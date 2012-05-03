@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Service="NPEG.Service.NpegParsingService, NPEG.Service" %>

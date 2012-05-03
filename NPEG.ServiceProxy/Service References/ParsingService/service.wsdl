@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:tns="http://tempuri.org/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" name="NpegParsingService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import namespace="http://tempuri.org/" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/NPEG.Terminals" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/NPEG" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/NPEG.NonTerminals" />
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/NPEG.Service" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IParsingService_Parse_InputMessage">
+    <wsdl:part name="parameters" element="tns:Parse" />
+  </wsdl:message>
+  <wsdl:message name="IParsingService_Parse_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ParseResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IParsingService">
+    <wsdl:operation name="Parse">
+      <wsdl:input wsaw:Action="http://tempuri.org/IParsingService/Parse" message="tns:IParsingService_Parse_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IParsingService/ParseResponse" message="tns:IParsingService_Parse_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IParsingService" type="tns:IParsingService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Parse">
+      <soap:operation soapAction="http://tempuri.org/IParsingService/Parse" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NpegParsingService">
+    <wsdl:port name="BasicHttpBinding_IParsingService" binding="tns:BasicHttpBinding_IParsingService">
+      <soap:address location="http://www.mixhacks.com:83/NpegParsingService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,364 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+	  http-equiv="content-type">
+    <style type="text/css">
+      body { font-size:12px; }
+      h1 { font-size:300%;
+      color:#FF0000;
+      font-style:italic;
+      border-bottom:solid thin black; }  
+
+      table, tr, td, th{border:#ccc solid 1px;}
+      
+      .notation {color:red;}
+    </style>
+    <title>NPEG Documentation</title>
+  </head>
+
+  <body>
+    <h1>NPEG Documentation</h1>
+    <table>    
+      <caption>Description of The Framework Notation</caption>	
+      <thead>
+	<th>Framework Notation</th>
+	<th>Meaning</th>
+      </thead>
+      <tbody>
+	<tr>
+	  <td><strong>e</strong></td>
+	  <td>An expression consisting of non-terminals or terminals</td>
+	</tr>
+	
+	<tr>
+	  <td><strong>.</strong></td>
+	  <td>Any char value, printable or not</td>
+	</tr>
+
+	<tr>
+	  <td><strong>_</strong></td>
+	  <td>Nothing, no character is matched nor consumed</td>
+	</tr>
+
+	<tr>
+	  <td><strong>eN</strong></td>
+	  <td>A numbered expression</td>
+	</tr>
+
+	<tr>
+	  <td><strong>e1, e2, ..., eN</strong></td>
+	  <td>A list of expressions</td>
+	</tr>
+
+	<tr>
+	  <td><strong>(e1 e2 ... eN)</strong></td>
+	  <td>A sequence of expressions</td>
+	</tr>
+
+	<tr>
+	  <td><strong>e {lower bound, upper bound}</strong></td>
+	  <td>At least lower bound and at most upper bound repetitions of expression <em>e</em></td>
+	</tr>
+
+	<tr>
+	  <td><strong>e {lower bound,}</strong></td>
+	  <td>Lower bound or more repetitions of expression <em>e</em></td>
+	</tr>
+
+	<tr>
+	  <td><strong>e {,upper bound}</strong></td>
+	  <td>At most upper bound repetitions of expression <em>e</em></td>
+	</tr>
+
+	<tr>
+	  <td><strong>e*</strong></td>
+	  <td>Zero or more repetitions of expression <em>e</em></td>
+	</tr>
+
+	<tr>
+	  <td><strong>e+</strong></td>
+	  <td>One or more repetitions of expression <em>e</em></td>
+	</tr>
+
+	<tr>
+	  <td><strong>e?</strong></td>
+	  <td>Zero or one occurences of expression <em>e</em></td>
+	</tr>
+
+	<tr>
+	  <td><strong>&amp;e</strong></td>
+	  <td>Peek, matches the characters of the input stream with the user input without consuming anything.</td>
+	</tr>
+
+
+	<tr>
+	  <td><strong>!e</strong></td>
+	  <td>Negates the truth value of <em>e</em></td>
+	</tr>
+
+	<tr>
+	  <td><strong>e1 / e2</strong></td>
+	  <td>
+	    Or operation, is true if either <em>e1</em> or <em>e2</em> are true.<br>
+	    If <em>e1</em> succeeds, <em>e2</em> is not evaluated.	    
+	  </td>
+	</tr>
+
+	<tr>
+	  <td><strong>&lt;USER INPUT&gt;</strong></td>
+	  <td>Some sort of user input</td>
+	</tr>	  
+
+	<tr>
+	  <td><strong><em>stack</em>(NAME)</strong></td>
+	  <td>A named stack</td>
+	</tr>
+
+	<tr>
+	  <td><strong><em>stack</em>.top</strong></td>
+	  <td>Top-most element of a stack</td>
+	</tr>
+      </tbody>
+    </table>
+
+
+    <table summary="Non-Terminals are rules that prefix, suffix, or contain terminals.  They do not live on their own therefore form a composite.">      
+      <caption>Non-Terminals</caption>	
+      <thead>
+	<th>Input</th>
+	<th>Framework Notation</th>
+	<th>Meaning</th>
+      </thead>
+
+      <tbody>
+	<tr>
+	  <td>Capturing Group</td>
+	  <td><span class='notation'>(?&lt;</span><em>TokenName</em><span class='notation'>&gt;</span> <em>e</em><span class='notation'>)</span></td>
+	  <td>
+	    <p>Use this non-terminal element to develop the expected abstract syntax tree, AST.
+	      If the expression, <em>e</em>, is matched by input, a new AstNode named <em>TokenName</em> will be linked into the final abstract syntax tree.
+	      The root node in the final grammar is required to be a capturing group.</p>
+	    <div>
+	      <h4>Notation Variations:</h4>
+	      <p>Optional parameter: <span class='notation'>\rsc</span>  means reduce to single child.</p>
+	      <p>Optional parameter: <span class='notation'>\ir</span>   means intermediate representation; This instructs code generation process to create plain objects in language specified that will be mapped to the AST.</p>
+	      <p>Optional parameter: <span class='notation'>\rn</span>   means replacement node. This instructs the code generation process that you will provide a custom object that implements IAstNodeReplacement during Ast Creation through use of a callback.</p>
+	      <p><span class='notation'>\ir</span>  and <span class='notation'>\rn</span>  are exclusive and cannot be used together.</p>
+	      <p><span class='notation'>(?&lt;</span><em>TokenName</em>  <span class='notation'>\rsc</span> <span class='notation'>&gt;)</span></p>
+	      <p><span class='notation'>(?&lt;</span><em>TokenName</em>  <span class='notation'>\rn = [ typename, assemblyname ]</span> <span class='notation'>&gt;)</span></p>
+	      <p><span class='notation'>(?&lt;</span><em>TokenName</em>  <span class='notation'>\ir = [ callbackname ]</span> <span class='notation'>&gt;)</span></p>
+	      <p><span class='notation'>(?&lt;</span><em>TokenName</em>  <span class='notation'>\rsc \rn = [ typename, assemblyname ]</span> <span class='notation'>&gt;)</span></p>
+	      <p><span class='notation'>(?&lt;</span><em>TokenName</em>  <span class='notation'>\rsc \ir = [ callbackname ]</span> <span class='notation'>&gt;)</span></p>
+	    </div>
+	  </td>
+	</tr>
+	<tr>
+	  <td>Dynamic Back Reference</td>
+	  <td><span class='notation'>\k&lt;</span><em>PreviouslyCapturedTokenName</em><span class='notation'>&gt;</span></td>
+	  <td>
+	    <p>Use this non-terminal to parse xml like structures that need to match current position with previously captured text of the input.</p>
+	    <p>This element is dependent on:
+	      <ul>
+		<li>Capturing Group TokenName</li>
+		<li>Flag to enable back referencing</li>
+	      </ul>
+	    </p>
+	    <div>
+	      <h4>Notation Variations:</h4>
+	      <p><span class='notation'>\k&lt;</span><em>PreviouslyCapturedTokenName</em><span class='notation'>[\i]&gt;</span>  by default the previously captured text requires 
+		current position to match using case sensitivity.  By specifiying switch <span class='notation'>[\i]</span> the match becomes case-insensitive.</p>
+	    </div>
+	  </td>
+	</tr>
+	<tr>
+	  <td>And Predicate</td>
+	  <td><span class='notation'>&amp;</span><em>e</em></td>
+	  <td><p>A predicate does not consume characters.  Used to test a positive logic condition for decision branching in grammar.</p></td>
+	</tr>
+	<tr>
+	  <td>Not Predicate</td>
+	  <td><span class='notation'>!</span><em>e</em></td>
+	  <td><p>A predicate does not consume characters.  Used to invert the logic test condition for decision branching in grammar.</p></td>
+	</tr>
+
+	<tr>
+	  <td>Limiting Repetitions</td>
+	  <td>
+	    <em>e</em><span class='notation'>{</span><em>lower,upper</em><span class='notation'>}</span>
+	  </td>
+	  
+	  <td>
+	    This non-terminal is useful for matching a bounded number of occurences of an expression. <em>lower</em> and <em>upper</em> may be the same value, in which case exactly <em>lower</em> = <em>upper</em> repetitions of the expression <em>e</em> will be required to exist at the current position of the input iterator.
+	    
+	    <h4>Notation Variations:</h4>
+	    <p>
+	      <em>e</em><span class='notation'>{</span><em>lower,</em><span class='notation'>}</span>: Unlimited Repetitions with a lower bound.  Requires at least <em>lower</em> satisfactions of the expression <em>e</em>. The absence of an upper bound is signaled by passing -1 in the upper bound argument in the C and C++ implementations of NPEG, and with a <em>null</em> reference in the C# implementation.
+	    </p>
+
+	    <p>
+	      <em>e</em><span class='notation'>{</span><em>,upper</em><span class='notation'>}</span>: Tries to match <em>e</em> at most <em>upper</em> times with the input stream content. The routine stops the first time <em>e</em> cannot be satisfied, however it does not return false, also if the expression is not found a single time in the input. The absence of a lower bound is signaled by passing -1 in the lower bound argument in the C and C++ implementations of NPEG, and with a <em>null</em> reference in the C# implementation.
+	  </td>
+	</tr>
+	
+	<tr>
+	  <td>One Or More</td>
+	  <td><em>e</em><span class='notation'>+</span></td>
+	  <td>
+	    Equivalent to, but faster than, Limiting Repetition with the bounds <span class='notation'>{</span>1,<span class='notation'>}</span>, this routine matches at least one occurence of <em>e</em>, and continues to do so until the expression fails to be satisfied by the input stream data.<br>
+	    Failure to match <em>e</em> at least once, results in a 0 return value and a restauration of the input iterator position.
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>Optional</td>
+	  <td>e<span class='notation'>?</span></td>
+	  <td>Equivalent to, but faster than, Limiting Repetition with the bounds <span class='notation'>{</span>,1<span class='notation'>}</span>, this routine tries to match <em>e</em> with the current input stream content.<br>
+	    Failure to match <em>e</em> even once leads to restauration of the input iterator position, but still results in a non-zero return value.
+	  </td>	    
+	</tr>
+
+	<tr>
+	  <td>Prioritized Choice</td>
+	  <td><span class='notation'>(</span><em>e1</em><span class='notation'>|</span>e2<span class='notation'>)</span></td>
+	  <td>
+	    First tries to match the expression <em>e1</em> with the input stream content. If <em>e1</em> could be satisfied only the characters corresponding to <em>e1</em> are consumed by this operation. If satisfaction of <em>e1</em> fails, the input iterator position is restored and <em>e2</em> is evaluated.<br>
+	    Failure to satisfy neither of <em>e1</em> and <em>e2</em>, leads to restauration of the input iterator position and a zero return value.
+	  </td>	    
+	</tr>
+	<tr>
+	  <td>Sequence</td>
+	  <td><span class='notation'>(</span><em>e1 e2</em><span class='notation'>)</span></td>
+	  <td>
+	    First tries to match the expression <em>e1</em> then <em>e2</em> with the input stream content. The characters corresponding to both <em>e1</em> and <em>e2</em> are consumed by this operation.<br>
+	    Failure to satisfy <em>e1</em> and then <em>e2</em>, leads to restauration of the input iterator position and a zero return value.
+	  </td>	    
+	</tr>
+
+	<tr>
+	  <td>Zero Or More</td>
+	  <td><em>e</em><span class='notation'>*</span></td>
+	  <td>Equivalent to, but faster than, Limiting Repetition with the bounds <span class='notation'>{</span>0,<span class='notation'>}</span>, this routine matches all occurences of <em>e</em> until the expression first fails to be satisfied by the input stream data.<br>
+	    Always returns true, but when the matching fails the input iterator is restored to the position after the last satisfaction of <em>e</em>, or in case of a failure to satisfy <em>e</em> in the first attempt, to the state before entering the Zero Or More routine. 
+	  </td>	    
+	</tr>
+      </tbody>
+    </table>
+
+    <table summary="Non-Terminals are rules that prefix, suffix, or contain terminals.  They do not live on their own therefore form a composite.">      
+      <caption>Terminals</caption>	
+      <thead>
+	<th>Input</th>
+	<th>Framework Notation</th>
+	<th>Meaning</th>
+      </thead>
+      <tbody>
+	<tr>	
+	  <td>
+	    Any Character
+	  </td>
+
+	  <td>
+	    <span class='notation'>.</span>
+	  </td>
+
+	  <td>
+	    Consumes one character, printable or non-printable. Will always return success (boolean true) as long as there is a character in the input stream that can be consumed.
+	  </td>
+	</tr>
+
+	<tr>	  
+	  <td>
+	    Character Class
+	  </td>
+
+	  <td>
+	    <span class='notation'>&lt;</span>CharacterClassChar<span class='notation'>&gt;</span>
+	  </td>
+	  
+	  <td>
+	    Consumes one character of the input stream, if it's in the user-specified character class, else the index of the input iterator is restored to it's position at the time of the call and 0 is returned.<br>
+	    Character classes are defined by either passing a range of characters enclosed in bracktes, of the form <span class='notation'>[</span>a-o<span class='notation'>]</span>, a group of individual characters of the form <span class='notation'>[</span>bq_@<span class='notation'>]</span>, or a combination of the two <span class='notation'>[</span>a-zA-Z0-9_.@<span class='notation'>]</span>.
+	  </td>
+	</tr>
+
+	<tr>	  
+	  <td>Code Point</td>
+
+	  <td>
+	    <span class='notation'>&lt;</span>BinaryValueOfNumberString<span class='notation'>&gt;</span>
+	  </td>
+
+	  <td>
+	    <p>
+	      This routine allows the user to specify the numerical values of the chars to be matched and consumed. Essentially it is the same as matching literal strings, however it's more convenient for matching non-printable characters.<br>
+	      A speciality of Npeg is that it allows for wildcards in binary and hexadecimal input, i.e. by placing x's in the input string one can tell the parser to accept any value in the corresponding bits.<br>
+	      A failure to match the input results in a restauration of the input stream index and a 0 return value.
+	    </p>
+	    
+	    <h4>Notation Variations:</h4>
+	    <p>
+	      <b>Binary strings:</b> <span class='notation'>#b</span>10101, if the input string has a length that is no multiple of 8 (8bits = 1 byte), the string is automatically padded with leading zeros.<br>
+	      <b>Binary strings with wildcards:</b> <span class='notation'>#b</span>10xx1, in this example the values of the 7th and 8th bit (due to padding with three leading zeros) would be ignored.
+	    </p>
+	    
+	    <p>
+	      <b>Hexadecimal strings:</b> <span class='notation'>#x</span>a90ef, if the length of the input string is no multiple of two (two hexadecimal digits = 4bit), it is padded with one leading 0.<br>
+	      <b>Hexadecimal strings with wildcards:</b> <span class='notation'>#x</span>x90ef, in this example the values of the 5th through 8th bits (due to padding with a leading zeros) would be ignored.
+	    </p>
+	    
+	    <p>
+	      <b>Decimal strings:</b> <span class='notation'>#</span>1234, In case of a decimal input value, the number string is parsed as one 32-bit integer value. The number of characters being consumed can vary from one to four, depending on how many of the higher position bytes of the int are all zero. In case of <span class='notation'>#</span>0 the framework assumes that the user explicitly wants to match zero.<br>
+	      There is no option for &quot;don't cares&quot; with decimal input.
+	    </p>
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>Fatal</td>
+
+	  <td>
+	    <span class='notation'>_</span>
+	  </td>
+	  
+	  <td>
+	    Allows the Npeg client to stop parsing when something unexpected happens in the client code.<br>
+	    A call of fatal results in a ParsingFatalTerminalException exception.<br>
+	    The user can pass the routine a string that describes the error. This string is stored in the exception object.
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    Literal
+	  </td>
+
+	  <td>
+	    <span class='notation'>&lt;</span><em>StringToBeMatched</em><span class='notation'>&gt;</span>
+	  </td>
+	  
+	  <td>
+	    Tries to match the current input stream content with <em>StringToBeMatched</em>.<br>
+	    Failure to do so, results in a restauration of the input stream index and a 0 return value.<br>
+	    <p>
+	      <b>Case-Sensitive Matching</b>: <span class='notation'>&lt;</span><em>StringToBeMatched</em><span class='notation'> \c &gt;</span> The literal terminal element requires the users to specify whether they want the string to be matched with or without case-sensitivity.
+	    </p>
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>Warn</td>
+
+	  <td>
+	    <span class='notation'>_</span>
+	  </td>
+
+	  <td>
+	    Places a user warning in a vector which can be accessed through the getWarnings member of Npeg C++ or through the warnings field of the npeg_context structure in the C implementation.<br>
+	    The routine always returns true.
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+  </body>
+</html>
