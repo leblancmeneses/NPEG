@@ -1,98 +1,91 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using NPEG.NonTerminals;
 using System.Runtime.Serialization;
+using NPEG.NonTerminals;
 
 namespace NPEG
 {
-    [DataContract]
-    abstract public class AComposite : AExpression
-    {
+	[DataContract]
+	public abstract class AComposite : AExpression
+	{
+		#region Predicates
 
-        #region Predicates
-        public AndPredicate And()
-        {
-            return new AndPredicate(this);
-        }
+		public AndPredicate And()
+		{
+			return new AndPredicate(this);
+		}
 
-        public NotPredicate Not()
-        {
-            return new NotPredicate(this);
-        }
-        #endregion
+		public NotPredicate Not()
+		{
+			return new NotPredicate(this);
+		}
 
+		#endregion
 
-        #region binary
-        public PrioritizedChoice Or(AExpression other)
-        {
-            return new PrioritizedChoice(this, other);
-        }
+		#region binary
 
-        public Sequence Sequence(AExpression other)
-        {
-            return new Sequence(this, other);
-        }
-        #endregion
+		public PrioritizedChoice Or(AExpression other)
+		{
+			return new PrioritizedChoice(this, other);
+		}
 
+		public Sequence Sequence(AExpression other)
+		{
+			return new Sequence(this, other);
+		}
 
-        #region unary suffix
-        public Optional Optional()
-        {
-            return new Optional(this);
-        }
+		#endregion
 
-        public OneOrMore Plus()
-        {
-            return new OneOrMore(this);
-        }
+		#region unary suffix
 
-        public ZeroOrMore Star()
-        {
-            return new ZeroOrMore(this);
-        }
+		public Optional Optional()
+		{
+			return new Optional(this);
+		}
 
-        public LimitingRepetition Limit(Int32? min, Int32? max)
-        {
-            return new LimitingRepetition(this) { Min = min, Max = max };
-        }
-        #endregion
+		public OneOrMore Plus()
+		{
+			return new OneOrMore(this);
+		}
 
+		public ZeroOrMore Star()
+		{
+			return new ZeroOrMore(this);
+		}
 
-        public CapturingGroup Capture(String name)
-        {
-            return new CapturingGroup(name, this);
-        }
+		public LimitingRepetition Limit(Int32? min, Int32? max)
+		{
+			return new LimitingRepetition(this) {Min = min, Max = max};
+		}
 
+		#endregion
 
+		[DataMember]
+		public abstract List<AExpression> Children { get; }
 
+		public CapturingGroup Capture(String name)
+		{
+			return new CapturingGroup(name, this);
+		}
 
-        [DataMember]
-        abstract public List<AExpression> Children
-        {
-            get;
-        }
+		// for visitenter, visitexit, visitexecute 
+		// require 1 to a maximum of 2 children for them to be called as user would expect.
+		public override void Accept(IParseTreeVisitor visitor)
+		{
+			visitor.VisitEnter(this);
 
-        // for visitenter, visitexit, visitexecute 
-        // require 1 to a maximum of 2 children for them to be called as user would expect.
-        public override void Accept(IParseTreeVisitor visitor)
-        {
-            visitor.VisitEnter(this);
+			int i = 0;
+			foreach (AExpression expression in Children)
+			{
+				if (i++ != 0)
+				{
+					visitor.VisitExecute(this);
+				}
 
-            int i = 0;
-            foreach (AExpression expression in this.Children)
-            {
-                if (i++ != 0)
-                {
-                    visitor.VisitExecute(this);
-                }
+				expression.Accept(visitor);
+			}
 
-                expression.Accept(visitor);
-            }
-
-            visitor.VisitLeave(this);
-        }
-    }
+			visitor.VisitLeave(this);
+		}
+	}
 }

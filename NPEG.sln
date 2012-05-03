@@ -1,13 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FAD75AB3-C110-4164-AF14-0DE19FB36881}"
-	ProjectSection(SolutionItems) = preProject
-		Competition.txt = Competition.txt
-		SvnDailyLog.txt = SvnDailyLog.txt
-		TodoLog.txt = TodoLog.txt
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{9697A736-7C9F-4D06-AE9F-AB337B6A3F46}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPEG", "NPEG\NPEG.csproj", "{567F6FBD-C5CE-4E3E-B16B-F40F1D367E35}"

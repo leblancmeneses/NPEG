@@ -1,205 +1,204 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using NPEG.NonTerminals;
+using NPEG.Terminals;
 
 namespace NPEG.Algorithms.LanguageWriters
 {
-    public class PhpWriter : WriterBase
-    {
-        public override void Write()
-        {
-            throw new NotImplementedException();
-        }
+	public class PhpWriter : WriterBase
+	{
+		public override void Write()
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.AndPredicate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(AndPredicate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.AndPredicate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(AndPredicate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.AndPredicate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(AndPredicate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.PrioritizedChoice expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(PrioritizedChoice expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.PrioritizedChoice expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(PrioritizedChoice expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.PrioritizedChoice expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(PrioritizedChoice expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.NotPredicate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(NotPredicate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.NotPredicate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(NotPredicate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.NotPredicate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(NotPredicate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.ZeroOrMore expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(ZeroOrMore expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.ZeroOrMore expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(ZeroOrMore expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.ZeroOrMore expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(ZeroOrMore expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.OneOrMore expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(OneOrMore expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.OneOrMore expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(OneOrMore expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.OneOrMore expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(OneOrMore expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.Optional expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(Optional expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.Optional expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(Optional expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.Optional expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(Optional expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.Sequence expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(Sequence expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.Sequence expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(Sequence expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.Sequence expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(Sequence expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.CapturingGroup expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(CapturingGroup expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.CapturingGroup expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(CapturingGroup expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.CapturingGroup expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(CapturingGroup expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.RecursionCreate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(RecursionCreate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.RecursionCreate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(RecursionCreate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.RecursionCreate expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(RecursionCreate expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitEnter(NPEG.NonTerminals.LimitingRepetition expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitEnter(LimitingRepetition expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitExecute(NPEG.NonTerminals.LimitingRepetition expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitExecute(LimitingRepetition expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void VisitLeave(NPEG.NonTerminals.LimitingRepetition expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void VisitLeave(LimitingRepetition expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.Literal expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void Visit(Literal expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.CharacterClass expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void Visit(CharacterClass expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.AnyCharacter expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void Visit(AnyCharacter expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.RecursionCall expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void Visit(RecursionCall expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.DynamicBackReference expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void Visit(DynamicBackReference expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.CodePoint expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void Visit(CodePoint expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.Warn expression)
-        {
-            throw new NotImplementedException();
-        }
+		public override void Visit(Warn expression)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override void Visit(NPEG.Terminals.Fatal expression)
-        {
-            throw new NotImplementedException();
-        }
-    }
+		public override void Visit(Fatal expression)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

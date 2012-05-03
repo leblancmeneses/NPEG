@@ -1,135 +1,128 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
-
 using NPEG.NonTerminals;
 using NPEG.Terminals;
 
 namespace NPEG
 {
-    public abstract class IParseTreeVisitor
-    {
-        public IParseTreeVisitor()
-        {
-        }
+	public abstract class IParseTreeVisitor
+	{
+		public void VisitEnter(AExpression expression)
+		{
+			// Use reflection to find and invoke the correct Visit method
+			var types = new[] {expression.GetType()};
+			MethodInfo methodInfo = GetType().GetMethod("VisitEnter", types);
+			if (methodInfo != null)
+			{
+				methodInfo.Invoke(this, new object[] {expression});
+			}
+			else
+			{
+				throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType());
+			}
+		}
+
+		public void VisitExecute(AExpression expression)
+		{
+			// Use reflection to find and invoke the correct Visit method
+			var types = new[] {expression.GetType()};
+			MethodInfo methodInfo = GetType().GetMethod("VisitExecute", types);
+			if (methodInfo != null)
+			{
+				methodInfo.Invoke(this, new object[] {expression});
+			}
+			else
+			{
+				throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType());
+			}
+		}
+
+		public void VisitLeave(AExpression expression)
+		{
+			// Use reflection to find and invoke the correct Visit method
+			var types = new[] {expression.GetType()};
+			MethodInfo methodInfo = GetType().GetMethod("VisitLeave", types);
+			if (methodInfo != null)
+			{
+				methodInfo.Invoke(this, new object[] {expression});
+			}
+			else
+			{
+				throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType());
+			}
+		}
 
 
-        public void VisitEnter(AExpression expression)
-        {
-            // Use reflection to find and invoke the correct Visit method
-            Type[] types = new Type[] { expression.GetType() };
-            MethodInfo methodInfo = this.GetType().GetMethod("VisitEnter", types);
-            if (methodInfo != null)
-            {
-                methodInfo.Invoke(this, new object[] { expression });
-            }
-            else
-            {
-                throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType().ToString());
-            }
-        }
+		public void Visit(AExpression expression)
+		{
+			// Use reflection to find and invoke the correct Visit method
+			var types = new[] {expression.GetType()};
+			MethodInfo methodInfo = GetType().GetMethod("Visit", types);
+			if (methodInfo != null)
+			{
+				methodInfo.Invoke(this, new object[] {expression});
+			}
+			else
+			{
+				throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType());
+			}
+		}
 
-        public void VisitExecute(AExpression expression)
-        {
-            // Use reflection to find and invoke the correct Visit method
-            Type[] types = new Type[] { expression.GetType() };
-            MethodInfo methodInfo = this.GetType().GetMethod("VisitExecute", types);
-            if (methodInfo != null)
-            {
-                methodInfo.Invoke(this, new object[] { expression });
-            }
-            else
-            {
-                throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType().ToString());
-            }
-        }
+		#region nonterminals
 
-        public void VisitLeave(AExpression expression)
-        {
-            // Use reflection to find and invoke the correct Visit method
-            Type[] types = new Type[] { expression.GetType() };
-            MethodInfo methodInfo = this.GetType().GetMethod("VisitLeave", types);
-            if (methodInfo != null)
-            {
-                methodInfo.Invoke(this, new object[] { expression });
-            }
-            else
-            {
-                throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType().ToString());
-            }
-        }
+		public abstract void VisitEnter(AndPredicate expression);
+		public abstract void VisitExecute(AndPredicate expression);
+		public abstract void VisitLeave(AndPredicate expression);
 
+		public abstract void VisitEnter(PrioritizedChoice expression);
+		public abstract void VisitExecute(PrioritizedChoice expression);
+		public abstract void VisitLeave(PrioritizedChoice expression);
 
-        public void Visit(AExpression expression)
-        {
-            // Use reflection to find and invoke the correct Visit method
-            Type[] types = new Type[] { expression.GetType() };
-            MethodInfo methodInfo = this.GetType().GetMethod("Visit", types);
-            if (methodInfo != null)
-            {
-                methodInfo.Invoke(this, new object[] { expression });
-            }
-            else
-            {
-                throw new Exception("Visitor does not implement the Visit method for the type: " + expression.GetType().ToString());
-            }
-        }
+		public abstract void VisitEnter(NotPredicate expression);
+		public abstract void VisitExecute(NotPredicate expression);
+		public abstract void VisitLeave(NotPredicate expression);
 
+		public abstract void VisitEnter(ZeroOrMore expression);
+		public abstract void VisitExecute(ZeroOrMore expression);
+		public abstract void VisitLeave(ZeroOrMore expression);
 
-        #region nonterminals
-        abstract public void VisitEnter(AndPredicate expression);
-        abstract public void VisitExecute(AndPredicate expression);
-        abstract public void VisitLeave(AndPredicate expression);
+		public abstract void VisitEnter(OneOrMore expression);
+		public abstract void VisitExecute(OneOrMore expression);
+		public abstract void VisitLeave(OneOrMore expression);
 
-        abstract public void VisitEnter(PrioritizedChoice expression);
-        abstract public void VisitExecute(PrioritizedChoice expression);
-        abstract public void VisitLeave(PrioritizedChoice expression);
+		public abstract void VisitEnter(Optional expression);
+		public abstract void VisitExecute(Optional expression);
+		public abstract void VisitLeave(Optional expression);
 
-        abstract public void VisitEnter(NotPredicate expression);
-        abstract public void VisitExecute(NotPredicate expression);
-        abstract public void VisitLeave(NotPredicate expression);
+		public abstract void VisitEnter(Sequence expression);
+		public abstract void VisitExecute(Sequence expression);
+		public abstract void VisitLeave(Sequence expression);
 
-        abstract public void VisitEnter(ZeroOrMore expression);
-        abstract public void VisitExecute(ZeroOrMore expression);
-        abstract public void VisitLeave(ZeroOrMore expression);
+		public abstract void VisitEnter(CapturingGroup expression);
+		public abstract void VisitExecute(CapturingGroup expression);
+		public abstract void VisitLeave(CapturingGroup expression);
 
-        abstract public void VisitEnter(OneOrMore expression);
-        abstract public void VisitExecute(OneOrMore expression);
-        abstract public void VisitLeave(OneOrMore expression);
+		public abstract void VisitEnter(RecursionCreate expression);
+		public abstract void VisitExecute(RecursionCreate expression);
+		public abstract void VisitLeave(RecursionCreate expression);
 
-        abstract public void VisitEnter(Optional expression);
-        abstract public void VisitExecute(Optional expression);
-        abstract public void VisitLeave(Optional expression);
+		public abstract void VisitEnter(LimitingRepetition expression);
+		public abstract void VisitExecute(LimitingRepetition expression);
+		public abstract void VisitLeave(LimitingRepetition expression);
 
-        abstract public void VisitEnter(Sequence expression);
-        abstract public void VisitExecute(Sequence expression);
-        abstract public void VisitLeave(Sequence expression);
+		#endregion
 
-        abstract public void VisitEnter(CapturingGroup expression);
-        abstract public void VisitExecute(CapturingGroup expression);
-        abstract public void VisitLeave(CapturingGroup expression);
+		#region terminals
 
-        abstract public void VisitEnter(RecursionCreate expression);
-        abstract public void VisitExecute(RecursionCreate expression);
-        abstract public void VisitLeave(RecursionCreate expression);
+		public abstract void Visit(Literal expression);
+		public abstract void Visit(CharacterClass expression);
+		public abstract void Visit(AnyCharacter expression);
+		public abstract void Visit(RecursionCall expression);
+		public abstract void Visit(DynamicBackReference expression);
+		public abstract void Visit(CodePoint expression);
+		public abstract void Visit(Warn expression);
+		public abstract void Visit(Fatal expression);
 
-        abstract public void VisitEnter(LimitingRepetition expression);
-        abstract public void VisitExecute(LimitingRepetition expression);
-        abstract public void VisitLeave(LimitingRepetition expression);
-        #endregion
-
-
-        #region terminals
-        abstract public void Visit(Literal expression);
-        abstract public void Visit(CharacterClass expression);
-        abstract public void Visit(AnyCharacter expression);
-        abstract public void Visit(RecursionCall expression);
-        abstract public void Visit(DynamicBackReference expression);
-        abstract public void Visit(CodePoint expression);
-        abstract public void Visit(Warn expression);
-        abstract public void Visit(Fatal expression);
-        #endregion
-    }
+		#endregion
+	}
 }

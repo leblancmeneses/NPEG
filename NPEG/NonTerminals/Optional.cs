@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace NPEG.NonTerminals
 {
-    [DataContract]
-    public class Optional : AComposite
-    {        
-        private AExpression Exp;
-        public Optional(AExpression exp)
-        {
-            this.Exp = exp;
-        }
+	[DataContract]
+	public class Optional : AComposite
+	{
+		private readonly AExpression Exp;
 
-        [DataMember]
-        public override List<AExpression> Children
-        {
-            get { return new List<AExpression>() { Exp }; }
-        }
-    }
+		public Optional(AExpression exp)
+		{
+			Exp = exp;
+		}
+
+		[DataMember]
+		public override List<AExpression> Children
+		{
+			get { return new List<AExpression> {Exp}; }
+		}
+	}
 }

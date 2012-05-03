@@ -12,7 +12,6 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,8 +29,8 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void Iterator_Initialization()
 		{
-			var value = "01234567890123456789";
-			var bytes = Encoding.ASCII.GetBytes(value);
+			string value = "01234567890123456789";
+			byte[] bytes = Encoding.ASCII.GetBytes(value);
 			var memoryStream = new MemoryStream();
 			memoryStream.Write(bytes, 0, bytes.Length);
 			var input = new FileInputIterator(memoryStream);
@@ -49,8 +48,8 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void Iterator_GetText_Limit()
 		{
-			var value = "01234567890123456789";
-			var bytes = Encoding.ASCII.GetBytes(value);
+			string value = "01234567890123456789";
+			byte[] bytes = Encoding.ASCII.GetBytes(value);
 			var memoryStream = new MemoryStream();
 			memoryStream.Write(bytes, 0, bytes.Length);
 			var input = new FileInputIterator(memoryStream);
@@ -87,8 +86,8 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void Iterator_Index()
 		{
-			var value = "01234567890123456789";
-			var bytes = Encoding.ASCII.GetBytes(value);
+			string value = "01234567890123456789";
+			byte[] bytes = Encoding.ASCII.GetBytes(value);
 			var memoryStream = new MemoryStream();
 			memoryStream.Write(bytes, 0, bytes.Length);
 			var input = new FileInputIterator(memoryStream);

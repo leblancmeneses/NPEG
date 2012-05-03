@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace NPEG
+﻿namespace NPEG
 {
-    // visitor
-    abstract public class IAstNodeReplacement : AstNode
-    {
-        abstract public void VisitEnter(AstNode node);
-        abstract public void VisitLeave(AstNode node);
-    }
+	// visitor
+	public abstract class IAstNodeReplacement : AstNode
+	{
+		public abstract void VisitEnter(AstNode node);
+		public abstract void VisitLeave(AstNode node);
+	}
 }

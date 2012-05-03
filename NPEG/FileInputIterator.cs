@@ -17,9 +17,9 @@ namespace NPEG
 
 		public override byte[] Text(int start, int end)
 		{
-			if(start > end)
+			if (start > end)
 				throw new IteratorUsageException("Index out of range. End must be >= than Start.  byte[] Text(int start, int end)");
-			
+
 			var buffer = new byte[end - start + 1];
 			input.Position = start;
 			input.Read(buffer, 0, end - start + 1);
