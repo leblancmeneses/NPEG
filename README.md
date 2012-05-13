@@ -52,58 +52,58 @@
 ## PEG - Mathematical Formula in C
 <code>
 
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
+	#include <assert.h>
+	#include <stdio.h>
+	#include <string.h>
 
-#include "robusthaven/text/npeg.h"
-#include "robusthaven/text/npeg_inputiterator.h"
-#include "robusthaven/structures/stack.h"
+	#include "robusthaven/text/npeg.h"
+	#include "robusthaven/text/npeg_inputiterator.h"
+	#include "robusthaven/structures/stack.h"
 
-#include "MathematicalFormula.h"
+	#include "MathematicalFormula.h"
 
-#define BUFFER_SIZE 100
+	#define BUFFER_SIZE 100
 
-int main(int argc, char *argv[])
-{
-  const char text1[] = "(1*3+4)/5*93";
-  const char text2[] = "9+(9-8)*10";  
+	int main(int argc, char *argv[])
+	{
+	  const char text1[] = "(1*3+4)/5*93";
+	  const char text2[] = "9+(9-8)*10";  
 
-  char buffer[BUFFER_SIZE];
-  rh_stack_instance disableBackReferenceStack;
-  rh_stackstack_instance sandbox;
-  rh_hashmap_instance backreference_lookup;
-  rh_list_instance warnings;
-  rh_stack_instance errors;
-  npeg_context context;
-  npeg_inputiterator iterator;
-  npeg_astnode* ast, *p_child;
+	  char buffer[BUFFER_SIZE];
+	  rh_stack_instance disableBackReferenceStack;
+	  rh_stackstack_instance sandbox;
+	  rh_hashmap_instance backreference_lookup;
+	  rh_list_instance warnings;
+	  rh_stack_instance errors;
+	  npeg_context context;
+	  npeg_inputiterator iterator;
+	  npeg_astnode* ast, *p_child;
 
-  int (*parsetree)(npeg_inputiterator*, npeg_context*) = &MathematicalFormula_impl_0;
-  int IsMatch = 0;
+	  int (*parsetree)(npeg_inputiterator*, npeg_context*) = &MathematicalFormula_impl_0;
+	  int IsMatch = 0;
 
-  // load npeg managed memory
-  context.disableBackReferenceStack = &disableBackReferenceStack;
-  context.sandbox = &sandbox;
-  context.backReferenceLookup = &backreference_lookup;
-  context.warnings = &warnings; 
-  context.errors = &errors;
+	  // load npeg managed memory
+	  context.disableBackReferenceStack = &disableBackReferenceStack;
+	  context.sandbox = &sandbox;
+	  context.backReferenceLookup = &backreference_lookup;
+	  context.warnings = &warnings; 
+	  context.errors = &errors;
 
-  npeg_inputiterator_constructor(&iterator, text1, strlen(text1));
-  npeg_constructor(&context, NULL);
+	  npeg_inputiterator_constructor(&iterator, text1, strlen(text1));
+	  npeg_constructor(&context, NULL);
 
-  IsMatch = parsetree(&iterator, &context);
-  assert(IsMatch);
-  printf("\tVerified: The expected input was matched by parser.\n");
+	  IsMatch = parsetree(&iterator, &context);
+	  assert(IsMatch);
+	  printf("\tVerified: The expected input was matched by parser.\n");
 
-  ast = npeg_get_ast(&context);
-  npeg_printVisitor(ast, NULL);
-  assert(0 == strcmp(ast->token->name, "EXPRESSION"));
-  printf("\tVerified: The expected token name: '%s'.\n", ast->token->name);
-  npeg_inputiterator_get_text(buffer, &iterator, ast->token->start, ast->token->end);
-  assert(0 == strcmp(buffer, text1));
-  printf("\tVerified: The expected matched string: '%s'.\n", buffer);
-  
+	  ast = npeg_get_ast(&context);
+	  npeg_printVisitor(ast, NULL);
+	  assert(0 == strcmp(ast->token->name, "EXPRESSION"));
+	  printf("\tVerified: The expected token name: '%s'.\n", ast->token->name);
+	  npeg_inputiterator_get_text(buffer, &iterator, ast->token->start, ast->token->end);
+	  assert(0 == strcmp(buffer, text1));
+	  printf("\tVerified: The expected matched string: '%s'.\n", buffer);
+	  
 </code>
 
 
@@ -111,91 +111,91 @@ int main(int argc, char *argv[])
 ## PEG - Mathematical Formula in C++
 <code>
 
-#include <cstdio>
-#include <cassert>
-#include <iostream>
-#include <cstring>
-#include "robusthaven/text/StringInputIterator.h"
-#include "robusthaven/text/PrintVisitor.h"
-#include "MathematicalFormula.h"
+	#include <cstdio>
+	#include <cassert>
+	#include <iostream>
+	#include <cstring>
+	#include "robusthaven/text/StringInputIterator.h"
+	#include "robusthaven/text/PrintVisitor.h"
+	#include "MathematicalFormula.h"
 
-using namespace RobustHaven::Text;
-using namespace std;
+	using namespace RobustHaven::Text;
+	using namespace std;
 
-#define BUFFER_SIZE 100
+	#define BUFFER_SIZE 100
 
-int main(int argc, char *argv[])
-{
-  const char text1[] = "(1*3+4)/5*93";
-  const char text2[] = "9+(9-8)*10";  
+	int main(int argc, char *argv[])
+	{
+	  const char text1[] = "(1*3+4)/5*93";
+	  const char text2[] = "9+(9-8)*10";  
 
-  char buffer[BUFFER_SIZE];
-  InputIterator* input; 
-  MathematicalFormula* context; 
-  AstNode *ast, *p_child;
+	  char buffer[BUFFER_SIZE];
+	  InputIterator* input; 
+	  MathematicalFormula* context; 
+	  AstNode *ast, *p_child;
 
-  input = new StringInputIterator(text1, strlen(text1));
-  context = new MathematicalFormula(input);
-  assert(context->isMatch());
-  cout << "\tVerified: Matching of input succeeds\n";
-  ast = context->getAST();
-  PrintVisitor::printAST(*ast);
-  assert(ast->getToken()->getName() == "EXPRESSION");
-  printf("\tVerified: The expected token name: '%s'.\n", ast->getToken()->getName().c_str());
-  input->getText(buffer, ast->getToken()->getStart(), ast->getToken()->getEnd());
-  assert(0 == strcmp(buffer, text1));
-  printf("\tVerified: The expected matched string: '%s'.\n", buffer);
-  
+	  input = new StringInputIterator(text1, strlen(text1));
+	  context = new MathematicalFormula(input);
+	  assert(context->isMatch());
+	  cout << "\tVerified: Matching of input succeeds\n";
+	  ast = context->getAST();
+	  PrintVisitor::printAST(*ast);
+	  assert(ast->getToken()->getName() == "EXPRESSION");
+	  printf("\tVerified: The expected token name: '%s'.\n", ast->getToken()->getName().c_str());
+	  input->getText(buffer, ast->getToken()->getStart(), ast->getToken()->getEnd());
+	  assert(0 == strcmp(buffer, text1));
+	  printf("\tVerified: The expected matched string: '%s'.\n", buffer);
+	  
 </code>
 
 
 ## PEG - Mathematical Formula in Java
 <code>
 
-package parser_tests;
-import robusthaven.text.npeg.tests.parsers.MathematicalFormula;
-import robusthaven.text.*;
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import java.util.*;
-import java.io.*;
+	package parser_tests;
+	import robusthaven.text.npeg.tests.parsers.MathematicalFormula;
+	import robusthaven.text.*;
+	import junit.framework.Assert;
+	import junit.framework.TestCase;
+	import java.util.*;
+	import java.io.*;
 
-public class MathematicalFormulaTest extends TestCase {
-    static final String text1 = "(1*3+4)/5*93";
-    static final String text2 = "9+(9-8)*10";  
+	public class MathematicalFormulaTest extends TestCase {
+		static final String text1 = "(1*3+4)/5*93";
+		static final String text2 = "9+(9-8)*10";  
 
-    InputIterator input;
-    MathematicalFormula parser;
-    AstNode ast, child;
-    
-    public void testInput1() {
-	String capturedText;
+		InputIterator input;
+		MathematicalFormula parser;
+		AstNode ast, child;
+		
+		public void testInput1() {
+		String capturedText;
 
-	try {
-	    input = new StringInputIterator(text1);
-	    parser = new MathematicalFormula(input);
+		try {
+			input = new StringInputIterator(text1);
+			parser = new MathematicalFormula(input);
 
-	    Assert.assertTrue(parser.isMatch());
-	    System.out.println("\tVerified: Matching of input succeeds\n");
-	
-	    ast = parser.getAST();
-	    PrintVisitor.printAST(ast);
-	    Assert.assertTrue(0 == ast.getToken().getName().compareTo("EXPRESSION"));
-	    System.out.println("\tVerified: The expected token name: " + ast.getToken().getName());
+			Assert.assertTrue(parser.isMatch());
+			System.out.println("\tVerified: Matching of input succeeds\n");
+		
+			ast = parser.getAST();
+			PrintVisitor.printAST(ast);
+			Assert.assertTrue(0 == ast.getToken().getName().compareTo("EXPRESSION"));
+			System.out.println("\tVerified: The expected token name: " + ast.getToken().getName());
 
 </code>
 
 ## PEG - Mathematical Formula in Javascript
 <code>
 
-.. framework has been "started" but no tests created yet
+	.. framework has been "started" but no tests created yet
 
 </code>
 
 ## PEG - Mathematical Formula in PHP
 <code>
 
-.. framework has been "started" but no tests created yet
+	.. framework has been "started" but no tests created yet
 
 </code>
  
