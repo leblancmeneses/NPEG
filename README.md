@@ -51,6 +51,7 @@
 
 ## PEG - Mathematical Formula in C
 <code>
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -102,12 +103,14 @@ int main(int argc, char *argv[])
   npeg_inputiterator_get_text(buffer, &iterator, ast->token->start, ast->token->end);
   assert(0 == strcmp(buffer, text1));
   printf("\tVerified: The expected matched string: '%s'.\n", buffer);
+  
 </code>
 
 
 
 ## PEG - Mathematical Formula in C++
 <code>
+
 #include <cstdio>
 #include <cassert>
 #include <iostream>
@@ -142,11 +145,13 @@ int main(int argc, char *argv[])
   input->getText(buffer, ast->getToken()->getStart(), ast->getToken()->getEnd());
   assert(0 == strcmp(buffer, text1));
   printf("\tVerified: The expected matched string: '%s'.\n", buffer);
+  
 </code>
 
 
 ## PEG - Mathematical Formula in Java
 <code>
+
 package parser_tests;
 import robusthaven.text.npeg.tests.parsers.MathematicalFormula;
 import robusthaven.text.*;
@@ -182,11 +187,15 @@ public class MathematicalFormulaTest extends TestCase {
 
 ## PEG - Mathematical Formula in Javascript
 <code>
+
 .. framework has been "started" but no tests created yet
+
 </code>
 
 ## PEG - Mathematical Formula in PHP
 <code>
+
 .. framework has been "started" but no tests created yet
+
 </code>
  
