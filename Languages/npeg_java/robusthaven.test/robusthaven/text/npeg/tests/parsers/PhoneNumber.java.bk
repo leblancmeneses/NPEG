@@ -1,0 +1,154 @@
+package robusthaven.text.npeg.tests.parsers;
+import java.io.IOException;
+import robusthaven.text.*;
+
+public class PhoneNumber extends Npeg
+{
+	public PhoneNumber(InputIterator iterator)
+	{
+		super(iterator);
+	}
+
+	public boolean isMatch() throws IOException, ParsingFatalTerminalException
+	{
+		return new PhoneNumber_impl_0().evaluate();
+	}
+
+
+	protected class PhoneNumber_impl_0 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "PhoneNumber";
+			return capturingGroup(new PhoneNumber_impl_1(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class PhoneNumber_impl_1 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new PhoneNumber_impl_2(), new PhoneNumber_impl_13());
+		}
+	}
+
+	protected class PhoneNumber_impl_13 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "FourDigitCode";
+			return capturingGroup(new PhoneNumber_impl_14(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class PhoneNumber_impl_14 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return limitingRepetition(4, 4, new PhoneNumber_impl_15(), "");
+		}
+	}
+
+	protected class PhoneNumber_impl_15 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _classExpression_0 = "[0-9]";
+			return characterClass(_classExpression_0.getBytes(), 5);
+		}
+	}
+
+	protected class PhoneNumber_impl_2 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new PhoneNumber_impl_3(), new PhoneNumber_impl_12());
+		}
+	}
+
+	protected class PhoneNumber_impl_12 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = "-";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+
+	protected class PhoneNumber_impl_3 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new PhoneNumber_impl_4(), new PhoneNumber_impl_9());
+		}
+	}
+
+	protected class PhoneNumber_impl_9 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "ThreeDigitCode";
+			return capturingGroup(new PhoneNumber_impl_10(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class PhoneNumber_impl_10 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return limitingRepetition(3, 3, new PhoneNumber_impl_11(), "");
+		}
+	}
+
+	protected class PhoneNumber_impl_11 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _classExpression_0 = "[0-9]";
+			return characterClass(_classExpression_0.getBytes(), 5);
+		}
+	}
+
+	protected class PhoneNumber_impl_4 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new PhoneNumber_impl_5(), new PhoneNumber_impl_8());
+		}
+	}
+
+	protected class PhoneNumber_impl_8 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = "-";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+
+	protected class PhoneNumber_impl_5 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "ThreeDigitCode";
+			return capturingGroup(new PhoneNumber_impl_6(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class PhoneNumber_impl_6 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return limitingRepetition(3, 3, new PhoneNumber_impl_7(), "");
+		}
+	}
+
+	protected class PhoneNumber_impl_7 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _classExpression_0 = "[0-9]";
+			return characterClass(_classExpression_0.getBytes(), 5);
+		}
+	}
+}

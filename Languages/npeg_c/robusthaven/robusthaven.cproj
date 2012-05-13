@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3CDB16A4-0081-4FA5-BE2D-F846EBF58877}</ProjectGuid>
+    <Compiler>
+      <Compiler ctype="GccCompiler" />
+    </Compiler>
+    <Language>C</Language>
+    <Target>Bin</Target>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <OutputName>robusthaven</OutputName>
+    <CompileTarget>StaticLibrary</CompileTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <DefineSymbols>MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <OptimizationLevel>3</OptimizationLevel>
+    <OutputName>robusthaven</OutputName>
+    <CompileTarget>StaticLibrary</CompileTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="structures\hashmap.h" />
+    <None Include="structures\stack.h" />
+    <None Include="text\npeg.h" />
+    <None Include="text\npeg_ast.h" />
+    <None Include="text\npeg_inputiterator.h" />
+    <None Include="text\npeg_token.h" />
+    <None Include="types\types.h" />
+    <None Include="structures\inthashmap.h" />
+    <None Include="structures\stackstack.h" />
+    <None Include="structures\list.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="structures\hashmap.c" />
+    <Compile Include="structures\stack.c" />
+    <Compile Include="text\npeg.c" />
+    <Compile Include="text\npeg_ast.c" />
+    <Compile Include="text\npeg_inputiterator.c" />
+    <Compile Include="structures\inthashmap.c" />
+    <Compile Include="structures\stackstack.c" />
+    <Compile Include="structures\list.c" />
+  </ItemGroup>
+</Project>

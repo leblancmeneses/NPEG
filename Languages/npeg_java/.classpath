@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="robusthaven.test/|robusthaven.test/parser_tests/" kind="src" path=""/>
+	<classpathentry excluding="parser_tests/" kind="src" path="robusthaven.test"/>
+	<classpathentry kind="src" path="robusthaven.test/parser_tests"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/usr/share/java/junit.jar"/>
+	<classpathentry kind="output" path="robusthaven.test"/>
+</classpath>

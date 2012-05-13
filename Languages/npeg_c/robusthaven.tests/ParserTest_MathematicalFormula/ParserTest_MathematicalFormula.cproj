@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3FAD6F2E-21F2-4685-BD03-51059CB40A9C}</ProjectGuid>
+    <Packages>
+      <Packages>
+        <Package file="/home/leblanc/Desktop/npeg/robusthaven/npeg/trunk/npeg_c/robusthaven/robusthaven.md.pc" name="robusthaven" IsProject="true" />
+      </Packages>
+    </Packages>
+    <Compiler>
+      <Compiler ctype="GccCompiler" />
+    </Compiler>
+    <Language>C</Language>
+    <Target>Bin</Target>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <Includes>
+      <Includes>
+        <Include>/home/leblanc/Desktop/npeg/robusthaven/npeg/trunk/npeg_c</Include>
+      </Includes>
+    </Includes>
+    <OutputName>ParserTest_MathematicalFormula</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <DefineSymbols>MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <OptimizationLevel>3</OptimizationLevel>
+    <OutputName>ParserTest_MathematicalFormula</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="main.c" />
+    <Compile Include="MathematicalFormula.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MathematicalFormula.h" />
+  </ItemGroup>
+</Project>

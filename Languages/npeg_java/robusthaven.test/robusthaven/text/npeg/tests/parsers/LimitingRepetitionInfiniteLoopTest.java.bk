@@ -1,0 +1,51 @@
+package robusthaven.text.npeg.tests.parsers;
+import java.io.IOException;
+import robusthaven.text.*;
+
+public class LimitingRepetitionInfiniteLoopTest extends Npeg
+{
+    public LimitingRepetitionInfiniteLoopTest(InputIterator iterator)
+    {
+	super(iterator);
+    }
+    
+	public boolean isMatch() throws IOException, ParsingFatalTerminalException
+    {
+	return new LimitingRepetitionInfiniteLoopTest_impl_0().evaluate();
+    }
+
+
+    protected class LimitingRepetitionInfiniteLoopTest_impl_0 implements IsMatchPredicate
+    {
+	public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+	{
+	    String _nodeName_0 = "Expression";
+		return capturingGroup(new LimitingRepetitionInfiniteLoopTest_impl_1(), _nodeName_0, false, 
+				      null);
+		    }
+    }
+
+	protected class LimitingRepetitionInfiniteLoopTest_impl_1 implements IsMatchPredicate
+	{
+	    public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+	    {
+		return limitingRepetition(0, -1, new LimitingRepetitionInfiniteLoopTest_impl_2(), "");
+	    }
+	}
+
+	    protected class LimitingRepetitionInfiniteLoopTest_impl_2 implements IsMatchPredicate
+	    {
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+		    return zeroOrMore(new LimitingRepetitionInfiniteLoopTest_impl_3(), "");
+			}
+	    }
+
+		protected class LimitingRepetitionInfiniteLoopTest_impl_3 implements IsMatchPredicate
+		{
+		    public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		    {
+			return anyCharacter();
+			    }
+		}
+}

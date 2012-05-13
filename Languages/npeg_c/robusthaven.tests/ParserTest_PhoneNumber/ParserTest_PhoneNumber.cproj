@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E2551A7A-8B4B-49DB-BE60-8C441351B095}</ProjectGuid>
+    <Packages>
+      <Packages>
+        <Package file="/home/leblanc/Desktop/npeg/robusthaven/npeg/trunk/npeg_c/robusthaven/robusthaven.md.pc" name="robusthaven" IsProject="true" />
+      </Packages>
+    </Packages>
+    <Compiler>
+      <Compiler ctype="GccCompiler" />
+    </Compiler>
+    <Language>C</Language>
+    <Target>Bin</Target>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <OutputName>ParserTest_PhoneNumber</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+    <Includes>
+      <Includes>
+        <Include>/home/leblanc/Desktop/npeg/robusthaven/npeg/trunk/npeg_c</Include>
+      </Includes>
+    </Includes>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <DefineSymbols>MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <OptimizationLevel>3</OptimizationLevel>
+    <OutputName>ParserTest_PhoneNumber</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="main.c" />
+    <Compile Include="PhoneNumber.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PhoneNumber.h" />
+  </ItemGroup>
+</Project>

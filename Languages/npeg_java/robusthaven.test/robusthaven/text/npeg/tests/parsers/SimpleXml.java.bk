@@ -1,0 +1,265 @@
+package robusthaven.text.npeg.tests.parsers;
+import java.io.IOException;
+import robusthaven.text.*;
+
+public class SimpleXml extends Npeg
+{
+	public SimpleXml(InputIterator iterator)
+	{
+		super(iterator);
+	}
+
+	public boolean isMatch() throws IOException, ParsingFatalTerminalException
+	{
+		return new SimpleXml_impl_0().evaluate();
+	}
+
+
+	protected class SimpleXml_impl_0 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "Expression";
+			return capturingGroup(new SimpleXml_impl_1(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class SimpleXml_impl_1 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return oneOrMore(new SimpleXml_impl_2(), "");
+		}
+	}
+
+	protected class SimpleXml_impl_2 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_3(), new SimpleXml_impl_23());
+		}
+	}
+
+	protected class SimpleXml_impl_23 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "END_TAG";
+			return capturingGroup(new SimpleXml_impl_24(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class SimpleXml_impl_24 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_25(), new SimpleXml_impl_28());
+		}
+	}
+
+	protected class SimpleXml_impl_28 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = ">";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+
+	protected class SimpleXml_impl_25 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_26(), new SimpleXml_impl_27());
+		}
+	}
+
+	protected class SimpleXml_impl_27 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _dynamicBackReference_0 = "TAG";
+			return dynamicBackReference(_dynamicBackReference_0, true);
+		}
+	}
+
+	protected class SimpleXml_impl_26 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = "</";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+
+	protected class SimpleXml_impl_3 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_4(), new SimpleXml_impl_12());
+		}
+	}
+
+	protected class SimpleXml_impl_12 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "Body";
+			return capturingGroup(new SimpleXml_impl_13(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class SimpleXml_impl_13 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return zeroOrMore(new SimpleXml_impl_14(), "");
+		}
+	}
+
+	protected class SimpleXml_impl_14 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_15(), new SimpleXml_impl_22());
+		}
+	}
+
+	protected class SimpleXml_impl_22 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return anyCharacter();
+		}
+	}
+
+	protected class SimpleXml_impl_15 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return notPredicate(new SimpleXml_impl_16());
+		}
+	}
+
+	protected class SimpleXml_impl_16 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "END_TAG";
+			return capturingGroup(new SimpleXml_impl_17(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class SimpleXml_impl_17 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_18(), new SimpleXml_impl_21());
+		}
+	}
+
+	protected class SimpleXml_impl_21 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = ">";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+
+	protected class SimpleXml_impl_18 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_19(), new SimpleXml_impl_20());
+		}
+	}
+
+	protected class SimpleXml_impl_20 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _dynamicBackReference_0 = "TAG";
+			return dynamicBackReference(_dynamicBackReference_0, true);
+		}
+	}
+
+	protected class SimpleXml_impl_19 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = "</";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+
+	protected class SimpleXml_impl_4 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "START_TAG";
+			return capturingGroup(new SimpleXml_impl_5(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class SimpleXml_impl_5 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_6(), new SimpleXml_impl_11());
+		}
+	}
+
+	protected class SimpleXml_impl_11 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = ">";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+
+	protected class SimpleXml_impl_6 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return sequence(new SimpleXml_impl_7(), new SimpleXml_impl_8());
+		}
+	}
+
+	protected class SimpleXml_impl_8 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _nodeName_0 = "TAG";
+
+			return capturingGroup(new SimpleXml_impl_9(), _nodeName_0, false, null);
+		}
+	}
+
+	protected class SimpleXml_impl_9 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			return oneOrMore(new SimpleXml_impl_10(), "");
+		}
+	}
+
+	protected class SimpleXml_impl_10 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _classExpression_0 = "[a-zA-Z0-9]";
+			return characterClass(_classExpression_0.getBytes(), 11);
+		}
+	}
+
+	protected class SimpleXml_impl_7 implements IsMatchPredicate
+	{
+		public boolean evaluate() throws ParsingFatalTerminalException, InfiniteLoopException, IOException
+		{
+			String _literal_0 = "<";
+			return literal(_literal_0.getBytes(), _literal_0.length(), true);
+		}
+	}
+}
