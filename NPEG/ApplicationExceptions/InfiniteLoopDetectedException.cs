@@ -2,7 +2,7 @@
 
 namespace NPEG.ApplicationExceptions
 {
-	public class InfiniteLoopDetectedException : ModelException
+	public class InfiniteLoopDetectedException : NpegException
 	{
 		public InfiniteLoopDetectedException()
 			: base("Supplied grammar rules caused an infinite loop.")

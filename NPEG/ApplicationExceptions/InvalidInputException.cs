@@ -2,7 +2,7 @@
 
 namespace NPEG.ApplicationExceptions
 {
-	public class InvalidInputException : ModelException
+	public class InvalidInputException : NpegException
 	{
 		public InvalidInputException()
 			: base("Supplied input could not be parsed by compiled parse tree.")

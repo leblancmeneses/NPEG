@@ -78,13 +78,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="AExpression.cs" />
     <Compile Include="ALeaf.cs" />
     <Compile Include="Algorithms\WriteRuleVisitor.cs" />
     <Compile Include="ApplicationExceptions\InfiniteLoopDetectedException.cs" />
     <Compile Include="ApplicationExceptions\InvalidInputException.cs" />
     <Compile Include="ApplicationExceptions\InvalidRuleException.cs" />
-    <Compile Include="ApplicationExceptions\ModelException.cs" />
+    <Compile Include="ApplicationExceptions\NpegException.cs" />
     <Compile Include="ApplicationExceptions\ParsingFatalTerminalException.cs" />
     <Compile Include="AstNode.cs" />
     <Compile Include="GrammarInterpreter\InterpreterAstNode.cs" />

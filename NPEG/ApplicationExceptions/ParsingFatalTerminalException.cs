@@ -2,7 +2,7 @@
 
 namespace NPEG.ApplicationExceptions
 {
-	public class ParsingFatalTerminalException : ModelException
+	public class ParsingFatalTerminalException : NpegException
 	{
 		public ParsingFatalTerminalException()
 			: base("Parse tree encountered an invalid path of execution.")

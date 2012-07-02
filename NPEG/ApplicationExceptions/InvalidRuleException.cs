@@ -2,7 +2,7 @@
 
 namespace NPEG.ApplicationExceptions
 {
-	public class InvalidRuleException : ModelException
+	public class InvalidRuleException : NpegException
 	{
 		public InvalidRuleException()
 			: base("Supplied grammar rules could not be compiled into a parse tree.")
