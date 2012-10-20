@@ -3,11 +3,11 @@
 *	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/JavaScript. http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-language-workbench
 *	The framework can read and write it's own DSL. http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-dsl-documentation
 
+The inline DSL is only supported in C#.  All other languages must use the DSL inside the language workbench to export the parse tree in your target language. 
+All offline versions will be faster so we provide an offline C# version also.  You can grab dependencies for your target language here: https://github.com/leblancmeneses/NPEG/tree/master/Languages
+
 
 ## PEG - Boolean Algebra in CSharp
-
-The inline DSL is only supported in C#.  All 
-
 <code>
 
     		String grammar = @"
