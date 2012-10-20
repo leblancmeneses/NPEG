@@ -1,6 +1,6 @@
 #NPEG - .NET Parsing Expression Grammar.  
 
-*	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/Javascript by swapping out the visitor (most are already built).
+*	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/JavaScript. http://www.robusthaven.com/blog/parsing-expression-grammar/language-workbench
 *	The framework can read and write it's own DSL.  See samples of the DSL below.
 
 

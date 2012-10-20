@@ -2,7 +2,7 @@
 
 namespace NPEG.ApplicationExceptions
 {
-	public class NpegException : ApplicationException
+	public class NpegException : Exception
 	{
 		public NpegException()
 		{

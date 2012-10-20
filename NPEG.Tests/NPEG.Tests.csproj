@@ -76,7 +76,6 @@
     </Compile>
     <Compile Include="CompositeVisitorTests.cs" />
     <Compile Include="FileInputIteratorTests.cs" />
-    <Compile Include="LanguageWriterTests.cs" />
     <Compile Include="PEGrammarParserTests.cs" />
     <Compile Include="GrammarInterpreterTests.cs" />
     <Compile Include="IteratorTests.cs" />
@@ -86,10 +85,6 @@
     <Compile Include="TerminalNodes.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NPEG.Algorithms\NPEG.Algorithms.csproj">
-      <Project>{663FBF4B-7397-4BBF-AA8C-3E3055CB9ABA}</Project>
-      <Name>NPEG.Algorithms</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NPEG\NPEG.csproj">
       <Project>{567F6FBD-C5CE-4E3E-B16B-F40F1D367E35}</Project>
       <Name>NPEG</Name>

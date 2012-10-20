@@ -728,7 +728,7 @@ namespace NPEG.GrammarInterpreter
 					)
 				) {DoCreateCustomAstNode = true};
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(Encoding.ASCII.GetBytes(rules)),
+			var visitor = new NpegParserVisitor(new StringInputIterator(Encoding.UTF8.GetBytes(rules)),
 			                                    new PeGrammarAstNodeFactory());
 
 			root.Accept(visitor);

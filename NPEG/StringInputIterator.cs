@@ -16,10 +16,10 @@ namespace NPEG
 			Index = 0;
 		}
 
-		public StringInputIterator(String us_ascii)
-			: base(Encoding.ASCII.GetBytes(us_ascii).Length)
+		public StringInputIterator(String utf8)
+			: base(Encoding.UTF8.GetBytes(utf8).Length)
 		{
-			input = Encoding.ASCII.GetBytes(us_ascii);
+			input = Encoding.UTF8.GetBytes(utf8);
 			Index = 0;
 		}
 

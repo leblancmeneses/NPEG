@@ -603,7 +603,7 @@ namespace NPEG
 
 
 								AstNode node = sandbox.Peek().Pop();
-								node.Token = new TokenMatch(name, Encoding.ASCII.GetString(matchedBytes), savePosition,
+								node.Token = new TokenMatch(name, Encoding.UTF8.GetString(matchedBytes,0,matchedBytes.Length), savePosition,
 								                            iterator.Index);
 
 
@@ -709,7 +709,7 @@ namespace NPEG
 								if (iterator.Current() == -1)
 									return false;
 
-								if (Encoding.ASCII.GetString(new[] {(Byte) iterator.Current()}).ToUpper() !=
+								if (Encoding.UTF8.GetString(new[] { (Byte)iterator.Current() }, 0, 1).ToUpper() !=
 								    c.ToString().ToUpper())
 								{
 									iterator.Next();
