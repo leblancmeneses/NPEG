@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>NPEG Javascript Unit Tests</title>
+    <link rel="stylesheet" href="qunit/qunit.css">
+    <script src="qunit/qunit.js"></script>
+	
+<!--NPEG
+    <script src="build_output/npeg.all.min.js" type="text/javascript"></script>
+-->
+    <script src="helper.js" type="text/javascript"></script>
+    <script src="ParsingExpressionGrammarException.js" type="text/javascript"></script>
+    <script src="ParsingFatalTerminalException.js" type="text/javascript"></script>
+    <script src="InfiniteLoopException.js" type="text/javascript"></script>
+    <script src="InputIterator.js" type="text/javascript"></script>
+    <script src="StringInputIterator.js" type="text/javascript"></script>
+    <script src="Expression.js" type="text/javascript"></script>
+    <script src="TokenMatch.js" type="text/javascript"></script>
+    <script src="AstNode.js" type="text/javascript"></script>
+    <script src="Warn.js" type="text/javascript"></script>
+    <script src="Npeg.js" type="text/javascript"></script>
+
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<script>
+    /**
+     * IteratorTests
+     */
+    module('IteratorTests');
+    test('Test_For_Empty_String', function(){
+        var  inputText = '',
+                iter = new RobustHaven.Text.Npeg.StringInputIterator(inputText);
+        equal(iter.getText(0, 3), null, 'Test_For_Empty_String');
+    });
+    test('Test_For_Get_Text', function(){
+        var strLength = 10,
+            inputText = randomString(strLength),
+            iter = new RobustHaven.Text.Npeg.StringInputIterator(inputText);
+
+        equal(iter.getText(0, strLength).length, strLength, 'Test_For_Get_Text');
+        equal(iter.getText(2, 5).length, 3, 'Test_For_Get_Text');
+        equal(iter.getText(strLength-1, strLength+1).length, 1, 'Test overlong');
+        equal(iter.getText(2, 1), null, 'start > end');
+    });
+
+    /**
+     *  NonTerminalTests
+     */
+    module('NonTerminalTests');
+    // Not predicate tests
+    test('Test_NotPredicate', function(){
+        var  STRING = {
+                 TESTSTRING: 'test',
+                 OTHERSTRING: 'otherstring'
+             },
+             _NotTest = function(iterator) {
+                _NotTest.superclass.constructor.call(this, iterator);
+
+                 var _expression = new Expression();
+                 _expression.npeg = this;
+                 _expression.evaluate = function() {
+                     return this.npeg.literal(STRING.TESTSTRING, STRING.TESTSTRING.length, true);
+                 }
+
+                this.isMatch = function() {
+                    return this.notPredicate(_expression);
+                }
+             };
+             RobustHaven.Text.Npeg.extend(_NotTest, RobustHaven.Text.Npeg.Npeg);
+
+        // Handling of empty string.
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            m_context = new _NotTest(m_iterator);
+        ok(m_context.isMatch() && m_iterator.getIndex() == 0, 'Handling of empty string');
+
+        // Handling of single occurrence
+        var inputString = STRING.TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _NotTest(m_iterator);
+        ok(!m_context.isMatch() && m_iterator.getIndex() == 0, 'Handling of single occurrence');
+
+        // Handling of 0 occurrence in non-empty string
+        var inputString = 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _NotTest(m_iterator);
+        ok(m_context.isMatch() && m_iterator.getIndex() == 0, 'Handling of 0 occurrence in non-empty string');
+
+        // Handling of double occurrence
+        var inputString = STRING.TESTSTRING + STRING.TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _NotTest(m_iterator);
+        m_iterator.setIndex(STRING.TESTSTRING.length/2);
+        ok(m_context.isMatch() && m_iterator.getIndex() == STRING.TESTSTRING.length/2,
+                'Handling of double occurrence');
+
+        // Operation with single occurrence of string iterator in middle of string
+        var inputString = STRING.OTHERSTRING + STRING.TESTSTRING + STRING.TESTSTRING + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _NotTest(m_iterator);
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        ok(m_context.isMatch() == false && m_iterator.getIndex() == STRING.OTHERSTRING.length,
+                'Operation with single occurrence of string iterator in middle of string');
+    });
+    // And predicate tests
+    test('Test_AndPredicate', function(){
+        var STRING = {
+            TESTSTRING1: 'test',
+            TESTSTRING2: 'TEST',
+            OTHERSTRING: 'something else'
+        },
+        _AndTest = function(iterator) {
+            _AndTest.superclass.constructor.call(this, iterator);
+
+            var sub_expression1 = new Expression();
+            sub_expression1.npeg = this;
+            sub_expression1.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING1, STRING.TESTSTRING1.length, true);
+            }
+
+            var sub_expression2 = new Expression();
+            sub_expression2.npeg = this;
+            sub_expression2.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING1, STRING.TESTSTRING1.length, false);
+            }
+
+            this.isMatch = function() {
+                return true;
+            }
+
+            this.expression1 = function() {
+                return this.andPredicate(sub_expression1) && sub_expression2.evaluate();
+            }
+
+            this.expression2 = function() {
+                return this.andPredicate(sub_expression2) && sub_expression1.evaluate();
+            }
+        }
+        RobustHaven.Text.Npeg.extend(_AndTest, RobustHaven.Text.Npeg.Npeg);
+
+        // Handling of empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            m_context = new _AndTest(m_iterator),
+            assertion = (m_context.expression1() == false && m_iterator.getIndex() == 0) &&
+                    (m_context.expression2() == false && m_iterator.getIndex() == 0);
+        ok(assertion, 'Handling of empty string');
+
+        // Handling of single occurrence
+        var  inputString = STRING.TESTSTRING1 + 'blah',
+             m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+             m_context = new _AndTest(m_iterator),
+             assertion;
+
+        assertion = m_context.expression1() == true && m_iterator.getIndex() == STRING.TESTSTRING1.length;
+        m_iterator.setIndex(0);
+        assertion = m_context.expression2() == true && m_iterator.getIndex() == STRING.TESTSTRING1.length &&
+                assertion;
+        ok(assertion, 'Handling of single occurrence');
+
+        // Handling of non-occurence
+        var inputString = STRING.TESTSTRING2 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _AndTest(m_iterator),
+            assertion;
+        assertion = (m_context.expression1() == false && m_iterator.getIndex() == 0) &&
+                (m_context.expression2() == false && m_iterator.getIndex() == 0);
+        ok(assertion, 'Handling of non-occurence');
+
+        // Handling of double occurrence
+        var inputString = STRING.TESTSTRING1 + STRING.TESTSTRING1 + STRING.TESTSTRING2 + 'blah',
+                m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                m_context = new _AndTest(m_iterator),
+                assertion;
+        assertion = m_context.expression1() == true && m_iterator.getIndex() == STRING.TESTSTRING1.length;
+        m_iterator.setIndex(0);
+        assertion = m_context.expression2() == true && m_iterator.getIndex() == STRING.TESTSTRING1.length &&
+               assertion;
+        ok(assertion, 'Handling of double occurrence');
+
+        // Handling of double occurence at center of string
+        var inputString = STRING.OTHERSTRING+STRING.TESTSTRING1+STRING.TESTSTRING1+STRING.TESTSTRING2+'blah',
+                m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                m_context = new _AndTest(m_iterator),
+                assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.expression1() == true) &&
+                (m_iterator.getIndex() == STRING.OTHERSTRING.length + STRING.TESTSTRING1.length);
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.expression2() == true) &&
+                (m_iterator.getIndex() == STRING.OTHERSTRING.length + STRING.TESTSTRING1.length) &&
+                assertion;
+        ok(assertion, 'Handling of double occurence at center of string');
+    });
+    // Limiting Repetition
+    test('Test_LimitingRepetition', function(){
+        var STRING = {
+            TESTSTRING: 'test',
+            OTHERSTRING: 'something else'
+        },
+        _RepTest = function(iterator) {
+            _RepTest.superclass.constructor.call(this, iterator);
+
+            var m_min, m_max;
+
+            var _expression = new Expression();
+            _expression.npeg = this;
+            _expression.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING, STRING.TESTSTRING.length, true);
+            }
+
+            var _infiniteLoopExpression = new Expression;
+            _infiniteLoopExpression.npeg = this;
+            _infiniteLoopExpression.evaluate = function() {
+                return this.npeg.notPredicate(_expression);
+            }
+
+            this.isMatch = function() {
+                return this.limitingRepetition(m_min, m_max, _expression, '');
+            }
+
+            this.bad = function() {
+                return this.limitingRepetition(m_min, m_max, _infiniteLoopExpression, '');
+            }
+
+            this.setBounds = function(min, max) {
+                m_min = min;
+                m_max = max;
+            }
+        }
+        RobustHaven.Text.Npeg.extend(_RepTest, RobustHaven.Text.Npeg.Npeg);
+
+        // Handling of empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            m_context = new _RepTest(m_iterator),
+            assertion;
+
+        m_context.setBounds(0, 10);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == 0);
+        m_context.setBounds(1, 10);
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0) && assertion;
+        ok(assertion, 'Handling of empty string');
+
+        // Handling of 0 occurrence in non-empty string
+        var inputString = 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _RepTest(m_iterator),
+            assertion;
+
+        m_context.setBounds(0, 10);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == 0);
+        m_context.setBounds(1, 10);
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0) && assertion;
+        ok(assertion, 'Handling of 0 occurrence in non-empty string');
+
+        // Handling of single occurrence
+        var inputString = STRING.TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _RepTest(m_iterator),
+            assertion;
+
+        m_context.setBounds(0, -1);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING.length);
+        m_iterator.setIndex(0);
+        m_context.setBounds(1, 10);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING.length) &&
+                assertion;
+        m_iterator.setIndex(0);
+        m_context.setBounds(2, -1);
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0) && assertion;
+        ok(assertion, 'Handling of single occurrence');
+
+        // Detection of infinite loops
+        var inputString = 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _RepTest(m_iterator);
+        m_context.setBounds(0, -1);
+        throws(
+                function() { m_context.bad(); },
+                RobustHaven.Text.Npeg.InfiniteLoopException,
+                'Detection of infinite loops'
+        );
+
+        // Handling of tripple occurrence
+        var _3TESTSTRING = STRING.TESTSTRING + STRING.TESTSTRING + STRING.TESTSTRING,
+            _2TESTSTRING = STRING.TESTSTRING + STRING.TESTSTRING,
+            inputString = _3TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _RepTest(m_iterator),
+            assertion;
+        m_context.setBounds(0, 1);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING.length);
+        m_iterator.setIndex(0);
+        m_context.setBounds(1, -1);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == _3TESTSTRING.length) && assertion;
+        m_iterator.setIndex(0);
+        m_context.setBounds(2, 2);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == _2TESTSTRING.length) && assertion;
+        m_iterator.setIndex(0);
+        m_context.setBounds(2, 3);
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == _3TESTSTRING.length) && assertion;
+        ok(assertion, 'Handling of tripple occurrence');
+
+        // Handling of double occurrence at center of string
+        var inputString = STRING.OTHERSTRING + _2TESTSTRING + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _RepTest(m_iterator),
+            assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        m_context.setBounds(0, 1);
+        assertion = (m_context.isMatch() == true
+                && m_iterator.getIndex() == (STRING.OTHERSTRING.length + STRING.TESTSTRING.length));
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        m_context.setBounds(1, -1);
+        assertion = (m_context.isMatch() == true
+                && m_iterator.getIndex() == (STRING.OTHERSTRING.length + _2TESTSTRING.length)) && assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        m_context.setBounds(2, 2);
+        assertion = (m_context.isMatch() == true
+                && m_iterator.getIndex() == (STRING.OTHERSTRING.length + _2TESTSTRING.length)) && assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        m_context.setBounds(2, 3);
+        assertion = (m_context.isMatch() == true
+                && m_iterator.getIndex() == (STRING.OTHERSTRING.length + _2TESTSTRING.length)) && assertion;
+        ok(assertion, 'Handling of double occurrence at center of string');
+
+        // Handling of non-sensical repetition limits
+        var inputString = STRING.OTHERSTRING + _2TESTSTRING + 'blah',
+                m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                m_context = new _RepTest(m_iterator);
+
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        m_context.setBounds(2, 1);
+        throws(
+                function() {m_context.isMatch()},
+                RobustHaven.Text.Npeg.ParsingFatalTerminalException,
+                'Handling of non-sensical repetition limits'
+        );
+    });
+    // Capturing group
+    test(' Test_CapturingGroup', function(){
+        var STRING = {
+            TESTSTRING1 : "test",
+            TESTSTRING2 : "TEST",
+            OTHERSTRING : "something else"
+
+        },
+        _name1 = "1st teststring",
+        _name2 = "2nd teststring",
+        _name3 = "1/2 sequence",
+        _name4 = "2 sequence unreduced",
+        _CaptTest = function(iterator) {
+            _CaptTest.superclass.constructor.call(this, iterator);
+
+            var _match_expression1 = new Expression;
+            _match_expression1.npeg = this;
+            _match_expression1.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING1, STRING.TESTSTRING1.length, true);
+            }
+
+            var _match_expression2 = new Expression;
+            _match_expression2.npeg = this;
+            _match_expression2.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING1, STRING.TESTSTRING1.length, false);
+            }
+
+            var _capture_expression1Predicate = new Expression;
+            _capture_expression1Predicate.npeg = this;
+            _capture_expression1Predicate.evaluate = function() {
+                return this.npeg.capture_expression1();
+            }
+
+            var _capture_expression2Predicate = new Expression;
+            _capture_expression2Predicate.npeg = this;
+            _capture_expression2Predicate.evaluate = function() {
+                return this.npeg.capture_expression2();
+            }
+
+            var _match_expression12 = new Expression;
+            _match_expression12.npeg = this;
+            _match_expression12.evaluate = function() {
+                return this.npeg.sequence(_capture_expression1Predicate, _capture_expression2Predicate);
+            }
+
+            var _forced_error = new Expression;
+            _forced_error.npeg = this;
+            _forced_error.evaluate = function() {
+                return this.npeg.limitingRepetition(4, 3, _match_expression12, "");
+            }
+
+            this.capture_expression1 = function() {
+                return this.capturingGroup(_match_expression1, _name1, false, false);
+            }
+
+            this.capture_expression2 = function() {
+                return this.capturingGroup(_match_expression2, _name2, false, false);
+            }
+
+            this.capture_expression3 = function() {
+                return this.capturingGroup(_match_expression12, _name3, false, false);
+            }
+
+            this.capture_expression2_red = function() {
+                return this.capturingGroup(_capture_expression2Predicate, _name4, true, false);
+            }
+
+            this.capture_fatal = function() {
+                return this.capturingGroup(_forced_error, _name4, true, false);
+            }
+
+            this.isMatch = function() {
+                return true;
+            }
+        }
+        RobustHaven.Text.Npeg.extend(_CaptTest, RobustHaven.Text.Npeg.Npeg);
+
+        // No change of internal state when operating on empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            m_context = new _CaptTest(m_iterator),
+            assertion;
+        assertion = (m_context.capture_expression1() == false && m_iterator.getIndex() == 0);
+        assertion &= (m_context.capture_expression2() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "No change of internal state when operating on empty string");
+
+        //  No change of internal state when no occurence of expression
+        var inputString = STRING.OTHERSTRING + STRING.TESTSTRING1 + STRING.TESTSTRING2 + "blah",
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _CaptTest(m_iterator),
+            assertion;
+
+            m_iterator.setIndex(STRING.OTHERSTRING.length/2);
+            assertion = (m_context.capture_expression1() == false
+                            && m_iterator.getIndex() == STRING.OTHERSTRING.length/2);
+        assertion &= (m_context.capture_expression2() == false
+                    && m_iterator.getIndex() == STRING.OTHERSTRING.length/2);
+        ok(assertion, "No change of internal state when no occurrence of expression");
+
+        // Capturing of simple occurrence of expression1
+        var inputString = STRING.TESTSTRING1 + "blah",
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _CaptTest(m_iterator),
+            assertion;
+
+            assertion = (m_context.capture_expression1() == true
+                    && m_iterator.getIndex() == STRING.TESTSTRING1.length);
+            var m_ast = m_context.getAST();
+            assertion &= (m_ast.getToken().getName() == _name1);
+            ok(assertion, "Capturing of simple occurence of expression1");
+
+        // Abortion on error without modification of state
+        var inputString = "some kind of error",
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _CaptTest(m_iterator);
+
+        throws(
+                function(){m_context.capture_fatal();},
+                RobustHaven.Text.Npeg.ParsingFatalTerminalException,
+                'Abortion on error without modification of state'
+        );
+
+        // Capturing of simple occurence of expression2
+        var inputString = STRING.TESTSTRING2 + "blah",
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _CaptTest(m_iterator),
+            assertion;
+
+            assertion = (m_context.capture_expression2() == true
+                            && m_iterator.getIndex() == STRING.TESTSTRING2.length);
+            var m_ast = m_context.getAST();
+            assertion &= (m_ast.getToken().getName() == _name2);
+            ok(assertion, "Capturing of simple occurence of expression2");
+
+        // Capturing of 1/2 sequence
+        var inputString = STRING.OTHERSTRING + STRING.TESTSTRING1 + STRING.TESTSTRING2 + "blah",
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _CaptTest(m_iterator),
+            assertion;
+
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.capture_expression3() == true
+            && m_iterator.getIndex() == (STRING.OTHERSTRING.length +
+                STRING.TESTSTRING1.length + STRING.TESTSTRING2.length));
+        var m_ast = m_context.getAST();
+        assertion &= (m_ast.getToken().getName() == _name3 && m_ast.getChildren().length == 2);
+        ok(assertion, "Capturing of 1/2 sequence");
+
+        // Capturing of redundant expression with reduction to single node
+        var inputString = STRING.TESTSTRING2 + "blah",
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _CaptTest(m_iterator),
+            assertion;
+
+            assertion = (m_context.capture_expression2_red() == true
+                            && m_iterator.getIndex() == STRING.TESTSTRING2.length);
+            var m_ast = m_context.getAST(),
+                m_ast_name  = m_ast.getToken().getName(),
+                children =  m_ast.getChildren().length;
+            assertion &= (m_ast.getToken().getName() == _name2 && m_ast.getChildren().length == 0);
+            ok(assertion, "Capturing of redundant expression with reduction to single node");
+    });
+    // One or more times
+    test('Test_OneOrMore', function(){
+        var STRING = {
+            TESTSTRING : "test",
+            OTHERSTRING : "something else"
+        },
+        _OneTest = function (iterator) {
+           _OneTest.superclass.constructor.call(this, iterator);
+
+            var _expression = new Expression;
+            _expression.npeg = this;
+            _expression.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING, STRING.TESTSTRING.length, true);
+            }
+
+            var _infiniteLoopExpression = new Expression;
+            _infiniteLoopExpression.npeg = this;
+            _infiniteLoopExpression.evaluate = function() {
+                return this.npeg.notPredicate(_expression);
+            }
+
+            this.bad = function() {
+                return this.oneOrMore(_infiniteLoopExpression, '');
+            }
+
+            this.isMatch = function() {
+                return this.oneOrMore(_expression, '');
+            }
+        };
+        RobustHaven.Text.Npeg.extend(_OneTest, RobustHaven.Text.Npeg.Npeg);
+
+        //  Handling of empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            m_context = new _OneTest(m_iterator),
+            assertion;
+
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of empty string");
+
+        // Handling of 0 occurrence in non-empty string
+        var inputString = 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OneTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of 0 occurrence in non-empty string");
+
+        // Handling of single occurrence
+        var inputString = STRING.TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OneTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING.length);
+        ok(assertion, "Handling of single occurrence");
+
+        // Handling of double occurrence
+        var _2TESTSTRING = STRING.TESTSTRING + STRING.TESTSTRING,
+            inputString = _2TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OneTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == _2TESTSTRING.length);
+        ok(assertion, "Handling of double occurrence");
+
+       // Handling of double occurrence at string center
+        var inputString = STRING.OTHERSTRING +  _2TESTSTRING + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OneTest(m_iterator),
+            assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.isMatch() == true &&
+                m_iterator.getIndex() == STRING.OTHERSTRING.length +  _2TESTSTRING.length);
+        ok(assertion, "Handling of double occurrence at string center");
+
+        // Detection of infinite loops
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator('blah'),
+            m_context = new _OneTest(m_iterator);
+        throws(
+                function() {m_context.bad() == true},
+                RobustHaven.Text.Npeg.InfiniteLoopException,
+                'Detection of infinite loops'
+        );
+    });
+    // Optional
+    test('Test_Optional', function(){
+        var STRING = {
+            TESTSTRING : "test",
+            OTHERSTRING : "something else"
+        },
+        _OpTest = function (iterator) {
+            _OpTest.superclass.constructor.call(this, iterator);
+
+            var _expression = new Expression;
+            _expression.npeg = this;
+            _expression.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING, STRING.TESTSTRING.length, true);
+            }
+
+            this.isMatch = function() {
+                return this.optional(_expression, '');
+            }
+        };
+        RobustHaven.Text.Npeg.extend(_OpTest, RobustHaven.Text.Npeg.Npeg);
+
+        //  Handling of empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            m_context = new _OpTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of empty string");
+
+        // Handling of 0 occurrence in non-empty string
+        var inputString = 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OpTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of 0 occurrence in non-empty string");
+
+        // Handling of single occurrence
+        var inputString = STRING.TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OpTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING.length);
+        ok(assertion, "Handling of single occurrence");
+
+        // Single consumption of double occurrence
+        var _2TESTSTRING = STRING.TESTSTRING + STRING.TESTSTRING,
+            inputString = _2TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OpTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING.length);
+        ok(assertion, "Single consumption of double occurrence");
+
+        // Handling of double occurrence at string center
+        var inputString = STRING.OTHERSTRING +  _2TESTSTRING + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _OpTest(m_iterator),
+            assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.isMatch() == true &&
+                m_iterator.getIndex() == STRING.OTHERSTRING.length +  STRING.TESTSTRING.length);
+        ok(assertion, "Handling of double occurrence at string center");
+    });
+    // Prioritized choice
+    test('Test_PrioritizedChoice', function(){
+        var STRING = {
+            TESTSTRING1 : "test",
+            TESTSTRING2 : "test with extension",
+            OTHERSTRING : "something else"
+        },
+        _ChoiceTest  = function (iterator) {
+            _ChoiceTest.superclass.constructor.call(this, iterator);
+
+            var _expression1 = new Expression;
+            _expression1.npeg = this;
+            _expression1.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING1, STRING.TESTSTRING1.length, true);
+            }
+
+            var _expression2 = new Expression;
+            _expression2.npeg = this;
+            _expression2.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING2, STRING.TESTSTRING2.length, true);
+            }
+
+            this.isMatch = function() {
+                return this.prioritizedChoice(_expression1, _expression2);
+            }
+
+            this.isMatch2 = function() {
+                return this.prioritizedChoice(_expression2, _expression1);
+            }
+        };
+        RobustHaven.Text.Npeg.extend(_ChoiceTest, RobustHaven.Text.Npeg.Npeg);
+
+        //  Handling of empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            m_context = new _ChoiceTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0);
+        assertion &= (m_context.isMatch2() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of empty string");
+
+        // Handling of 0 occurrence in non-empty string
+        var inputString = 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ChoiceTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of 0 occurrence in non-empty string");
+
+        // Handling of single occurrence
+        var inputString = STRING.TESTSTRING1 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ChoiceTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING1.length);
+        ok(assertion, "Handling of single occurrence");
+
+        // Handling of single occurrence of long string
+        var inputString = STRING.TESTSTRING2 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ChoiceTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING1.length);
+        m_iterator.setIndex(0);
+        assertion &= (m_context.isMatch2() == true && m_iterator.getIndex() == STRING.TESTSTRING2.length);
+        ok(assertion, "Handling of single occurrence of long string");
+
+        // Handling of single occurrence of short string before long string
+        var inputString = STRING.TESTSTRING1 + STRING.TESTSTRING2 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ChoiceTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING1.length);
+        ok(assertion, "Handling of single occurrence of short string before long string");
+
+        // Handling of single occurrence of short string
+        var inputString = STRING.OTHERSTRING + STRING.TESTSTRING2 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ChoiceTest(m_iterator),
+            assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.isMatch() == true &&
+                m_iterator.getIndex() == STRING.OTHERSTRING.length + STRING.TESTSTRING1.length);
+        ok(assertion, "Handling of single occurrence of short string");
+    });
+    // Sequence
+    test('Test_Sequence', function(){
+        var STRING = {
+            TESTSTRING1 : "test",
+            TESTSTRING2 : "test__2",
+            OTHERSTRING : "something else"
+        },
+        _SeqTest = function(iterator) {
+            _SeqTest.superclass.constructor.call(this, iterator);
+
+            var _expression1 = new Expression;
+            _expression1.npeg = this;
+            _expression1.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING1, STRING.TESTSTRING1.length, true);
+            }
+
+            var _expression2 = new Expression;
+            _expression2.npeg = this;
+            _expression2.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING2, STRING.TESTSTRING2.length, true);
+            }
+
+            this.isMatch = function() {
+                return this.sequence(_expression1, _expression2);
+            }
+
+            this.isMatch2 = function() {
+                return this.sequence(_expression2, _expression1);
+            }
+        }
+        RobustHaven.Text.Npeg.extend(_SeqTest, RobustHaven.Text.Npeg.Npeg);
+
+        //  Handling of empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+                m_context = new _SeqTest(m_iterator),
+                assertion;
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0);
+        assertion &= (m_context.isMatch2() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of empty string");
+
+        // Handling of partial sequence
+        var inputString = STRING.TESTSTRING1 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _SeqTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == false && m_iterator.getIndex() == 0);
+        assertion &= (m_context.isMatch2() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of partial sequence");
+
+        // Handling of full sequence
+        var inputString = STRING.TESTSTRING1 + STRING.TESTSTRING2 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _SeqTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true &&
+                m_iterator.getIndex() == STRING.TESTSTRING1.length + STRING.TESTSTRING2.length);
+        m_iterator.setIndex(0);
+        assertion = (m_context.isMatch2() == false && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of full sequence");
+
+        // Handling of of full sequence at random position
+        var inputString = STRING.OTHERSTRING + STRING.TESTSTRING1 + STRING.TESTSTRING2 + 'blah',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _SeqTest(m_iterator),
+            assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.isMatch() == true);
+        assertion &= (m_iterator.getIndex() ==
+                STRING.OTHERSTRING.length + STRING.TESTSTRING2.length + STRING.TESTSTRING1.length);
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion &= (m_context.isMatch2() == false && m_iterator.getIndex() == STRING.OTHERSTRING.length);
+        ok(assertion, "Handling of of full sequence at random position");
+    });
+    // Zero or more
+    test('Test_ZerorOrMore', function(){
+        var STRING = {
+            TESTSTRING : "test",
+            OTHERSTRING : "something else"
+        },
+        _ZeroTest = function (iterator) {
+            _ZeroTest.superclass.constructor.call(this, iterator);
+
+            var _expression = new Expression;
+            _expression.npeg = this;
+            _expression.evaluate = function() {
+                return this.npeg.literal(STRING.TESTSTRING, STRING.TESTSTRING.length, true);
+            }
+
+            var _infiniteLoopExpression = new Expression;
+            _infiniteLoopExpression.npeg = this;
+            _infiniteLoopExpression.evaluate = function() {
+                return this.npeg.notPredicate(_expression);
+            }
+
+            this.bad = function() {
+                return this.oneOrMore(_infiniteLoopExpression, '');
+            }
+
+            this.isMatch = function() {
+                return this.zeroOrMore(_expression, '');
+            }
+        };
+        RobustHaven.Text.Npeg.extend(_ZeroTest, RobustHaven.Text.Npeg.Npeg);
+
+        //  Handling of empty string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+                m_context = new _ZeroTest(m_iterator),
+                assertion;
+
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of empty string");
+
+        // Handling of 0 occurrence in non-empty string
+        var inputString = 'blah',
+                m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                m_context = new _ZeroTest(m_iterator),
+                assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == 0);
+        ok(assertion, "Handling of 0 occurrence in non-empty string");
+
+        // Handling of single occurrence
+        var inputString = STRING.TESTSTRING + 'Tes',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ZeroTest(m_iterator),
+            assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == STRING.TESTSTRING.length);
+        ok(assertion, "Handling of single occurrence");
+
+        // Handling of double occurrence
+        var _2TESTSTRING = STRING.TESTSTRING + STRING.TESTSTRING,
+                inputString = _2TESTSTRING + 'Tes',
+                m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                m_context = new _ZeroTest(m_iterator),
+                assertion;
+        assertion = (m_context.isMatch() == true && m_iterator.getIndex() == _2TESTSTRING.length);
+        ok(assertion, "Handling of double occurrence");
+
+        // Handling of double occurrence at string center
+        var inputString = STRING.OTHERSTRING +  _2TESTSTRING + 'blah',
+                m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                m_context = new _ZeroTest(m_iterator),
+                assertion;
+        m_iterator.setIndex(STRING.OTHERSTRING.length);
+        assertion = (m_context.isMatch() == true &&
+                m_iterator.getIndex() == STRING.OTHERSTRING.length +  _2TESTSTRING.length);
+        ok(assertion, "Handling of double occurrence at string center");
+
+        // Detection of infinite loops
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator('blah'),
+                m_context = new _ZeroTest(m_iterator);
+        throws(
+                function() {m_context.bad() == true},
+                RobustHaven.Text.Npeg.InfiniteLoopException,
+                'Detection of infinite loops'
+        );
+    });
+
+    /**
+     * TerminalTests
+     */
+    module('TerminalTests');
+    // Any character
+    test('Test_AnyCharacter', function(){
+       var randstringlen = 10,
+           randomstring = randomString(randstringlen),
+           _AnyTest = function(iterator) {
+               _AnyTest.superclass.constructor.call(this, iterator);
+
+               var _expression = new Expression;
+               _expression.npeg = this;
+               _expression.evaluate = function() {
+                   return this.npeg.anyCharacter();
+               }
+
+               this.isMatch = function() {
+                   return _expression.evaluate();
+               }
+           };
+           RobustHaven.Text.Npeg.extend(_AnyTest, RobustHaven.Text.Npeg.Npeg);
+
+       // Handling of empty string
+       var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+           m_context = new _AnyTest(m_iterator);
+       ok(m_context.isMatch() == false, 'Handling of empty string');
+
+        // Character consumption and handling of end of string
+        var m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(randomstring),
+            m_context = new _AnyTest(m_iterator),
+            assertion = true;
+        for (var i=0; i < randomstring.length; i++) {
+            assertion &= (m_iterator.getCurrent() == randomstring[i] && m_context.isMatch() == true);
+        }
+        assertion &= m_context.isMatch() == false;
+        ok(assertion, 'Character consumption and handling of end of string');
+    });
+    // CharacterClass
+    test('Test_CharacterClass', function(){
+        var _ClassTest = function(iterator) {
+            _ClassTest.superclass.constructor.call(this, iterator);
+
+            var m_classStr,
+                m_len;
+
+            this.setClass = function(classStr, len) {
+                len = (len == undefined) ? classStr.length : len;
+
+                m_classStr = classStr;
+                m_len = len;
+            }
+
+            this.isMatch = function() {
+                return this.characterClass(m_classStr, m_len);
+            }
+        }
+        RobustHaven.Text.Npeg.extend(_ClassTest, RobustHaven.Text.Npeg.Npeg);
+
+        // test empty
+        var inputString = '00',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ClassTest(m_iterator),
+            assertion = true;
+        try {
+            m_context.setClass(inputString, inputString.length);
+            m_context.isMatch();
+        } catch (e) {
+            assertion &= 'CharacterClass definition must be a minimum of 3 characters [expression]' ==
+                    e.getMessage();
+        }
+        assertion &= m_context.getWarnings().length == 0;
+        assertion &= m_iterator.getIndex() == 0;
+        ok(assertion, 'Empty character class leads to error. Given InvalidExpressionException context.warnings collection will not be affected and have zero items. On no match iterator should not consume character');
+
+        // test AAA
+        var inputString = '00',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ClassTest(m_iterator),
+            assertion = true;
+        try {
+            m_context.setClass('aaa');
+            m_context.isMatch();
+        } catch (e) {
+            assertion &= 'CharacterClass definition must start with [' ==  e.getMessage();
+        }
+        assertion &= m_context.getWarnings().length == 0;
+        assertion &= m_iterator.getIndex() == 0;
+        ok(assertion, 'Invalid character class leads to error. Given InvalidExpressionException context.warnings collection will not be affected and have zero items. On no match iterator should not consume character');
+
+        // test half AA
+        var inputString = '00',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ClassTest(m_iterator),
+            assertion = true;
+        try {
+            m_context.setClass('[aa');
+            m_context.isMatch();
+        } catch (e) {
+            assertion &= 'CharacterClass definition must end with ]' ==  e.getMessage();
+        }
+        assertion &= m_context.getWarnings().length == 0;
+        assertion &= m_iterator.getIndex() == 0;
+        ok(assertion, 'Invalid character class leads to error. Given InvalidExpressionException context.warnings collection will not be affected and have zero items. On no match iterator should not consume character');
+
+        // test invalid slash
+        var inputString = '00',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ClassTest(m_iterator),
+            assertion = true;
+        try {
+            m_context.setClass('[\\]');
+            m_context.isMatch();
+        } catch (e) {
+            assertion &= "CharacterClass definition requires user to escape '\\' given location in expression. User must escape by specifying '\\\\'" ==  e.getMessage();
+        }
+        assertion &= m_context.getWarnings().length == 0;
+        assertion &= m_iterator.getIndex() == 0;
+        ok(assertion, 'Invalid character class leads to error. Given InvalidExpressionException context.warnings collection will not be affected and have zero items. On no match iterator should not consume character');
+
+        // test invalid minus
+        var inputString = '00',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ClassTest(m_iterator),
+            assertion = true;
+        try {
+            m_context.setClass('[-]');
+            m_context.isMatch();
+        } catch (e) {
+            assertion &= "CharacterClass definition requires user to escape '-' given location in expression. User must escape by specifying '\\-'" ==  e.getMessage();
+        }
+        assertion &= m_context.getWarnings().length == 0;
+        assertion &= m_iterator.getIndex() == 0;
+        ok(assertion, 'Invalid character class leads to error. Given InvalidExpressionException context.warnings collection will not be affected and have zero items. On no match iterator should not consume character');
+
+        // test a-minus
+        var inputString = '00',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ClassTest(m_iterator),
+            assertion = true;
+        try {
+            m_context.setClass('[a-]');
+            m_context.isMatch();
+        } catch (e) {
+            assertion &= "CharacterClass definition requires user to escape '-' given location in expression. User must escape by specifying '\\-'" ==  e.getMessage();
+        }
+        assertion &= m_context.getWarnings().length == 0;
+        assertion &= m_iterator.getIndex() == 0;
+        ok(assertion, 'Invalid character class leads to error. Given InvalidExpressionException context.warnings collection will not be affected and have zero items. On no match iterator should not consume character');
+
+        // test slash L
+        var inputString = '00',
+            m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            m_context = new _ClassTest(m_iterator),
+            assertion = true;
+        try {
+            m_context.setClass('[\\L]');
+            m_context.isMatch();
+        } catch (e) {
+            assertion &= "CharacterClass definition contains an invalid escape sequence. Accepted sequences: \\\\, \\s, \\S, \\d, \\D, \\w, \\W" ==  e.getMessage();
+        }
+        assertion &= m_context.getWarnings().length == 0;
+        assertion &= m_iterator.getIndex() == 0;
+        ok(assertion, 'Invalid character class leads to error. Given InvalidExpressionException context.warnings collection will not be affected and have zero items. On no match iterator should not consume character');
+
+        // validate simple character ranges
+        var assertion = true,
+            classStr = '[0-9]';
+        for (var i=0; i <= 9; i++) {
+            var inputString = new String(i),
+                m_iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                m_context = new _ClassTest(m_iterator);
+            m_context.setClass(classStr);
+            assertion &= m_context.isMatch() == true && m_iterator.getIndex() == 1;
+        }
+        ok(assertion, 'Validate simple character ranges');
+
+        // Validate grouped character ranges
+        var assertion = true;
+        for (var i=0; i < 26; i++) {
+            var inputString = String.fromCharCode(97 +i ),
+                iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                context = new _ClassTest(iterator);
+            context.setClass("[A-Z0-9a-z]");
+            assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+            var inputString = String.fromCharCode(65 + i),
+                iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                context = new _ClassTest(iterator);
+            context.setClass("[A-Z0-9a-z]");
+            assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+            var inputString = String.fromCharCode(48 + i%10),
+                iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+                context = new _ClassTest(iterator);
+            context.setClass("[A-Z0-9a-z]");
+            assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+        }
+        ok(assertion, 'Validate grouped character ranges');
+
+        // Interpreted simple escape sequence
+        var assertion = true;
+        for (var i=0; i <= 9; i++) {
+            var iterator = new RobustHaven.Text.Npeg.StringInputIterator(new String(i)),
+                context = new _ClassTest(iterator);
+            context.setClass('[\\d]');
+            assertion &= (context.isMatch() == true && iterator.getIndex() == 1);
+        }
+        ok(assertion, 'Interpreted simple escape sequence');
+
+        // Interpreted grouped escape sequence
+        var assertion = true;
+        for (var i=0; i <= 9; i++) {
+            var inputStr = new String(i),
+                iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+                context = new _ClassTest(iterator);
+            context.setClass('[\\d\\s]');
+            assertion &= (context.isMatch() == true && iterator.getIndex() == 1);
+
+            var inputStr = new String(i),
+                iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+                context = new _ClassTest(iterator);
+            context.setClass('[\\s\\w]');
+            assertion &= (context.isMatch() == true && iterator.getIndex() == 1);
+        }
+        ok(assertion, 'Interpreted grouped escape sequence');
+
+        // Interpreted special escape sequence
+        var assertion = true;
+
+        var inputStr = ' ',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+            context = new _ClassTest(iterator);
+        context.setClass("[\\d\\s]");
+        assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+        var inputStr = '\n',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+            context = new _ClassTest(iterator);
+        context.setClass("[\\d\\s]");
+        assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+        var inputStr = '\f',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+            context = new _ClassTest(iterator);
+        context.setClass("[\\d\\s]");
+        assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+        var inputStr = '\r',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+            context = new _ClassTest(iterator);
+        context.setClass("[\\d\\s]");
+        assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+        var inputStr = '\t',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+            context = new _ClassTest(iterator);
+        context.setClass("[\\d\\s]");
+        assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+        ok(assertion, 'Interpreted special escape sequence');
+
+        // Confirming negative character group
+        var inputStr = 'b',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+            context = new _ClassTest(iterator);
+        context.setClass("[^a]");
+        assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+        var inputStr = 'a',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+            context = new _ClassTest(iterator);
+        context.setClass("[^a]");
+        assertion &= (false == context.isMatch() && 0 == iterator.getIndex());
+
+        ok(assertion, 'Confirming negative character group');
+
+        // Confirming escaped negative character group
+        var assertion = true;
+        for (var i=0; i<26; i++) {
+            var inputStr = String.fromCharCode(65+i),
+                iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+                context = new _ClassTest(iterator);
+            context.setClass("[^\\W]");
+            assertion &= (true == context.isMatch() && 1 == iterator.getIndex());
+
+            var iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputStr),
+                context = new _ClassTest(iterator);
+            context.setClass("[^\\S]");
+            assertion &= (false == context.isMatch() && 0 == iterator.getIndex());
+        }
+        ok(assertion, 'Confirming escaped negative character group');
+    });
+    // CodePoint
+    test('Test_CodePoint', function(){
+        var OTHER_STRING = "blah this is something else",
+            input1 = OTHER_STRING + String.fromCharCode(0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x01, 0x02),
+            match_h1 = "#x789abcdef00102",
+            match_h1w = "#x789Xbcxef00X02",
+            match_b1 = "#b"+ "111" + "1000" + "1001" + "1010",
+            match_b1w = "#b" + "11X" + "x000" + "100X" + "1x10",
+            input2 = OTHER_STRING + String.fromCharCode(0x08, 0x9a, 0xbc, 0xde, 0xf0, 0x01, 0x02),
+            match_h2 = "#x89abcdef00102",
+            match_h2w = "#x8XabxdeX00x02",
+            input3 = OTHER_STRING + String.fromCharCode(0xf0, 0x9a, 0xbc),
+            match_h3 = "#xf09abc",
+            match_b3 = "#b" + "1111" + "0000" + "1001" + "1010" + "1011" + "1100",
+            input4 = String.fromCharCode(0x08, 0x9a),
+            input5 = OTHER_STRING + '0',
+            match_d5 = "#0",
+            _CPTest = function (iterator) {
+                _CPTest.superclass.constructor.call(this, iterator);
+
+                var m_codeStr,
+                    m_len;
+
+                this.setCode = function(bytes, len) {
+                    var len = (len != undefined) ? len : bytes.length,
+                    bytes = (typeof bytes != 'object' && !(bytes instanceof Array)) ?
+                            RobustHaven.Text.Npeg.StringInputIterator.stringToBytes(''+bytes) :
+                            bytes;
+
+                    m_codeStr = bytes;
+                    m_len = len;
+                }
+
+                this.isMatch = function() {
+                    return this.codePoint(m_codeStr, m_len);
+                }
+            }
+            RobustHaven.Text.Npeg.extend(_CPTest, RobustHaven.Text.Npeg.Npeg);
+
+        var match_d3 = (function(){
+            var val = 0;
+            for (var i=0; i < 3; i++) {
+                val = (val << 8) + input3.charCodeAt(OTHER_STRING.length+i)
+            }
+            return '#' + val;
+        })(),
+        match_d4 = (function(){
+            val = 0;
+            for (i = 0; i < 2; i++) {
+                val = (val << 8) + input4.charCodeAt(i);
+            }
+            return "#" + val;
+        })();
+
+        //  Handling of string mismatch
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(input1),
+            context = new _CPTest(iterator),
+            assertion = true;
+        context.setCode(match_h1, match_h1.length);
+        assertion &= (context.isMatch() == false);
+        context.setCode(match_b1, match_b1.length);
+        assertion &= context.isMatch() == false;
+        context.setCode(match_d4);
+        assertion &= (context.isMatch() == false && iterator.getIndex() == 0);
+        ok(assertion, 'Handling of string mismatch');
+
+        // Handling of string mismatch with wildcards
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(input1),
+            context = new _CPTest(iterator),
+            assertion = true;
+        context.setCode(match_h1w);
+        assertion &= context.isMatch() == false;
+        context.setCode(match_b1w);
+        assertion &= context.isMatch() == false && iterator.getIndex() == 0;
+        ok (assertion, 'Handling of string mismatch with wildcards');
+
+        // Parsing of input1: no padding w/ hex, 1bit padding w/ binary
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(input1),
+            context = new _CPTest(iterator),
+            assertion = true;
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_h1);
+        assertion &= context.isMatch() == true && iterator.getIndex() == input1.length;
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_b1);
+        assertion &= context.isMatch() == true && iterator.getIndex() == OTHER_STRING.length + 2;
+        ok(assertion, 'Parsing of input1: no padding w/ hex, 1bit padding w/ binary');
+
+        // Parsing of input1 /w wildcards: no padding w/ hex, 1bit padding w/ binary
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(input1),
+            context = new _CPTest(iterator),
+            assertion = true;
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_h1w);
+        assertion &= context.isMatch() == true && iterator.getIndex() == input1.length;
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_b1w);
+        assertion &= context.isMatch() == true && iterator.getIndex() == OTHER_STRING.length + 2;
+        ok(assertion, 'Parsing of input1 /w wildcards: no padding w/ hex, 1bit padding w/ binary');
+
+        // Parsing of input2: padding of 4bits w/ hex"
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(input2),
+            context = new _CPTest(iterator),
+            assertion = true;
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_h2);
+        assertion &= context.isMatch() == true && iterator.getIndex() == input2.length;
+        ok(assertion, 'Parsing of input2: padding of 4bits w/ hex');
+
+        // Parsing of input2 with wildcards: padding of 4bits w/ hex
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(input2),
+            context = new _CPTest(iterator),
+            assertion = true;
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_h2w);
+        assertion &= context.isMatch() == true && iterator.getIndex() == input2.length;
+        ok(assertion, 'Parsing of input2 with wildcards: padding of 4bits w/ hex');
+
+        // Parsing of input3: no padding
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(input3),
+            context = new _CPTest(iterator),
+            assertion = true;
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_h3);
+        assertion &= (context.isMatch() == true && iterator.getIndex() == input3.length);
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_b3);
+        assertion &= (context.isMatch() == true && iterator.getIndex() == OTHER_STRING.length + 3);
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_d3);
+        assertion &= (context.isMatch() == true && iterator.getIndex() == input3.length);
+        ok(assertion, "Parsing of input3: no padding");
+
+        // Parsing of input4: short decimal test
+        var iterator  = new RobustHaven.Text.Npeg.StringInputIterator(input4),
+            context = new _CPTest(iterator);
+        context.setCode(match_d4);
+        ok(context.isMatch() == true, 'Parsing of input4: short decimal test');
+
+        // Parsing of input5: matching 0 with decimals
+        var iterator  = new RobustHaven.Text.Npeg.StringInputIterator(input5, input5.length+1),
+            context = new _CPTest(iterator);
+        iterator.setIndex(OTHER_STRING.length);
+        context.setCode(match_d5);
+        ok(context.isMatch() == true && iterator.getIndex() == OTHER_STRING.length+1,
+                'Parsing of input5: matching 0 with decimals');
+    });
+    // Test_Fatal
+    test('Test_Fatal', function(){
+        var errorStr = 'some error',
+            _FatalTest = function(iterator){
+                _FatalTest.superclass.constructor.call(this, iterator);
+
+                this.isMatch = function() {
+                    return this.fatal(errorStr);
+                }
+            }
+            RobustHaven.Text.Npeg.extend(_FatalTest, RobustHaven.Text.Npeg.Npeg);
+
+        // Error string matches input
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(''),
+            context = new _FatalTest(iterator);
+        try {
+            context.isMatch();
+        } catch(e) {
+            ok(e.getMessage() == errorStr, 'Error string matches input');
+        }
+    });
+    // Test_Literal
+    test('Test_Literal', function(){
+        var matchText = '.NET Parsing Expression Grammar',
+            _LiteralText = function(iterator) {
+                _LiteralText.superclass.constructor.call(this, iterator);
+
+                var isCaseSensitive = false;
+
+                this.isMatch = function() {
+                    return this.literal(matchText, matchText.length, isCaseSensitive);
+                }
+
+                this.makeCaseSensitive = function() {
+                    isCaseSensitive = true;
+                }
+            }
+            RobustHaven.Text.Npeg.extend(_LiteralText, RobustHaven.Text.Npeg.Npeg);
+
+        // Branch of isCaseSensitive = false; input1 successfully matches
+        var inputString = '.nEt Parsing expression grammar',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            context = new _LiteralText(iterator);
+        ok(context.isMatch() == true, 'Branch of isCaseSensitive = false; input1 successfully matches');
+
+        // Branch of isCaseSensitive = false; input2 successfully matches
+        var inputString = '.NET Parsing Expression Grammar',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            context = new _LiteralText(iterator);
+        ok(context.isMatch() == true, 'Branch of isCaseSensitive = false; input2 successfully matches');
+
+        // Branch of isCaseSensitive = false; input3 is NOT matched
+        var inputString = 'invalid',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            context = new _LiteralText(iterator);
+        ok(context.isMatch() == false, 'Branch of isCaseSensitive = false; input3 is NOT matched');
+
+        // Branch of isCaseSensitive = true; input1 is NOT matched
+        var inputString = '.nEt Parsing expression grammar',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            context = new _LiteralText(iterator);
+        context.makeCaseSensitive();
+        ok(context.isMatch() == false, 'Branch of isCaseSensitive = true; input1 is NOT matched');
+
+        // Branch of isCaseSensitive = false; input2 successfully matches
+        var inputString = '.NET Parsing Expression Grammar',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            context = new _LiteralText(iterator);
+        context.makeCaseSensitive();
+        ok(context.isMatch() == true, 'Branch of isCaseSensitive = true; input2 successfully matches');
+
+        // Branch of isCaseSensitive = false; input3 is NOT matched
+        var inputString = 'invalid',
+            iterator = new RobustHaven.Text.Npeg.StringInputIterator(inputString),
+            context = new _LiteralText(iterator);
+        context.makeCaseSensitive();
+        ok(context.isMatch() == false, 'Branch of isCaseSensitive = true; input3 is NOT matched');
+    });
+    // Test_Warn
+    test('Test_Warn', function(){
+        var warningMsg = 'A user warning message',
+            _WarnTest = function(iterator) {
+                _WarnTest.superclass.constructor.call(this, iterator);
+
+                this.isMatch = function() {
+                    return this.warn(warningMsg);
+                }
+            }
+            RobustHaven.Text.Npeg.extend(_WarnTest, RobustHaven.Text.Npeg.Npeg);
+
+        var iterator = new RobustHaven.Text.Npeg.StringInputIterator(warningMsg),
+            context = new _WarnTest(iterator),
+            assertion = true;
+
+        // context warnings is zero at start
+        ok(0 == context.getWarnings().length, 'context warnings is zero at start');
+        // npeg_Warn will always return true
+        ok(true == context.isMatch(), 'npeg_Warn will always return true');
+        // npeg_Warn will add an warning to context warnings collection
+        ok(1 == context.getWarnings().length, 'npeg_Warn will add an warning to context warnings collection');
+        // that the original warn message was copied in full to the new allocated npeg managed memory
+        ok(warningMsg == context.getWarnings()[context.getWarnings().length-1].getMessage(), 'that the original warn message was copied in full to the new allocated npeg managed memory');
+    });
+
+
+    /**
+     * Helpers
+     */
+     function randomString(length) {
+        var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split('');
+
+        var str = '';
+        for (var i = 0; i < length; i++) {
+            str += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return str;
+    }
+</script>
+</body>
+</html>
