@@ -7,14 +7,24 @@ The inline DSL is only supported in C#.  All other languages must use the DSL in
 All offline versions will be faster so we provide an offline C# version also.  You can grab dependencies for your target language here: https://github.com/leblancmeneses/NPEG/tree/master/Languages
 
 
-## PEG - Boolean Algebra in CSharp
-
+##Nuget Packages
 Offline version which requires exporting the parse tree using the language workbench.
-Install-Package RobustHaven.Text.Npeg 
+
+<code>
+Install-Package RobustHaven.Text.Npeg
+</code>
 
 Online version that allows building the parse tree from a string using the NPEG DSL.
-Install-Package NPEG 
 
+<code>
+Install-Package NPEG 
+</code>
+
+
+
+
+
+## PEG - Boolean Algebra in CSharp
 <code>
 
     		String grammar = @"
