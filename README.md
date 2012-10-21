@@ -8,6 +8,13 @@ All offline versions will be faster so we provide an offline C# version also.  Y
 
 
 ## PEG - Boolean Algebra in CSharp
+
+Offline version which requires exporting the parse tree using the language workbench.
+Install-Package RobustHaven.Text.Npeg 
+
+Online version that allows building the parse tree from a string using the NPEG DSL.
+Install-Package NPEG 
+
 <code>
 
     		String grammar = @"
