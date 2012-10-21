@@ -1,71 +1,71 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
+using System.IO;
 
 namespace RobustHaven.Text.Npeg
 {
-    public class FileInputIterator : InputIterator
-    {
-        private System.IO.Stream input;
-        public FileInputIterator(System.IO.Stream input)
-            : base((Int32)input.Length)
-        {
-            this.input = input;
-        }
+	public class FileInputIterator : InputIterator
+	{
+		private readonly Stream input;
 
-        public override byte[] Text(int start, int end)
-        {
-            byte[] buffer = new byte[end - start];
-            this.input.Read(buffer, start, end - start);
-            return buffer;
-        }
+		public FileInputIterator(Stream input)
+			: base((Int32) input.Length)
+		{
+			this.input = input;
+		}
 
-        public override short Current()
-        {
-            if (this.Index >= this.Length) return -1;
-            else
-            {
-                return this.GetByte(this.Index);
-            }
-        }
+		public override byte[] Text(int start, int end)
+		{
+			var buffer = new byte[end - start];
+			input.Read(buffer, start, end - start);
+			return buffer;
+		}
 
-        public override short Next()
-        {
-            if (this.Index >= this.Length) return -1;
-            else
-            {
-                this.Index += 1;
+		public override short Current()
+		{
+			if (Index >= Length) return -1;
+			else
+			{
+				return GetByte(Index);
+			}
+		}
 
-                if (this.Index >= this.Length) return -1;
-                else return this.GetByte(this.Index); ;
-            }
-        }
+		public override short Next()
+		{
+			if (Index >= Length) return -1;
+			else
+			{
+				Index += 1;
 
-        public override short Previous()
-        {
-            if (this.Index <= 0)
-            {
-                return -1;
-            }
-            else
-            {
-                Debug.Assert(this.Length > 0);
+				if (Index >= Length) return -1;
+				else return GetByte(Index);
+				;
+			}
+		}
 
-                this.Index -= 1;
+		public override short Previous()
+		{
+			if (Index <= 0)
+			{
+				return -1;
+			}
+			else
+			{
+				Debug.Assert(Length > 0);
 
-                return this.GetByte(this.Index); ;
-            }
-        }
+				Index -= 1;
+
+				return GetByte(Index);
+				;
+			}
+		}
 
 
-
-        private short GetByte(Int32 index)
-        {
-            Byte[] b = new Byte[1];
-            this.input.Read(b, this.Index, 1);
-            return b[0];
-        }
-    }
+		private short GetByte(Int32 index)
+		{
+			var b = new Byte[1];
+			input.Read(b, Index, 1);
+			return b[0];
+		}
+	}
 }

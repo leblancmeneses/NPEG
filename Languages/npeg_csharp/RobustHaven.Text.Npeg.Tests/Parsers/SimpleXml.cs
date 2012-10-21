@@ -1,12 +1,12 @@
 using System;
-using System.Text;
-using RobustHaven.Text.Npeg;
 
 namespace RobustHaven.Text.Npeg.Tests.Parsers
 {
 	public class SimpleXml : NpegParser
 	{
-		public SimpleXml(InputIterator iterator): base(iterator){}
+		public SimpleXml(InputIterator iterator) : base(iterator)
+		{
+		}
 
 		public override Boolean IsMatch()
 		{
@@ -17,161 +17,161 @@ namespace RobustHaven.Text.Npeg.Tests.Parsers
 		protected Boolean SimpleXml_impl_0()
 		{
 			String _nodeName_0 = "Expression";
-			return this.CapturingGroup(new IsMatchPredicate(this.SimpleXml_impl_1), _nodeName_0, false, false);
+			return CapturingGroup(SimpleXml_impl_1, _nodeName_0, false, false);
 		}
 
 		protected Boolean SimpleXml_impl_1()
 		{
-			return this.OneOrMore(new IsMatchPredicate(this.SimpleXml_impl_2), "");
+			return OneOrMore(SimpleXml_impl_2, "");
 		}
 
 		protected Boolean SimpleXml_impl_2()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_3), new IsMatchPredicate(this.SimpleXml_impl_23));
+			return Sequence(SimpleXml_impl_3, SimpleXml_impl_23);
 		}
 
 		protected Boolean SimpleXml_impl_23()
 		{
 			String _nodeName_0 = "END_TAG";
-			return this.CapturingGroup(new IsMatchPredicate(this.SimpleXml_impl_24), _nodeName_0, false, false);
+			return CapturingGroup(SimpleXml_impl_24, _nodeName_0, false, false);
 		}
 
 		protected Boolean SimpleXml_impl_24()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_25), new IsMatchPredicate(this.SimpleXml_impl_28));
+			return Sequence(SimpleXml_impl_25, SimpleXml_impl_28);
 		}
 
 		protected Boolean SimpleXml_impl_28()
 		{
 			String _literal_0 = ">";
-			return this.Literal(_literal_0, true);
+			return Literal(_literal_0, true);
 		}
 
 		protected Boolean SimpleXml_impl_25()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_26), new IsMatchPredicate(this.SimpleXml_impl_27));
+			return Sequence(SimpleXml_impl_26, SimpleXml_impl_27);
 		}
 
 		protected Boolean SimpleXml_impl_27()
 		{
 			String _dynamicBackReference_0 = "TAG";
-			return this.DynamicBackReference(_dynamicBackReference_0, true);
+			return DynamicBackReference(_dynamicBackReference_0, true);
 		}
 
 		protected Boolean SimpleXml_impl_26()
 		{
 			String _literal_0 = "</";
-			return this.Literal(_literal_0, true);
+			return Literal(_literal_0, true);
 		}
 
 		protected Boolean SimpleXml_impl_3()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_4), new IsMatchPredicate(this.SimpleXml_impl_12));
+			return Sequence(SimpleXml_impl_4, SimpleXml_impl_12);
 		}
 
 		protected Boolean SimpleXml_impl_12()
 		{
 			String _nodeName_0 = "Body";
-			return this.CapturingGroup(new IsMatchPredicate(this.SimpleXml_impl_13), _nodeName_0, false, false);
+			return CapturingGroup(SimpleXml_impl_13, _nodeName_0, false, false);
 		}
 
 		protected Boolean SimpleXml_impl_13()
 		{
-			return this.ZeroOrMore(new IsMatchPredicate(this.SimpleXml_impl_14), "");
+			return ZeroOrMore(SimpleXml_impl_14, "");
 		}
 
 		protected Boolean SimpleXml_impl_14()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_15), new IsMatchPredicate(this.SimpleXml_impl_22));
+			return Sequence(SimpleXml_impl_15, SimpleXml_impl_22);
 		}
 
 		protected Boolean SimpleXml_impl_22()
 		{
-			return this.AnyCharacter();
+			return AnyCharacter();
 		}
 
 		protected Boolean SimpleXml_impl_15()
 		{
-			return this.NotPredicate(new IsMatchPredicate(this.SimpleXml_impl_16));
+			return NotPredicate(SimpleXml_impl_16);
 		}
 
 		protected Boolean SimpleXml_impl_16()
 		{
 			String _nodeName_0 = "END_TAG";
-			return this.CapturingGroup(new IsMatchPredicate(this.SimpleXml_impl_17), _nodeName_0, false, false);
+			return CapturingGroup(SimpleXml_impl_17, _nodeName_0, false, false);
 		}
 
 		protected Boolean SimpleXml_impl_17()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_18), new IsMatchPredicate(this.SimpleXml_impl_21));
+			return Sequence(SimpleXml_impl_18, SimpleXml_impl_21);
 		}
 
 		protected Boolean SimpleXml_impl_21()
 		{
 			String _literal_0 = ">";
-			return this.Literal(_literal_0, true);
+			return Literal(_literal_0, true);
 		}
 
 		protected Boolean SimpleXml_impl_18()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_19), new IsMatchPredicate(this.SimpleXml_impl_20));
+			return Sequence(SimpleXml_impl_19, SimpleXml_impl_20);
 		}
 
 		protected Boolean SimpleXml_impl_20()
 		{
 			String _dynamicBackReference_0 = "TAG";
-			return this.DynamicBackReference(_dynamicBackReference_0, true);
+			return DynamicBackReference(_dynamicBackReference_0, true);
 		}
 
 		protected Boolean SimpleXml_impl_19()
 		{
 			String _literal_0 = "</";
-			return this.Literal(_literal_0, true);
+			return Literal(_literal_0, true);
 		}
 
 		protected Boolean SimpleXml_impl_4()
 		{
 			String _nodeName_0 = "START_TAG";
-			return this.CapturingGroup(new IsMatchPredicate(this.SimpleXml_impl_5), _nodeName_0, false, false);
+			return CapturingGroup(SimpleXml_impl_5, _nodeName_0, false, false);
 		}
 
 		protected Boolean SimpleXml_impl_5()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_6), new IsMatchPredicate(this.SimpleXml_impl_11));
+			return Sequence(SimpleXml_impl_6, SimpleXml_impl_11);
 		}
 
 		protected Boolean SimpleXml_impl_11()
 		{
 			String _literal_0 = ">";
-			return this.Literal(_literal_0, true);
+			return Literal(_literal_0, true);
 		}
 
 		protected Boolean SimpleXml_impl_6()
 		{
-			return this.Sequence(new IsMatchPredicate(this.SimpleXml_impl_7), new IsMatchPredicate(this.SimpleXml_impl_8));
+			return Sequence(SimpleXml_impl_7, SimpleXml_impl_8);
 		}
 
 		protected Boolean SimpleXml_impl_8()
 		{
 			String _nodeName_0 = "TAG";
-			return this.CapturingGroup(new IsMatchPredicate(this.SimpleXml_impl_9), _nodeName_0, false, false);
+			return CapturingGroup(SimpleXml_impl_9, _nodeName_0, false, false);
 		}
 
 		protected Boolean SimpleXml_impl_9()
 		{
-			return this.OneOrMore(new IsMatchPredicate(this.SimpleXml_impl_10), "");
+			return OneOrMore(SimpleXml_impl_10, "");
 		}
 
 		protected Boolean SimpleXml_impl_10()
 		{
 			String _classExpression_0 = "[a-zA-Z0-9]";
-			return this.CharacterClass(_classExpression_0, 11);
+			return CharacterClass(_classExpression_0, 11);
 		}
 
 		protected Boolean SimpleXml_impl_7()
 		{
 			String _literal_0 = "<";
-			return this.Literal(_literal_0, true);
+			return Literal(_literal_0, true);
 		}
 	}
 }

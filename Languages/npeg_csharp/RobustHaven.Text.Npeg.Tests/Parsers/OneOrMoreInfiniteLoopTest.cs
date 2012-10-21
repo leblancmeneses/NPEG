@@ -1,12 +1,12 @@
 using System;
-using System.Text;
-using RobustHaven.Text.Npeg;
 
 namespace RobustHaven.Text.Npeg.Tests.Parsers
 {
 	public class OneOrMoreInfiniteLoopTest : NpegParser
 	{
-		public OneOrMoreInfiniteLoopTest(InputIterator iterator): base(iterator){}
+		public OneOrMoreInfiniteLoopTest(InputIterator iterator) : base(iterator)
+		{
+		}
 
 		public override Boolean IsMatch()
 		{
@@ -17,22 +17,22 @@ namespace RobustHaven.Text.Npeg.Tests.Parsers
 		protected Boolean OneOrMoreInfiniteLoopTest_impl_0()
 		{
 			String _nodeName_0 = "Expression";
-			return this.CapturingGroup(new IsMatchPredicate(this.OneOrMoreInfiniteLoopTest_impl_1), _nodeName_0, false, false);
+			return CapturingGroup(OneOrMoreInfiniteLoopTest_impl_1, _nodeName_0, false, false);
 		}
 
 		protected Boolean OneOrMoreInfiniteLoopTest_impl_1()
 		{
-			return this.OneOrMore(new IsMatchPredicate(this.OneOrMoreInfiniteLoopTest_impl_2), "");
+			return OneOrMore(OneOrMoreInfiniteLoopTest_impl_2, "");
 		}
 
 		protected Boolean OneOrMoreInfiniteLoopTest_impl_2()
 		{
-			return this.ZeroOrMore(new IsMatchPredicate(this.OneOrMoreInfiniteLoopTest_impl_3), "");
+			return ZeroOrMore(OneOrMoreInfiniteLoopTest_impl_3, "");
 		}
 
 		protected Boolean OneOrMoreInfiniteLoopTest_impl_3()
 		{
-			return this.AnyCharacter();
+			return AnyCharacter();
 		}
 	}
 }
