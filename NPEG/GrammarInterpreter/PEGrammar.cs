@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using NPEG.ApplicationExceptions;
+using NPEG.GrammarInterpreter.AstNodes;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
 

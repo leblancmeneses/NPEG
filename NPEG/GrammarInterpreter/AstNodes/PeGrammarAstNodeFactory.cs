@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NPEG.GrammarInterpreter
+namespace NPEG.GrammarInterpreter.AstNodes
 {
 	internal class PeGrammarAstNodeFactory : IAstNodeFactory
 	{

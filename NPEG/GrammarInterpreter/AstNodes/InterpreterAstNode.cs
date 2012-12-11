@@ -6,7 +6,7 @@ using NPEG.Extensions;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
 
-namespace NPEG.GrammarInterpreter
+namespace NPEG.GrammarInterpreter.AstNodes
 {
 	public class InterpreterAstNode : IAstNodeReplacement
 	{

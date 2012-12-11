@@ -91,11 +91,11 @@
     <Compile Include="ApplicationExceptions\ParsingFatalTerminalException.cs" />
     <Compile Include="AstNode.cs" />
     <Compile Include="Extensions\TokenMatchExtensions.cs" />
-    <Compile Include="GrammarInterpreter\InterpreterAstNode.cs" />
+    <Compile Include="GrammarInterpreter\AstNodes\InterpreterAstNode.cs" />
     <Compile Include="GrammarInterpreter\InterpreterParseException.cs" />
     <Compile Include="GrammarInterpreter\PEGrammar.cs" />
-    <Compile Include="GrammarInterpreter\PeGrammarAstNodeFactory.cs" />
-    <Compile Include="GrammarInterpreter\StatementAstNode.cs" />
+    <Compile Include="GrammarInterpreter\AstNodes\PeGrammarAstNodeFactory.cs" />
+    <Compile Include="GrammarInterpreter\AstNodes\StatementAstNode.cs" />
     <Compile Include="IAstNodeFactory.cs" />
     <Compile Include="IAstNodeReplacement.cs" />
     <Compile Include="NpegParserVisitor.cs" />

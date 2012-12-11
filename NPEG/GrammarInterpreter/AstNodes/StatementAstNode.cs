@@ -1,7 +1,7 @@
 ﻿using System;
 using NPEG.Extensions;
 
-namespace NPEG.GrammarInterpreter
+namespace NPEG.GrammarInterpreter.AstNodes
 {
 	public class StatementAstNode : IAstNodeReplacement
 	{
