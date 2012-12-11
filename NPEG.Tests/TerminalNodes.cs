@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NPEG.Extensions;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
 
@@ -86,7 +87,8 @@ namespace NPEG.Tests
 			Assert.IsTrue((Byte) 'a' == 97);
 			Assert.IsTrue((Byte) 'a' == 0x61);
 
-			var visitor = new NpegParserVisitor(new StringInputIterator("a"));
+			var iterator = new StringInputIterator("a");
+			var visitor = new NpegParserVisitor(iterator);
 			var Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                     new CodePoint {Match = "#x61"}
 				);
@@ -94,11 +96,12 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value == "a");
+			Assert.IsTrue(node.Token.Value(iterator) == "a");
 
 
 			// Byte boundary tests
-			visitor = new NpegParserVisitor(new StringInputIterator("\na"));
+			iterator = new StringInputIterator("\na");
+			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new CodePoint {Match = "#xA61"}
 				);
@@ -107,37 +110,37 @@ namespace NPEG.Tests
 			              "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be 0A = \n and letter a.");
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value == "\na");
+			Assert.IsTrue(node.Token.Value(iterator) == "\na");
 
 
-			visitor = new NpegParserVisitor(new StringInputIterator("\0a"));
+			iterator = new StringInputIterator("\0a");
+			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new CodePoint {Match = "#x061"}
 				);
 			Hexadecimal.Accept(visitor);
-			Assert.IsTrue(visitor.IsMatch,
-			              "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be 00 = \0 and letter a.");
+			Assert.IsTrue(visitor.IsMatch, "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be 00 = \0 and letter a.");
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value == "\0a");
+			Assert.IsTrue(node.Token.Value(iterator) == "\0a");
 
 
 			// Don't care tests
-			visitor =
-				new NpegParserVisitor(new StringInputIterator(Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71, 0x03, 0x00})));
+			iterator = new StringInputIterator(Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71, 0x03, 0x00}));
+			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new OneOrMore(new CodePoint {Match = "#xX1"}) // #bXXXX0001
-				);
+			);
 			Hexadecimal.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value == Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71}));
+			Assert.IsTrue(node.Token.Value(iterator) == Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71}));
 
 
-			visitor = new NpegParserVisitor(new StringInputIterator(
-			                                	Encoding.ASCII.GetString(new byte[] {0x10})
-			                                	));
+			var input = Encoding.ASCII.GetString(new byte[] { 0x10 });
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new CodePoint {Match = "#xX1"}
 				);
@@ -146,7 +149,9 @@ namespace NPEG.Tests
 
 
 			// cannot consume character test
-			visitor = new NpegParserVisitor(new StringInputIterator(""));
+			input = string.Empty;
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new CodePoint {Match = "#xX1"}
 				);
@@ -161,7 +166,9 @@ namespace NPEG.Tests
 			Assert.IsTrue((Byte) 'a' == 97);
 			Assert.IsTrue((Byte) 'a' == 0x61);
 
-			var visitor = new NpegParserVisitor(new StringInputIterator("a"));
+			var input = "a";
+			var iterator = new StringInputIterator(input);
+			var visitor = new NpegParserVisitor(iterator);
 			var binary = new CapturingGroup("Binary",
 			                                new CodePoint {Match = "#b1100001"}
 				);
@@ -169,10 +176,12 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value == "a");
+			Assert.IsTrue(ast.Token.Value(iterator) == "a");
 
 
-			visitor = new NpegParserVisitor(new StringInputIterator("aa"));
+			input = "aa";
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary",
 			                            new CodePoint {Match = "#b0110000101100001"}
 				);
@@ -180,37 +189,39 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value == "aa");
+			Assert.IsTrue(ast.Token.Value(iterator) == "aa");
 
 
 			// Byte boundary tests
-			visitor = new NpegParserVisitor(new StringInputIterator("\0a"));
+			input = "\0a";
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary",
 			                            new CodePoint {Match = "#b00001100001"}
 				);
 			binary.Accept(visitor);
-			Assert.IsTrue(visitor.IsMatch,
-			              "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be null and letter a.");
+			Assert.IsTrue(visitor.IsMatch, "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be null and letter a.");
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value == "\0a");
+			Assert.IsTrue(ast.Token.Value(iterator) == "\0a");
 
 
-			visitor = new NpegParserVisitor(new StringInputIterator("\0a"));
-			binary = new CapturingGroup("Binary",
-			                            new Sequence(new CodePoint {Match = "#b000"}, new CodePoint {Match = "#b01100001"})
-				);
+			input = "\0a";
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
+			binary = new CapturingGroup("Binary", new Sequence(new CodePoint {Match = "#b000"}, new CodePoint {Match = "#b01100001"}));
 			binary.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch,
 			              "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be null and letter a.");
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value == "\0a");
+			Assert.IsTrue(ast.Token.Value(iterator) == "\0a");
 
 
 			// Don't care tests
-			visitor =
-				new NpegParserVisitor(new StringInputIterator(Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71, 0x03, 0x00})));
+			input = Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71, 0x03, 0x00});
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary",
 			                            new OneOrMore(new CodePoint {Match = "#bXXXX0001"}) // #bXXXX0001
 				);
@@ -218,24 +229,22 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value == Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71}));
+			Assert.IsTrue(ast.Token.Value(iterator) == Encoding.ASCII.GetString(new byte[] { 0x11, 0x01, 0x71 }));
 
 
-			visitor = new NpegParserVisitor(new StringInputIterator(
-			                                	Encoding.ASCII.GetString(new byte[] {0x10})
-			                                	));
-			binary = new CapturingGroup("Binary",
-			                            new CodePoint {Match = "#bXXXX0001"}
-				);
+			input = Encoding.ASCII.GetString(new byte[] { 0x10 });
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
+			binary = new CapturingGroup("Binary", new CodePoint {Match = "#bXXXX0001"});
 			binary.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
 
 
 			// cannot consume character test
-			visitor = new NpegParserVisitor(new StringInputIterator(""));
-			binary = new CapturingGroup("Binary",
-			                            new CodePoint {Match = "#bXXXX0001"}
-				);
+			input = "";
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
+			binary = new CapturingGroup("Binary", new CodePoint {Match = "#bXXXX0001"});
 			binary.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
 		}
@@ -244,7 +253,8 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void Terminal_CodePoint_Decimal()
 		{
-			var visitor = new NpegParserVisitor(new StringInputIterator("&"));
+			var iterator = new StringInputIterator("&");
+			var visitor = new NpegParserVisitor(iterator);
 			var codepoint = new CapturingGroup("CodePoint",
 			                                   new CodePoint {Match = "#38"}
 				);
@@ -252,7 +262,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "CodePoint");
-			Assert.IsTrue(ast.Token.Value == "&");
+			Assert.IsTrue(ast.Token.Value(iterator) == "&");
 		}
 
 
@@ -314,7 +324,7 @@ namespace NPEG.Tests
 			MinTrue5.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
-			Assert.IsTrue(node.Token.Value == input);
+			Assert.IsTrue(node.Token.Value(iterator) == input);
 
 
 			iterator.Index = 0;

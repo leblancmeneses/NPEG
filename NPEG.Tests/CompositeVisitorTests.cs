@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NPEG.Extensions;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
 
@@ -102,7 +103,7 @@ namespace NPEG.Tests
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
-			Assert.IsTrue(node.Token.Value == input);
+			Assert.IsTrue(node.Token.Value(iterator) == input);
 			Assert.IsTrue(node.Token.Name == "NESTEDRECURSIONTEST");
 			Assert.IsTrue(node.Children.Count == 1);
 			Assert.IsTrue(node.Children[0].Token.Name == "PENCLOSED");
@@ -196,15 +197,17 @@ namespace NPEG.Tests
 			                              	)
 				);
 
-			var input = new StringInputIterator(@"\k< CapturedLabelVariableName >");
-			var visitor = new NpegParserVisitor(input);
+			var input = @"\k< CapturedLabelVariableName >";
+			var iterator = new StringInputIterator(input);
+			var visitor = new NpegParserVisitor(iterator);
+
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Test");
 			Assert.IsTrue(node.Children[0].Token.Name == "DynamicBackReferencing");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
 		}
 
 
@@ -335,16 +338,15 @@ namespace NPEG.Tests
 			                                    	.Plus()
 				);
 
-			var visitor = new NpegParserVisitor(
-				new StringInputIterator(".")
-				);
+			var iterator = new StringInputIterator(".");
+			var visitor = new NpegParserVisitor(iterator);
 			expression.Accept(visitor);
 
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children.Count == 1);
 			Assert.IsTrue(node.Token.Name == "Expression");
-			Assert.IsTrue(node.Token.Value == ".");
+			Assert.IsTrue(node.Token.Value(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Token.Name == "AnyCharacter");
 		}
 

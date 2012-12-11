@@ -603,8 +603,7 @@ namespace NPEG
 
 
 								AstNode node = sandbox.Peek().Pop();
-								node.Token = new TokenMatch(name, Encoding.UTF8.GetString(matchedBytes,0,matchedBytes.Length), savePosition,
-								                            iterator.Index);
+								node.Token = new TokenMatch(name, savePosition, iterator.Index - 1);
 
 
 								if (expression.DoCreateCustomAstNode)
@@ -648,7 +647,6 @@ namespace NPEG
 									// each successful sandbox will have 1 item left in the stack
 								}
 
-								savePosition = iterator.Index;
 								return true;
 							}
 							sandbox.Peek().Pop();

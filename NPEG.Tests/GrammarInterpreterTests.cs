@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.ApplicationExceptions;
+using NPEG.Extensions;
 using NPEG.GrammarInterpreter;
 
 namespace NPEG.Tests
@@ -16,34 +17,37 @@ namespace NPEG.Tests
 			string input = "hello world";
 			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): 'Hello World';");
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(input));
+			var iterator = new StringInputIterator(input);
+			var visitor = new NpegParserVisitor(iterator);
 			caseSensitive.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
 
 			AExpression notCaseSensitive = PEGrammar.Load(@"(?<Expression>): 'Hello World'\i;");
-			visitor = new NpegParserVisitor(new StringInputIterator(input));
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
 			notCaseSensitive.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Expression");
-			Assert.IsTrue(node.Token.Value == input);
+			Assert.IsTrue(node.Token.Value(iterator) == input);
 
 
 			// not sure if it would be better to use verbatim identifier @"" for escaping
 			// escape back slash inside double quotes
 			input = @"\";
 			AExpression escape = PEGrammar.Load(@"(?<Literal>): ""\\"";");
-			visitor = new NpegParserVisitor(new StringInputIterator(input));
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator);
 			escape.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
-			Assert.IsTrue(@"\" == visitor.AST.Token.Value);
+			Assert.IsTrue(@"\" == visitor.AST.Token.Value(iterator));
 
 			input = @"\";
 			escape = PEGrammar.Load(@"(?<Literal>): '\\';");
-			visitor = new NpegParserVisitor(new StringInputIterator(input));
-			escape.Accept(visitor);
+			iterator = new StringInputIterator(input);
+			visitor = new NpegParserVisitor(iterator); escape.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
-			Assert.IsTrue(@"\" == visitor.AST.Token.Value);
+			Assert.IsTrue(@"\" == visitor.AST.Token.Value(iterator));
 		}
 
 
@@ -119,13 +123,13 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 
 			Assert.IsTrue(node.Token.Name == "PhoneNumber");
-			Assert.IsTrue(node.Token.Value == input);
+			Assert.IsTrue(node.Token.Value(iterator) == input);
 			Assert.IsTrue(node.Children[0].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[0].Token.Value == "123");
+			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "123");
 			Assert.IsTrue(node.Children[1].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[1].Token.Value == "456");
+			Assert.IsTrue(node.Children[1].Token.Value(iterator) == "456");
 			Assert.IsTrue(node.Children[2].Token.Name == "FourDigitCode");
-			Assert.IsTrue(node.Children[2].Token.Value == "7890");
+			Assert.IsTrue(node.Children[2].Token.Value(iterator) == "7890");
 		}
 
 
@@ -142,25 +146,26 @@ namespace NPEG.Tests
                     "
 					.Trim());
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(input));
+			var iterator = new StringInputIterator(input);
+			var visitor = new NpegParserVisitor(iterator);
 			PhoneNumber.Accept(visitor);
 
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "PhoneNumber");
-			Assert.IsTrue(node.Token.Value == input);
+			Assert.IsTrue(node.Token.Value(iterator) == input);
 			Assert.IsTrue(node.Children[0].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[0].Token.Value == "123");
+			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "123");
 			Assert.IsTrue(node.Children[1].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[1].Token.Value == "456");
+			Assert.IsTrue(node.Children[1].Token.Value(iterator) == "456");
 			Assert.IsTrue(node.Children[2].Token.Name == "FourDigitCode");
-			Assert.IsTrue(node.Children[2].Token.Value == "7890");
+			Assert.IsTrue(node.Children[2].Token.Value(iterator) == "7890");
 		}
 
 		[TestMethod]
 		public void PEGrammar_RecursiveParentheses()
 		{
-			String input = "((((((123))))))";
+			var input = "((((((123))))))";
 
 			AExpression ROOT = PEGrammar.Load(
 				@"
@@ -171,11 +176,12 @@ namespace NPEG.Tests
                     "
 					.Trim());
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(input));
+			var iterator = new StringInputIterator(input);
+			var visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
-			Assert.IsTrue(node.Token.Value == input);
+			Assert.IsTrue(node.Token.Value(iterator) == input);
 		}
 
 		[TestMethod]
@@ -197,7 +203,7 @@ namespace NPEG.Tests
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
-			Assert.IsTrue(node.Token.Value == input);
+			Assert.IsTrue(node.Token.Value(iterator) == input);
 #warning does not specify expected tree
 		}
 

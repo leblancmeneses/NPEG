@@ -1,21 +1,27 @@
 ﻿using System;
+using NPEG.Extensions;
 
 namespace NPEG.GrammarInterpreter
 {
 	public class StatementAstNode : IAstNodeReplacement
 	{
+		private readonly IInputIterator _inputIterator;
+
+		public StatementAstNode(IInputIterator inputIterator)
+		{
+			_inputIterator = inputIterator;
+		}
+
 		public String Name
 		{
 			get
 			{
 				if (IsCaptured)
 				{
-					return Children[0].Children[0].Children[0].Token.Value;
+					return Children[0].Children[0].Children[0].Token.Value(_inputIterator);
 				}
-				else
-				{
-					return Children[0].Token.Value;
-				}
+
+				return Children[0].Token.Value(_inputIterator);
 			}
 		}
 
@@ -27,11 +33,9 @@ namespace NPEG.GrammarInterpreter
 				{
 					return true;
 				}
-				else
-				{
-					// it's a label and will not be captured
-					return false;
-				}
+
+				// it's a label and will not be captured
+				return false;
 			}
 		}
 

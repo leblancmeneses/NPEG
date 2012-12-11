@@ -710,9 +710,9 @@ namespace NPEG.GrammarInterpreter
 		}
 
 
-		public static AExpression Load(String rules)
+		private static AExpression RootPegExpression()
 		{
-			var root = new CapturingGroup(
+			return new CapturingGroup(
 				"PEG",
 				new Sequence(
 					new Sequence(
@@ -726,46 +726,24 @@ namespace NPEG.GrammarInterpreter
 						new AnyCharacter()
 						)
 					)
-				) {DoCreateCustomAstNode = true};
+				) { DoCreateCustomAstNode = true };
+		}
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(Encoding.UTF8.GetBytes(rules)),
-			                                    new PeGrammarAstNodeFactory());
 
-			root.Accept(visitor);
+		public static AExpression Load(String rules)
+		{
+			var rootExpression = RootPegExpression();
+			var iterator = new StringInputIterator(Encoding.UTF8.GetBytes(rules));
+			var visitor = new NpegParserVisitor(iterator, new PeGrammarAstNodeFactory(iterator));
+
+			rootExpression.Accept(visitor);
 			if (visitor.IsMatch)
 			{
-				var interpret = visitor.AST as InterpreterAstNode;
+				var interpret = (InterpreterAstNode)visitor.AST;
 				return interpret.Expression;
 			}
 
 			throw new InvalidRuleException();
 		}
-
-		#region Nested type: PeGrammarAstNodeFactory
-
-		private class PeGrammarAstNodeFactory : IAstNodeFactory
-		{
-			#region IAstNodeFactory Members
-
-			public IAstNodeReplacement Create(AstNode original)
-			{
-				switch (original.Token.Name)
-				{
-					case "Statement":
-						return new StatementAstNode();
-					case "PEG":
-						return new InterpreterAstNode();
-					default:
-						break;
-				}
-
-				throw new ArgumentOutOfRangeException(
-					String.Format("PeGrammarAstNodeFactory does not define replacement node for: {0}", original.Token.Name));
-			}
-
-			#endregion
-		}
-
-		#endregion
 	}
 }

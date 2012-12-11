@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using NPEG.Extensions;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
 
@@ -9,6 +10,7 @@ namespace NPEG.GrammarInterpreter
 {
 	public class InterpreterAstNode : IAstNodeReplacement
 	{
+		private readonly IInputIterator _inputIterator;
 		private readonly Dictionary<String, AExpression> completedStatements = new Dictionary<string, AExpression>();
 		private readonly List<String> wrapWithRecursionRule = new List<string>();
 		private AExpression expression;
@@ -17,6 +19,10 @@ namespace NPEG.GrammarInterpreter
 
 		private Boolean hasPassedNodeDefinition;
 
+		public InterpreterAstNode(IInputIterator inputIterator)
+		{
+			_inputIterator = inputIterator;
+		}
 
 		public AExpression this[String terminalname]
 		{
@@ -173,7 +179,7 @@ namespace NPEG.GrammarInterpreter
 
 
 					case "Prefix":
-						switch (node.Token.Value[0].ToString())
+						switch (node.Token.Value(_inputIterator)[0].ToString())
 						{
 							case "!":
 								expressionStack.Push(new NotPredicate(expressionStack.Pop()));
@@ -207,39 +213,34 @@ namespace NPEG.GrammarInterpreter
 										                     		Min =
 										                     			Int32.Parse(
 										                     				node.Children[0].Children[1].Children[0].
-										                     					Token.Value),
+																				Token.Value(_inputIterator)),
 										                     		Max =
 										                     			Int32.Parse(
 										                     				node.Children[0].Children[1].Children[1].
-										                     					Token.Value)
+																				Token.Value(_inputIterator))
 										                     	});
 										break;
 									case "ATMOST":
 										expressionStack.Push(new LimitingRepetition(expressionStack.Pop())
 										                     	{
 										                     		Min = null,
-										                     		Max =
-										                     			Int32.Parse(
-										                     				node.Children[0].Children[1].Children[0].Token
-										                     					.Value)
+										                     		Max = Int32.Parse(node.Children[0].Children[1].Children[0].Token
+																				.Value(_inputIterator))
 										                     	});
 										break;
 									case "ATLEAST":
 										expressionStack.Push(new LimitingRepetition(expressionStack.Pop())
 										                     	{
 										                     		Min =
-										                     			Int32.Parse(
-										                     				node.Children[0].Children[1].Children[0].
-										                     					Token.Value),
+										                     			Int32.Parse(node.Children[0].Children[1].Children[0].
+																				Token.Value(_inputIterator)),
 										                     		Max = null
 										                     	});
 										break;
 									case "EXACT":
-										Int32 exactcount = Int32.Parse(node.Children[0].Children[1].Token.Value);
+										Int32 exactcount = Int32.Parse(node.Children[0].Children[1].Token.Value(_inputIterator));
 										expressionStack.Push(new LimitingRepetition(expressionStack.Pop())
 										                     	{Min = exactcount, Max = exactcount});
-										break;
-									default:
 										break;
 								}
 								break;
@@ -250,7 +251,7 @@ namespace NPEG.GrammarInterpreter
 
 
 					case "CapturingGroup":
-						var capture = new CapturingGroup(node.Children[0].Token.Value, expressionStack.Pop());
+						var capture = new CapturingGroup(node.Children[0].Token.Value(_inputIterator), expressionStack.Pop());
 
 						if (node.Children.Where(child => child.Token.Name == "OptionalFlags").Count() > 0)
 						{
@@ -283,39 +284,36 @@ namespace NPEG.GrammarInterpreter
 						                     	{
 						                     		IsCaseSensitive = isCaseSensitive,
 						                     		MatchText = Regex.Replace(
-						                     			Regex.Replace(node.Children[0].Token.Value, @"\\(?<quote>""|')", @"${quote}")
+														Regex.Replace(node.Children[0].Token.Value(_inputIterator), @"\\(?<quote>""|')", @"${quote}")
 						                     			, @"\\\\", @"\")
 						                     	});
 						break;
 					case "CharacterClass":
-						expressionStack.Push(new CharacterClass {ClassExpression = node.Token.Value});
+						expressionStack.Push(new CharacterClass { ClassExpression = node.Token.Value(_inputIterator) });
 						break;
 					case "RecursionCall":
-						expressionStack.Push((this)[node.Children[0].Token.Value]);
+						expressionStack.Push((this)[node.Children[0].Token.Value(_inputIterator)]);
 						break;
 					case "CodePoint":
-						expressionStack.Push(new CodePoint {Match = "#" + node.Children[0].Token.Value});
+						expressionStack.Push(new CodePoint { Match = "#" + node.Children[0].Token.Value(_inputIterator) });
 						break;
 					case "Fatal":
-						expressionStack.Push(new Fatal {Message = node.Children[0].Token.Value});
+						expressionStack.Push(new Fatal { Message = node.Children[0].Token.Value(_inputIterator) });
 						break;
 					case "Warn":
-						expressionStack.Push(new Warn {Message = node.Children[0].Token.Value});
+						expressionStack.Push(new Warn { Message = node.Children[0].Token.Value(_inputIterator) });
 						break;
 					case "DynamicBackReferencing":
 						if (node.Children.Count == 1)
 						{
 							// no options specified only tag name.
-							expressionStack.Push(new DynamicBackReference
-							                     	{BackReferenceName = node.Children[0].Token.Value});
+							expressionStack.Push(new DynamicBackReference { BackReferenceName = node.Children[0].Token.Value(_inputIterator) });
 						}
 						else
 						{
 							throw new NotImplementedException(
 								"Add IsCaseSensitive using children[1].Token.Name == IsCasesensitive");
 						}
-						break;
-					default:
 						break;
 				}
 			}
