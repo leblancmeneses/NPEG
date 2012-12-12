@@ -734,7 +734,7 @@ namespace NPEG.GrammarInterpreter
 		public static AExpression Load(String rules)
 		{
 			var rootExpression = RootPegExpression();
-			var iterator = new StringInputIterator(Encoding.UTF8.GetBytes(rules));
+			var iterator = new ByteInputIterator(Encoding.UTF8.GetBytes(rules));
 			var visitor = new NpegParserVisitor(iterator, new PeGrammarAstNodeFactory(iterator));
 
 			rootExpression.Accept(visitor);

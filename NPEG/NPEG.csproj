@@ -101,8 +101,8 @@
     <Compile Include="NpegParserVisitor.cs" />
     <Compile Include="IInputIterator.cs" />
     <Compile Include="ApplicationExceptions\IteratorUsageException.cs" />
-    <Compile Include="FileInputIterator.cs" />
-    <Compile Include="StringInputIterator.cs" />
+    <Compile Include="StreamInputIterator.cs" />
+    <Compile Include="ByteInputIterator.cs" />
     <Compile Include="NonTerminals\CapturingGroup.cs" />
     <Compile Include="NonTerminals\LimitingRepetition.cs" />
     <Compile Include="NonTerminals\RecursionCreate.cs" />

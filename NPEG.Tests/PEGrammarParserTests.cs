@@ -23,7 +23,7 @@ namespace NPEG.Tests
 
 
 			var bytes = Encoding.UTF8.GetBytes(" \t         \t\t           \t");
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			root.Accept(visitor);
@@ -40,7 +40,7 @@ namespace NPEG.Tests
 			// notice only matches newlines of linux/win/mac/ 
 
 			var bytes = Encoding.UTF8.GetBytes("\n\n\r\n\r\r");
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -54,14 +54,14 @@ namespace NPEG.Tests
 			AExpression root = WrapInCapturedGroup("Test", RequireEndOfInput(rule));
 
 			var bytes = Encoding.UTF8.GetBytes(@"//this is a single line comment.");
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 
 			bytes = Encoding.UTF8.GetBytes(@"/*this is a multiline comment.*/");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -73,7 +73,7 @@ namespace NPEG.Tests
                         a   multiline 
                         comment.
                     */");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -107,7 +107,7 @@ namespace NPEG.Tests
                         comment.
                     */
             ");
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -121,13 +121,13 @@ namespace NPEG.Tests
 			AExpression root = WrapInCapturedGroup("Test", RequireEndOfInput(rule));
 
 			var bytes = Encoding.UTF8.GetBytes("0x012345679aaabbbcccdddeeeff");
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 			bytes = Encoding.UTF8.GetBytes("x012345679aaabbbcccdddeeeff");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -135,7 +135,7 @@ namespace NPEG.Tests
 
 			// expected to fail
 			bytes = Encoding.UTF8.GetBytes("x012345679ggghhhiiijjjkkklllmmmnnn");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
@@ -149,20 +149,20 @@ namespace NPEG.Tests
 			AExpression root = WrapInCapturedGroup("Test", RequireEndOfInput(rule));
 
 			var bytes = Encoding.UTF8.GetBytes("0b01000101010101010");
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 			bytes = Encoding.UTF8.GetBytes("b01000101010101010");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 			// expected to fail
 			bytes = Encoding.UTF8.GetBytes("0b0103234234");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
@@ -177,7 +177,7 @@ namespace NPEG.Tests
 
 			var input = "variaBle023_name";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -188,20 +188,20 @@ namespace NPEG.Tests
 
 
 			bytes = Encoding.UTF8.GetBytes("_variaBle023_name");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 			bytes = Encoding.UTF8.GetBytes("AAvariaBle023_name");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 			// expected to fail
 			bytes = Encoding.UTF8.GetBytes("2invalidvarname");
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
@@ -216,7 +216,7 @@ namespace NPEG.Tests
 
 			var input = ".";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			root.Accept(visitor);
@@ -234,14 +234,14 @@ namespace NPEG.Tests
 
 			var input = "[a-zA-Z0-9_-]";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 			input = "[^a-zA-Z0-9_-]";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -256,7 +256,7 @@ namespace NPEG.Tests
 
 			var input = @"#0b01010101";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			root.Accept(visitor);
@@ -268,7 +268,7 @@ namespace NPEG.Tests
 
 			input = @"#2563";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -281,7 +281,7 @@ namespace NPEG.Tests
 
 			input = @"#0xffff";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -300,7 +300,7 @@ namespace NPEG.Tests
 
 			var input = @"\k< CapturedLabelVariableName >";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -311,7 +311,7 @@ namespace NPEG.Tests
 
 			input = (@"\k<CapturedLabelVariableName>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -322,7 +322,7 @@ namespace NPEG.Tests
 
 			input = (@"\k< CapturedLabelVariableName[\i] >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -335,7 +335,7 @@ namespace NPEG.Tests
 
 			input = (@"\k< CapturedLabelVariableName   [\i] >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -357,7 +357,7 @@ namespace NPEG.Tests
 
 			var input = (@"FaTal< fatal message without single or double quotes >");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -369,7 +369,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL< 'Fatal with single quotes' >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -380,7 +380,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<'Fatal with single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -391,7 +391,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<'Fatal\'s escaped single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -402,7 +402,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL< ""Fatal with double quotes"" >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -413,7 +413,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<""Fatal with double quotes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -424,7 +424,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<""Fatal message quoteing \""some other message\"" using escapes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -444,7 +444,7 @@ namespace NPEG.Tests
 
 			var input = (@"WarN< warning message without single or double quotes >");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -456,7 +456,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN< 'warning with single quotes' >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -467,7 +467,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<'warning with single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -478,7 +478,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<'warning\'s escaped single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -489,7 +489,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN< ""warning with double quotes"" >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -500,7 +500,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<""warning with double quotes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -511,7 +511,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<""warning message quoteing \""some other message\"" using escapes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -530,7 +530,7 @@ namespace NPEG.Tests
 
 			var input = (@"'this is some captured text'");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -542,7 +542,7 @@ namespace NPEG.Tests
 
 			input = (@"""this is double quoted captured text""");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -561,7 +561,7 @@ namespace NPEG.Tests
 
 			var input = (@"(?<CapturedItemName> . )");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -582,7 +582,7 @@ namespace NPEG.Tests
 
 			var input = (@"(?<CapturedItemName>)");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -594,7 +594,7 @@ namespace NPEG.Tests
 
 			input = (@"(?< CapturedItemName >     )");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -609,7 +609,7 @@ namespace NPEG.Tests
                                                  \rn
                                               >     )";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -631,7 +631,7 @@ namespace NPEG.Tests
                                                  \rsc  // some comment
                                               >     )";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -648,7 +648,7 @@ namespace NPEG.Tests
 
 			input = (@"(?<CapturedItemName\rsc\rn>)");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -672,7 +672,7 @@ namespace NPEG.Tests
 
 			var input = (@". . .");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -692,7 +692,7 @@ namespace NPEG.Tests
                                             . // capture third character
                                            ";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -709,7 +709,7 @@ namespace NPEG.Tests
 
 			input = (@"...");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -733,7 +733,7 @@ namespace NPEG.Tests
 
 			var input = (@".");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -752,7 +752,7 @@ namespace NPEG.Tests
 			// no whitespace
 			var input = (@"./.");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -767,7 +767,7 @@ namespace NPEG.Tests
 			// whitespace
 			input = (@". / .");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -790,7 +790,7 @@ namespace NPEG.Tests
 			// no whitespace
 			var input = (@".../../.../../...");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			root.Accept(visitor);
@@ -822,7 +822,7 @@ namespace NPEG.Tests
                                             ... 
                                            ";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -850,7 +850,7 @@ namespace NPEG.Tests
 
 			var input = (". . .");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -873,14 +873,14 @@ namespace NPEG.Tests
 
 			var input = ("[a-zA-Z0-9_-]");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
 			input = ("[^a-zA-Z0-9_-]");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -895,7 +895,7 @@ namespace NPEG.Tests
 
 			var input = (@"#0b01010101");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -906,7 +906,7 @@ namespace NPEG.Tests
 
 			input = (@"#2563");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -919,7 +919,7 @@ namespace NPEG.Tests
 
 			input = (@"#0xffff");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -938,7 +938,7 @@ namespace NPEG.Tests
 
 			var input = (@"\k< CapturedLabelVariableName >");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -949,7 +949,7 @@ namespace NPEG.Tests
 
 			input = (@"\k<CapturedLabelVariableName>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -960,7 +960,7 @@ namespace NPEG.Tests
 
 			input = (@"\k< CapturedLabelVariableName[\i] >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -973,7 +973,7 @@ namespace NPEG.Tests
 
 			input = (@"\k< CapturedLabelVariableName   [\i] >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -993,7 +993,7 @@ namespace NPEG.Tests
 
 			var input = (@"FaTal< fatal message without single or double quotes >");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1005,7 +1005,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL< 'Fatal with single quotes' >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1016,7 +1016,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<'Fatal with single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1027,7 +1027,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<'Fatal\'s escaped single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1038,7 +1038,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL< ""Fatal with double quotes"" >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1049,7 +1049,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<""Fatal with double quotes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1060,7 +1060,7 @@ namespace NPEG.Tests
 
 			input = (@"FATAL<""Fatal message quoteing \""some other message\"" using escapes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1077,7 +1077,7 @@ namespace NPEG.Tests
 
 			var input = (@"'this is some captured text'");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1089,7 +1089,7 @@ namespace NPEG.Tests
 
 			input = (@"""this is double quoted captured text""");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1107,7 +1107,7 @@ namespace NPEG.Tests
 
 			var input = ("variaBle023_name _variaBle023_name AAvariaBle023_name");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1130,7 +1130,7 @@ namespace NPEG.Tests
 
 			var input = (@"WarN< warning message without single or double quotes >");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1142,7 +1142,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN< 'warning with single quotes' >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1153,7 +1153,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<'warning with single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1164,7 +1164,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<'warning\'s escaped single quotes'>");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1175,7 +1175,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN< ""warning with double quotes"" >");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1186,7 +1186,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<""warning with double quotes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1197,7 +1197,7 @@ namespace NPEG.Tests
 
 			input = (@"WARN<""warning message quoteing \""some other message\"" using escapes"">");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1216,7 +1216,7 @@ namespace NPEG.Tests
 
 			var input = (@".{55,77}");
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1234,7 +1234,7 @@ namespace NPEG.Tests
 
 			input = (@".{ 55 , 77 }");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1252,7 +1252,7 @@ namespace NPEG.Tests
 
 			input = (@".{ , 77 }");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1269,7 +1269,7 @@ namespace NPEG.Tests
 
 			input = (@".{,77}");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1286,7 +1286,7 @@ namespace NPEG.Tests
 
 			input = (@".{ 55 ,   }");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1302,7 +1302,7 @@ namespace NPEG.Tests
 
 			input = (@".{55,}");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1318,7 +1318,7 @@ namespace NPEG.Tests
 
 			input = (@".{ 95687 }");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -1333,7 +1333,7 @@ namespace NPEG.Tests
 
 			input = (@".{95687}");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);

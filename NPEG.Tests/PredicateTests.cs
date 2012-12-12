@@ -33,7 +33,7 @@ namespace NPEG.Tests
 
 			// regex expression: \d+
 			var input = Encoding.UTF8.GetBytes("01234567890123456789");
-			var iterator = new StringInputIterator(input);
+			var iterator = new ByteInputIterator(input);
 			AExpression andPredicate = new OneOrMore(Digit).And();
 			var visitor = new NpegParserVisitor(iterator);
 			andPredicate.Accept(visitor);
@@ -52,7 +52,7 @@ namespace NPEG.Tests
 			// equivalent to: regex '^' '$'
 			// regex expression: ^\d+$
 			var bytes = Encoding.UTF8.GetBytes("0123456abcdefg");
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			AExpression notPredicate = new OneOrMore(Digit).And().Sequence(new NotPredicate(new AnyCharacter()));
 			var visitor = new NpegParserVisitor(iterator);
 			notPredicate.Accept(visitor);

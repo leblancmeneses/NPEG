@@ -37,7 +37,7 @@ namespace NPEG.Tests
 			#endregion
 
 			var input = Encoding.UTF8.GetBytes("((((((123))))))");
-			var visitor = new NpegParserVisitor(new StringInputIterator(input));
+			var visitor = new NpegParserVisitor(new ByteInputIterator(input));
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
@@ -96,7 +96,7 @@ namespace NPEG.Tests
 
 			var input = "(((<<<123>>>)))";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -197,7 +197,7 @@ namespace NPEG.Tests
 
 			var input = @"\k< CapturedLabelVariableName >";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			root.Accept(visitor);
@@ -295,7 +295,7 @@ namespace NPEG.Tests
 			var input = ".{77,55}";
 			var bytes = Encoding.UTF8.GetBytes(input);
 			var visitor = new NpegParserVisitor(
-				new StringInputIterator(bytes)
+				new ByteInputIterator(bytes)
 			);
 			expression.Accept(visitor);
 
@@ -341,7 +341,7 @@ namespace NPEG.Tests
 
 			var input = ".";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			expression.Accept(visitor);
 
@@ -412,7 +412,7 @@ namespace NPEG.Tests
 
 			var input = @"(?<NPEGNode>./.. )";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			expression.Accept(visitor);
 

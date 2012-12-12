@@ -63,7 +63,7 @@ namespace NPEG.Tests
 			var input = "((((12/3)+5-2*(81/9))+1))";
 			var bytes = Encoding.UTF8.GetBytes(input);
 
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			EXPRESSION.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -166,7 +166,7 @@ namespace NPEG.Tests
 			// single variable
 			var input = "A*!B+!A*B";
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -190,7 +190,7 @@ namespace NPEG.Tests
 			// quoted variable
 			input = "'aA'*!'bB'+!'aA'*'bB'";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -215,7 +215,7 @@ namespace NPEG.Tests
 			// expression + gate + variable .star()
 			input = "A*!B*C+!A*B*C";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -225,7 +225,7 @@ namespace NPEG.Tests
 			// parethesis
 			input = "((A)*(!B)+(!A)*(B))";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -234,7 +234,7 @@ namespace NPEG.Tests
 
 			input = "((A)*!(B)+!(A)*(B))";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -243,7 +243,7 @@ namespace NPEG.Tests
 
 			input = "((A)*(!(B))+(!(A))*(B))";
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -252,7 +252,7 @@ namespace NPEG.Tests
 
 			input = ("(!X*Y*!Z)");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -261,7 +261,7 @@ namespace NPEG.Tests
 
 			input = ("(!X*Y*!Z)+(!X*Y*Z)");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -270,7 +270,7 @@ namespace NPEG.Tests
 
 			input = ("(X*Z)");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -279,7 +279,7 @@ namespace NPEG.Tests
 
 			input = ("(!X*Y*!Z)+(!X*Y*Z)+(X*Z)");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -288,7 +288,7 @@ namespace NPEG.Tests
 
 			input = ("((((!X*Y*Z)+(!X*Y*!Z)+(X*Z))))");
 			bytes = Encoding.UTF8.GetBytes(input);
-			iterator = new StringInputIterator(bytes);
+			iterator = new ByteInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Root.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -329,7 +329,7 @@ namespace NPEG.Tests
 			// Test Manual Composite
 
 			var bytes = Encoding.UTF8.GetBytes(input);
-			var iterator = new StringInputIterator(bytes);
+			var iterator = new ByteInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			PhoneNumber.Accept(visitor);
 

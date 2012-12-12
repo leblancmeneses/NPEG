@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Text;
 using NPEG.ApplicationExceptions;
 
 namespace NPEG
 {
-	public class StringInputIterator : IInputIterator
+	public class ByteInputIterator : IInputIterator
 	{
 		private readonly Byte[] _input;
 
-		public StringInputIterator(Byte[] input)
+		public ByteInputIterator(Byte[] input)
 			: base(input.Length)
 		{
 			_input = input;
