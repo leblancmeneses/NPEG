@@ -12,6 +12,7 @@
 
 #endregion
 
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
@@ -31,12 +32,13 @@ namespace NPEG.Tests
 			AExpression Digit = new CharacterClass {ClassExpression = "[0-9]"};
 
 			// regex expression: \d+
-			var input = new StringInputIterator("01234567890123456789");
+			var input = Encoding.UTF8.GetBytes("01234567890123456789");
+			var iterator = new StringInputIterator(input);
 			AExpression andPredicate = new OneOrMore(Digit).And();
-			var visitor = new NpegParserVisitor(input);
+			var visitor = new NpegParserVisitor(iterator);
 			andPredicate.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
-			Assert.IsTrue(input.Index == 0);
+			Assert.IsTrue(iterator.Index == 0);
 		}
 
 
@@ -49,12 +51,13 @@ namespace NPEG.Tests
 
 			// equivalent to: regex '^' '$'
 			// regex expression: ^\d+$
-			var input = new StringInputIterator("0123456abcdefg");
+			var bytes = Encoding.UTF8.GetBytes("0123456abcdefg");
+			var iterator = new StringInputIterator(bytes);
 			AExpression notPredicate = new OneOrMore(Digit).And().Sequence(new NotPredicate(new AnyCharacter()));
-			var visitor = new NpegParserVisitor(input);
+			var visitor = new NpegParserVisitor(iterator);
 			notPredicate.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch); // should fail
-			Assert.IsTrue(input.Index == 0);
+			Assert.IsTrue(iterator.Index == 0);
 		}
 	}
 }

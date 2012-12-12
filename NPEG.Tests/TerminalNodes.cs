@@ -15,27 +15,33 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void Terminal_Any()
 		{
-			var input = new StringInputIterator("ijk");
+			var input = "ijk";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			AExpression any = new Sequence(new AnyCharacter(), new AnyCharacter());
-			var visitor = new NpegParserVisitor(input);
+			var visitor = new NpegParserVisitor(iterator);
 			any.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
-			Assert.IsTrue(input.Index == 2,
+			Assert.IsTrue(iterator.Index == 2,
 			              "Expected two characters to be consumed and Iterator updated by 2.  0, 1 .. points to 2");
 
-			input = new StringInputIterator("ij");
-			visitor = new NpegParserVisitor(input);
+			input = "ij";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
+			visitor = new NpegParserVisitor(iterator);
 			any.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
-			Assert.IsTrue(input.Index == 2,
+			Assert.IsTrue(iterator.Index == 2,
 			              "Expected two characters to be consumed and Iterator updated by 2.  0, 1 .. points to 2");
 
-			input = new StringInputIterator("");
+			input = "";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			any = new AnyCharacter();
-			visitor = new NpegParserVisitor(input);
+			visitor = new NpegParserVisitor(iterator);
 			any.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
-			Assert.IsTrue(input.Index == 0, "Expected no characters to be consumed and index stay at zero.");
+			Assert.IsTrue(iterator.Index == 0, "Expected no characters to be consumed and index stay at zero.");
 
 			var number = new Sequence(
 				new OneOrMore(new CharacterClass {ClassExpression = "[0-9]"}),
@@ -43,8 +49,10 @@ namespace NPEG.Tests
 					new AnyCharacter()
 					)
 				);
-			input = new StringInputIterator("012345.");
-			visitor = new NpegParserVisitor(input);
+			input = "012345.";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
+			visitor = new NpegParserVisitor(iterator);
 			number.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
 		}
@@ -55,11 +63,17 @@ namespace NPEG.Tests
 		{
 			AExpression Digit = new CharacterClass {ClassExpression = "[0-9]"};
 
-			var visitor = new NpegParserVisitor(new StringInputIterator("0"));
+			var input = "0";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
+			var visitor = new NpegParserVisitor(iterator);
 			Digit.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 
-			visitor = new NpegParserVisitor(new StringInputIterator("0123456789"));
+			input = "0123456789";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
+			visitor = new NpegParserVisitor(iterator);
 			new OneOrMore(Digit).Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 		}
@@ -69,13 +83,20 @@ namespace NPEG.Tests
 		{
 			var Mixed = new Literal {MatchText = "Hello World"};
 
-			var visitor = new NpegParserVisitor(new StringInputIterator("hello world"));
+			var input = "hello world";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
+			var visitor = new NpegParserVisitor(iterator);
 			Mixed.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
 
 			// Not case sensitve
 			Mixed.IsCaseSensitive = false;
-			visitor = new NpegParserVisitor(new StringInputIterator("hello world"));
+
+			input = "hello world";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
+			visitor = new NpegParserVisitor(iterator);
 			Mixed.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 		}
@@ -86,12 +107,13 @@ namespace NPEG.Tests
 		{
 			Assert.IsTrue((Byte) 'a' == 97);
 			Assert.IsTrue((Byte) 'a' == 0x61);
-
-			var iterator = new StringInputIterator("a");
+			var input = "a";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			var Hexadecimal = new CapturingGroup("Hexadecimal",
-			                                     new CodePoint {Match = "#x61"}
-				);
+			    new CodePoint {Match = "#x61"}
+			);
 			Hexadecimal.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
@@ -100,20 +122,22 @@ namespace NPEG.Tests
 
 
 			// Byte boundary tests
-			iterator = new StringInputIterator("\na");
+			input = "\na";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
-			                                 new CodePoint {Match = "#xA61"}
-				);
+			    new CodePoint {Match = "#xA61"}
+			);
 			Hexadecimal.Accept(visitor);
-			Assert.IsTrue(visitor.IsMatch,
-			              "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be 0A = \n and letter a.");
+			Assert.IsTrue(visitor.IsMatch, "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be 0A = \n and letter a.");
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
 			Assert.IsTrue(node.Token.Value(iterator) == "\na");
 
-
-			iterator = new StringInputIterator("\0a");
+			input = "\0a";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new CodePoint {Match = "#x061"}
@@ -126,7 +150,8 @@ namespace NPEG.Tests
 
 
 			// Don't care tests
-			iterator = new StringInputIterator(Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71, 0x03, 0x00}));
+			bytes = new byte[] {0x11, 0x01, 0x71, 0x03, 0x00};
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new OneOrMore(new CodePoint {Match = "#xX1"}) // #bXXXX0001
@@ -138,8 +163,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Token.Value(iterator) == Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71}));
 
 
-			var input = Encoding.ASCII.GetString(new byte[] { 0x10 });
-			iterator = new StringInputIterator(input);
+			iterator = new StringInputIterator(new byte[] { 0x10 });
 			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new CodePoint {Match = "#xX1"}
@@ -150,7 +174,7 @@ namespace NPEG.Tests
 
 			// cannot consume character test
 			input = string.Empty;
-			iterator = new StringInputIterator(input);
+			iterator = new StringInputIterator(Encoding.UTF8.GetBytes(input));
 			visitor = new NpegParserVisitor(iterator);
 			Hexadecimal = new CapturingGroup("Hexadecimal",
 			                                 new CodePoint {Match = "#xX1"}
@@ -167,7 +191,8 @@ namespace NPEG.Tests
 			Assert.IsTrue((Byte) 'a' == 0x61);
 
 			var input = "a";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			var binary = new CapturingGroup("Binary",
 			                                new CodePoint {Match = "#b1100001"}
@@ -180,7 +205,8 @@ namespace NPEG.Tests
 
 
 			input = "aa";
-			iterator = new StringInputIterator(input);
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary",
 			                            new CodePoint {Match = "#b0110000101100001"}
@@ -194,7 +220,8 @@ namespace NPEG.Tests
 
 			// Byte boundary tests
 			input = "\0a";
-			iterator = new StringInputIterator(input);
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary",
 			                            new CodePoint {Match = "#b00001100001"}
@@ -207,7 +234,8 @@ namespace NPEG.Tests
 
 
 			input = "\0a";
-			iterator = new StringInputIterator(input);
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary", new Sequence(new CodePoint {Match = "#b000"}, new CodePoint {Match = "#b01100001"}));
 			binary.Accept(visitor);
@@ -219,12 +247,13 @@ namespace NPEG.Tests
 
 
 			// Don't care tests
-			input = Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71, 0x03, 0x00});
-			iterator = new StringInputIterator(input);
+			input = Encoding.ASCII.GetString(new byte[] { 0x11, 0x01, 0x71, 0x03, 0x00 });
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary",
-			                            new OneOrMore(new CodePoint {Match = "#bXXXX0001"}) // #bXXXX0001
-				);
+			         new OneOrMore(new CodePoint {Match = "#bXXXX0001"}) // #bXXXX0001
+			);
 			binary.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			ast = visitor.AST;
@@ -233,7 +262,8 @@ namespace NPEG.Tests
 
 
 			input = Encoding.ASCII.GetString(new byte[] { 0x10 });
-			iterator = new StringInputIterator(input);
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary", new CodePoint {Match = "#bXXXX0001"});
 			binary.Accept(visitor);
@@ -242,7 +272,8 @@ namespace NPEG.Tests
 
 			// cannot consume character test
 			input = "";
-			iterator = new StringInputIterator(input);
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			binary = new CapturingGroup("Binary", new CodePoint {Match = "#bXXXX0001"});
 			binary.Accept(visitor);
@@ -253,7 +284,9 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void Terminal_CodePoint_Decimal()
 		{
-			var iterator = new StringInputIterator("&");
+			var input = "&";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			var codepoint = new CapturingGroup("CodePoint",
 			                                   new CodePoint {Match = "#38"}
@@ -306,7 +339,8 @@ namespace NPEG.Tests
 			#endregion
 
 			String input = "1234567890";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			MinTrue0.Accept(visitor);
@@ -414,7 +448,8 @@ namespace NPEG.Tests
 			#endregion
 
 			String input = "<h1>hello</h1><h2>hello</h2>";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			Expression.Accept(visitor);
@@ -488,7 +523,8 @@ namespace NPEG.Tests
 				);
 
 
-			var iterator = new StringInputIterator(input.Trim());
+			var bytes = Encoding.UTF8.GetBytes(input.Trim());
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			Expression.Accept(visitor);

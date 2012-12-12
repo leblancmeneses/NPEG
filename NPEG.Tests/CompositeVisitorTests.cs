@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.Extensions;
 using NPEG.NonTerminals;
@@ -35,8 +36,7 @@ namespace NPEG.Tests
 
 			#endregion
 
-			String input = "((((((123))))))";
-
+			var input = Encoding.UTF8.GetBytes("((((((123))))))");
 			var visitor = new NpegParserVisitor(new StringInputIterator(input));
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -53,13 +53,10 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children.Count == 1);
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Token.Name == "ENCLOSEDDIGITS");
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Children.Count == 1);
-			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Token.Name ==
-			              "ENCLOSEDDIGITS");
+			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Token.Name == "ENCLOSEDDIGITS");
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Children.Count == 1);
-			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Token.Name ==
-			              "DIGITS");
-			Assert.IsTrue(
-				node.Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Children.Count == 0);
+			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Token.Name == "DIGITS");
+			Assert.IsTrue(node.Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Children[0].Children.Count == 0);
 		}
 
 
@@ -97,8 +94,9 @@ namespace NPEG.Tests
 
 			#endregion
 
-			String input = "(((<<<123>>>)))";
-			var iterator = new StringInputIterator(input);
+			var input = "(((<<<123>>>)))";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -198,7 +196,8 @@ namespace NPEG.Tests
 				);
 
 			var input = @"\k< CapturedLabelVariableName >";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			root.Accept(visitor);
@@ -293,9 +292,11 @@ namespace NPEG.Tests
 			                                    	)
 				);
 
+			var input = ".{77,55}";
+			var bytes = Encoding.UTF8.GetBytes(input);
 			var visitor = new NpegParserVisitor(
-				new StringInputIterator(".{77,55}")
-				);
+				new StringInputIterator(bytes)
+			);
 			expression.Accept(visitor);
 
 			Assert.IsTrue(visitor.IsMatch);
@@ -338,7 +339,9 @@ namespace NPEG.Tests
 			                                    	.Plus()
 				);
 
-			var iterator = new StringInputIterator(".");
+			var input = ".";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			expression.Accept(visitor);
 
@@ -407,9 +410,10 @@ namespace NPEG.Tests
 			                                                        new PrioritizedChoice(prioritizedchoice, sequence)));
 
 
-			var visitor = new NpegParserVisitor(
-				new StringInputIterator(@"(?<NPEGNode>./.. )")
-				);
+			var input = @"(?<NPEGNode>./.. )";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
+			var visitor = new NpegParserVisitor(iterator);
 			expression.Accept(visitor);
 
 			Assert.IsTrue(visitor.IsMatch);

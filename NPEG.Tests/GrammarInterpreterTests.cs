@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.ApplicationExceptions;
 using NPEG.Extensions;
@@ -14,16 +15,19 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void PEGrammar_Literal()
 		{
-			string input = "hello world";
 			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): 'Hello World';");
 
-			var iterator = new StringInputIterator(input);
+			var input = "hello world";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			caseSensitive.Accept(visitor);
 			Assert.IsFalse(visitor.IsMatch);
 
 			AExpression notCaseSensitive = PEGrammar.Load(@"(?<Expression>): 'Hello World'\i;");
-			iterator = new StringInputIterator(input);
+			input = "hello world";
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			notCaseSensitive.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -36,7 +40,8 @@ namespace NPEG.Tests
 			// escape back slash inside double quotes
 			input = @"\";
 			AExpression escape = PEGrammar.Load(@"(?<Literal>): ""\\"";");
-			iterator = new StringInputIterator(input);
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			escape.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -44,8 +49,10 @@ namespace NPEG.Tests
 
 			input = @"\";
 			escape = PEGrammar.Load(@"(?<Literal>): '\\';");
-			iterator = new StringInputIterator(input);
-			visitor = new NpegParserVisitor(iterator); escape.Accept(visitor);
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
+			visitor = new NpegParserVisitor(iterator);
+			escape.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			Assert.IsTrue(@"\" == visitor.AST.Token.Value(iterator));
 		}
@@ -56,10 +63,11 @@ namespace NPEG.Tests
 		[ExpectedException(typeof (InfiniteLoopDetectedException))]
 		public void PEGrammar_ZeroOrMore_InfiniteLoopTest()
 		{
-			string input = "";
 			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): (.*)*;");
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(input));
+			var input = "";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var visitor = new NpegParserVisitor(new StringInputIterator(bytes));
 			caseSensitive.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 		}
@@ -72,7 +80,8 @@ namespace NPEG.Tests
 			string input = "";
 			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): (.*){0,};");
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(input));
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var visitor = new NpegParserVisitor(new StringInputIterator(bytes));
 			caseSensitive.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 		}
@@ -85,7 +94,8 @@ namespace NPEG.Tests
 			string input = "";
 			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): (.*)+;");
 
-			var visitor = new NpegParserVisitor(new StringInputIterator(input));
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var visitor = new NpegParserVisitor(new StringInputIterator(bytes));
 			caseSensitive.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 		}
@@ -107,16 +117,17 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void PEGrammar_LimitingRepetition()
 		{
-			String grammar =
+			var grammar =
 				@"
                                 (?<ThreeDigitCode>): [0-9]{3,3};
                                 (?<PhoneNumber>): ThreeDigitCode '-' ThreeDigitCode '-' (?<FourDigitCode>[0-9]{4});
                               ";
 
-			AExpression ROOT = PEGrammar.Load(grammar);
+			var ROOT = PEGrammar.Load(grammar);
 
-			String input = "123-456-7890";
-			var iterator = new StringInputIterator(input);
+			var input = "123-456-7890";
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -136,9 +147,9 @@ namespace NPEG.Tests
 		[TestMethod]
 		public void PEGrammar_PhoneNumber()
 		{
-			String input = "123-456-7890";
+			var input = "123-456-7890";
 
-			AExpression PhoneNumber = PEGrammar.Load(
+			var PhoneNumber = PEGrammar.Load(
 				@"
                         (?<ThreeDigitCode>): [0-9] [0-9] [0-9];
                         (?<FourDigitCode>): [0-9] [0-9] [0-9] [0-9];
@@ -146,7 +157,8 @@ namespace NPEG.Tests
                     "
 					.Trim());
 
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			PhoneNumber.Accept(visitor);
 
@@ -166,6 +178,7 @@ namespace NPEG.Tests
 		public void PEGrammar_RecursiveParentheses()
 		{
 			var input = "((((((123))))))";
+			var bytes = Encoding.UTF8.GetBytes(input);
 
 			AExpression ROOT = PEGrammar.Load(
 				@"
@@ -176,7 +189,7 @@ namespace NPEG.Tests
                     "
 					.Trim());
 
-			var iterator = new StringInputIterator(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -197,7 +210,8 @@ namespace NPEG.Tests
 				);
 
 			String input = "((((12/3)+5-2*(81/9))+1))";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			ROOT.Accept(visitor);
@@ -219,7 +233,8 @@ namespace NPEG.Tests
 				);
 
 			String input = " ";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			ROOT.Accept(visitor);
@@ -237,7 +252,8 @@ namespace NPEG.Tests
 				);
 
 			String input = " ";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			ROOT.Accept(visitor);
@@ -256,7 +272,8 @@ namespace NPEG.Tests
 				);
 
 			String input = " ";
-			var iterator = new StringInputIterator(input);
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 
 			ROOT.Accept(visitor);
@@ -282,7 +299,9 @@ namespace NPEG.Tests
 			AExpression ROOT = PEGrammar.Load(grammar);
 
 			// single variable
-			var iterator = new StringInputIterator("A*!B+!A*B");
+			var input = ("A*!B+!A*B");
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var iterator = new StringInputIterator(bytes);
 			var visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -291,7 +310,9 @@ namespace NPEG.Tests
 
 
 			// quoted variable
-			iterator = new StringInputIterator("'aA'*!'bB'+!'aA'*'bB'");
+			input = ("'aA'*!'bB'+!'aA'*'bB'");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -299,7 +320,9 @@ namespace NPEG.Tests
 #warning             Assert.IsTrue(node.Token.Value == input);
 
 			// expression + gate + variable .star()
-			iterator = new StringInputIterator("A*!B*C+!A*B*C");
+			input = ("A*!B*C+!A*B*C");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
@@ -307,56 +330,72 @@ namespace NPEG.Tests
 #warning             Assert.IsTrue(node.Token.Value == input);
 
 			// parethesis
-			iterator = new StringInputIterator("((A)*(!B)+(!A)*(B))");
+			input = ("((A)*(!B)+(!A)*(B))");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 #warning            Assert.IsTrue(node.Token.Value == input);
 
-			iterator = new StringInputIterator("((A)*!(B)+!(A)*(B))");
+			input = ("((A)*!(B)+!(A)*(B))");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 #warning            Assert.IsTrue(node.Token.Value == input);
 
-			iterator = new StringInputIterator("((A)*(!(B))+(!(A))*(B))");
+			input = ("((A)*(!(B))+(!(A))*(B))");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 #warning            Assert.IsTrue(node.Token.Value == input);
 
-			iterator = new StringInputIterator("(!X*Y*!Z)");
+			input = ("(!X*Y*!Z)");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 #warning             Assert.IsTrue(node.Token.Value == input);
 
-			iterator = new StringInputIterator("(!X*Y*!Z)+(!X*Y*Z)");
+			input = ("(!X*Y*!Z)+(!X*Y*Z)");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 #warning             Assert.IsTrue(node.Token.Value == input);
 
-			iterator = new StringInputIterator("(X*Z)");
+			input = ("(X*Z)");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 #warning             Assert.IsTrue(node.Token.Value == input);
 
-			iterator = new StringInputIterator("(!X*Y*!Z)+(!X*Y*Z)+(X*Z)");
+			input = ("(!X*Y*!Z)+(!X*Y*Z)+(X*Z)");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 #warning            Assert.IsTrue(node.Token.Value == input);
 
-			iterator = new StringInputIterator("((((!X*Y*Z)+(!X*Y*!Z)+(X*Z))))");
+			input = ("((((!X*Y*Z)+(!X*Y*!Z)+(X*Z))))");
+			bytes = Encoding.UTF8.GetBytes(input);
+			iterator = new StringInputIterator(bytes);
 			visitor = new NpegParserVisitor(iterator);
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);

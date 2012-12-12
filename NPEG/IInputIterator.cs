@@ -4,7 +4,7 @@ namespace NPEG
 {
 	public abstract class IInputIterator
 	{
-		public IInputIterator(Int32 length)
+		protected IInputIterator(Int32 length)
 		{
 			Index = 0;
 			Length = length;
