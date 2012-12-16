@@ -1,10 +1,14 @@
 #NPEG - .NET Parsing Expression Grammar.  
 
-*	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/JavaScript. http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-language-workbench
-*	The framework can read and write it's own DSL. http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-dsl-documentation
+*	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/JavaScript. [Tool Here](http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-language-workbench)
+*	The framework can read and write it's own DSL. [DSL Documentation](http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-dsl-documentation). 
 
 The inline DSL is only supported in C#.  All other languages must use the DSL inside the language workbench to export the parse tree in your target language. 
 All offline versions will be faster so we provide an offline C# version also.  You can grab dependencies for your target language here: https://github.com/leblancmeneses/NPEG/tree/master/Languages
+
+##How to get started
+Watch this [pair programming session as Leblanc](http://www.robusthaven.com/blog/parsing-expression-grammar/dsl-pair-programming-with-leblanc) writes a math expression solver.
+
 
 
 ##Nuget Packages

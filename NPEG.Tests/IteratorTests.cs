@@ -39,7 +39,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(iterator.Current() == '0');
 			Assert.IsTrue(iterator.Next() == '1');
 			Assert.IsTrue(iterator.Previous() == '0');
-			Assert.IsTrue(Encoding.UTF8.GetBytes(input).SequenceEqual(iterator.Text(0, 19)), "Text unable to return complete input.");
+			Assert.IsTrue(bytes.SequenceEqual(iterator.Text(0, 19)), "Text unable to return complete input.");
 		}
 
 		[TestMethod]
