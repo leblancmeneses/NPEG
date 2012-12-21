@@ -12,13 +12,13 @@ Watch this [pair programming session as Leblanc](http://www.robusthaven.com/blog
 
 
 ##Nuget Packages
-Offline version which requires exporting the parse tree using the language workbench.
+[Offline version](http://nuget.org/packages/RobustHaven.Text.Npeg) which requires exporting the parse tree using the language workbench.
 
 <code>
 Install-Package RobustHaven.Text.Npeg
 </code>
 
-Online version that allows building the parse tree from a string using the NPEG DSL.
+[Online version](https://github.com/leblancmeneses/NPEG) that allows building the parse tree from a string using the [NPEG DSL](http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-dsl-documentation).
 
 <code>
 Install-Package NPEG 
