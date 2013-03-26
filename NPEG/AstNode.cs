@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace NPEG
 {
 	[DataContract]
-	[DebuggerDisplay("AstNode: {Token.Name}, Children {Children.Count}")]
+	[DebuggerDisplay("AstNode: {(Token == null)? string.Empty:Token.Name}, Children {Children.Count}")]
 	public class AstNode
 	{
 		public AstNode()

@@ -143,6 +143,45 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[2].Token.Value(iterator) == "7890");
 		}
 
+		[TestMethod]
+		public void PEGrammar_LimitingRepetition_VariableExpression()
+		{
+			var grammar =
+				@"
+					(?<ESC_AMP_Y>): . . . (?<C1>.) (?<C2>.) 
+					(
+						((?<X> .) (?<D> .{3})) 
+					){(\k<C2> - \k<C1>)+1};
+
+             ";
+
+			var ROOT = PEGrammar.Load(grammar);
+
+								  //.     .      .    C1    C2    X     D     D      D
+			var bytes = new byte[]{0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00};
+			var iterator = new ByteInputIterator(bytes);
+			var visitor = new NpegParserVisitor(iterator);
+			ROOT.Accept(visitor);
+			Assert.IsTrue(visitor.IsMatch);
+			AstNode node = visitor.AST;
+			Assert.IsTrue(node.Token.Name == "ESC_AMP_Y");
+			Assert.IsTrue(node.Token.End == bytes.Length - 1); // zero index
+
+								//.     .      .    C1    C2  
+			bytes = new byte[] { 0x00, 0x00, 0x00, 0x01, 0x02, 
+				0x00, 0x00, 0x00, 0x00,  //X     D     D      D
+				0x00, 0x00, 0x00, 0x00,  //X     D     D      D
+				0x00
+			};
+			iterator = new ByteInputIterator(bytes);
+			visitor = new NpegParserVisitor(iterator);
+			ROOT.Accept(visitor);
+			Assert.IsTrue(visitor.IsMatch);
+			node = visitor.AST;
+
+			Assert.IsTrue(node.Token.Name == "ESC_AMP_Y");
+			Assert.IsTrue(node.Token.End == bytes.Length - 2); // zero index - expect additional character to not be consumed
+		}
 
 		[TestMethod]
 		public void PEGrammar_PhoneNumber()

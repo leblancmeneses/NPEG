@@ -116,12 +116,9 @@ namespace NPEG.GrammarInterpreter.AstNodes
 						{
 							var captureStatement = new CapturingGroup(statement.Name, expressionStack.Pop());
 							if (
-								Children[0].Children[0].Children[0].Children.Where(
-									child => child.Token.Name == "OptionalFlags").Count() > 0
+								statement.Children[0].Children[0].Children.Any(child => child.Token.Name == "OptionalFlags")
 								&&
-								Children[0].Children[0].Children[0].Children.Where(
-									child => child.Token.Name == "OptionalFlags").First().Children.Where(
-										child => child.Token.Name == "ReplaceBySingleChild").Count() > 0
+								statement.Children[0].Children[0].Children[1].Children.Any(child => child.Token.Name == "ReplaceBySingleChild")
 								)
 							{
 								captureStatement.DoReplaceBySingleChildNode = true; // default is false
@@ -242,6 +239,10 @@ namespace NPEG.GrammarInterpreter.AstNodes
 										expressionStack.Push(new LimitingRepetition(expressionStack.Pop())
 										                     	{Min = exactcount, Max = exactcount});
 										break;
+									case "VariableLength":
+										var variableLengthExpression = node.Children[0].Children[1].Token.Value(_inputIterator);
+										expressionStack.Push(new LimitingRepetition(expressionStack.Pop()) { VariableLengthExpression = variableLengthExpression });
+										break;
 								}
 								break;
 							default:
@@ -253,17 +254,13 @@ namespace NPEG.GrammarInterpreter.AstNodes
 					case "CapturingGroup":
 						var capture = new CapturingGroup(node.Children[0].Token.Value(_inputIterator), expressionStack.Pop());
 
-						if (node.Children.Where(child => child.Token.Name == "OptionalFlags").Count() > 0)
+						if (node.Children.Any(child => child.Token.Name == "OptionalFlags"))
 						{
-							if (
-								node.Children.Where(child => child.Token.Name == "OptionalFlags").First().Children.Where
-									(child => child.Token.Name == "ReplaceBySingleChild").Count() > 0)
+							if (node.Children[1].Children.Any(child => child.Token.Name == "ReplaceBySingleChild"))
 							{
 								capture.DoReplaceBySingleChildNode = true; // default is false
 							}
-							if (
-								node.Children.Where(child => child.Token.Name == "OptionalFlags").First().Children.Where
-									(child => child.Token.Name == "ReplacementNode").Count() > 0)
+							if (node.Children[1].Children.Any(child => child.Token.Name == "ReplacementNode"))
 							{
 								capture.DoCreateCustomAstNode = true; // default is false
 							}

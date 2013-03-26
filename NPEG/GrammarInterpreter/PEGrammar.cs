@@ -509,6 +509,98 @@ namespace NPEG.GrammarInterpreter
 
 		private static AExpression mSuffix()
 		{
+			// MathExpression
+			var variable = new CapturingGroup("VARIABLE",
+								new Sequence(
+									new Literal() { IsCaseSensitive = false, MatchText = @"\k<" }
+									, 
+									new ZeroOrMore(mSpace())
+								)
+								.Sequence(
+									new CapturingGroup("NAME", 
+										new Sequence(
+											new CharacterClass { ClassExpression = "[a-zA-Z]" }
+											,
+											new ZeroOrMore(
+												new CharacterClass { ClassExpression = "[a-zA-Z0-9]" }
+											)
+										)
+									)
+								)
+								.Sequence(
+									new ZeroOrMore(mSpace())
+								)
+								.Sequence(
+									new Literal() { IsCaseSensitive = false, MatchText = @">" }
+								)
+						);
+
+			var digit = new CapturingGroup("DIGIT",
+							new Sequence(
+								new OneOrMore(new CharacterClass {ClassExpression = "[0-9]"})
+								,
+								new Sequence(new Literal(){MatchText = "."}, new OneOrMore(new CharacterClass {ClassExpression = "[0-9]"})).Optional()
+							)
+						);
+
+			var value = new PrioritizedChoice(
+							variable,
+							digit
+						)
+						.Or(
+							new Sequence(
+								new Literal { MatchText = "(" },
+								new ZeroOrMore(mSpace())
+							)
+							.Sequence(new RecursionCall("VariableLengthExpressionFunction"))
+							.Sequence(new ZeroOrMore(mSpace()))
+							.Sequence(new Literal { MatchText = ")" })
+						);
+
+
+			var product = new CapturingGroup("PRODUCT",
+								new Sequence(
+									new Sequence(value, new ZeroOrMore(mSpace()))
+									,
+									new Sequence(
+										new CapturingGroup("SYMBOL",
+												new PrioritizedChoice(
+													new Literal { MatchText = "*" },
+													new Literal { MatchText = "/" }
+												)
+										),
+										new Sequence(new ZeroOrMore(mSpace()), value)
+									).Star()
+								)
+							);
+
+			var sum = new CapturingGroup("SUM",
+						new Sequence(
+							new Sequence(product, new ZeroOrMore(mSpace()))
+							,
+							new Sequence(
+								new CapturingGroup("SYMBOL",
+										new PrioritizedChoice(
+											new Literal { MatchText = "+" },
+											new Literal { MatchText = "-" }
+										)
+								),
+								new Sequence(new ZeroOrMore(mSpace()), product)
+							).Star()
+						)
+					);
+
+			AExpression variableLengthExpression = new RecursionCreate("VariableLengthExpressionFunction", 
+				new CapturingGroup("VariableLength", 
+					new Sequence(
+						new ZeroOrMore(mSpace()), sum)
+						.Sequence(
+						new ZeroOrMore(mSpace())
+						)
+					)
+				);
+
+
 			return new CapturingGroup("Suffix",
 			                          new PrioritizedChoice(
 			                          	new CapturingGroup("ZeroOrMore",
@@ -615,7 +707,12 @@ namespace NPEG.GrammarInterpreter
 			                          		                   					new CapturingGroup("EXACT",
 			                          		                   					                   new OneOrMore(new CharacterClass
 			                          		                   					                                 	{ClassExpression = "[0-9]"}))
-			                          		                   				)
+																			)
+																			.Or
+																			(
+																				//{(\k<C2> - \k<C1>)+1}  variable-length protocol support with backreferencing
+																				variableLengthExpression
+																			)
 			                          		                   			)
 			                          		                   			.Sequence(
 			                          		                   				new ZeroOrMore(mSpace())

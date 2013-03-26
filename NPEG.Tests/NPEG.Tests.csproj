@@ -78,7 +78,7 @@
     <Compile Include="StreamInputIteratorTests.cs" />
     <Compile Include="PEGrammarParserTests.cs" />
     <Compile Include="GrammarInterpreterTests.cs" />
-    <Compile Include="IteratorTests.cs" />
+    <Compile Include="ByteInputIteratorTests.cs" />
     <Compile Include="PracticalExampleTests.cs" />
     <Compile Include="PredicateTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

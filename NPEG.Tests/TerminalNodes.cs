@@ -305,6 +305,7 @@ namespace NPEG.Tests
 			// min
 			// min max
 			// max
+			// math expression using back referencing {(\k<C2> - \k<C1>)+1} - variable length protocols
 
 			AExpression Digits = new CharacterClass {ClassExpression = "[0-9]"};
 
