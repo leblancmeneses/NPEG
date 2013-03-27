@@ -70,7 +70,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 
 
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 		}
 
 
@@ -173,19 +173,19 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "BOOLEANEQUATION");
 			Assert.IsTrue(node.Children[0].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "A");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "A");
 			Assert.IsTrue(node.Children[1].Token.Name == "GATE");
-			Assert.IsTrue(node.Children[1].Token.Value(iterator) == "*");
+			Assert.IsTrue(node.Children[1].Token.ValueAsString(iterator) == "*");
 			Assert.IsTrue(node.Children[2].Token.Name == "INVERTOR");
 			Assert.IsTrue(node.Children[2].Children[0].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[2].Children[0].Token.Value(iterator) == "B");
+			Assert.IsTrue(node.Children[2].Children[0].Token.ValueAsString(iterator) == "B");
 			Assert.IsTrue(node.Children[3].Token.Name == "GATE");
 			Assert.IsTrue(node.Children[4].Token.Name == "INVERTOR");
 			Assert.IsTrue(node.Children[4].Children[0].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[4].Children[0].Token.Value(iterator) == "A");
+			Assert.IsTrue(node.Children[4].Children[0].Token.ValueAsString(iterator) == "A");
 			Assert.IsTrue(node.Children[5].Token.Name == "GATE");
 			Assert.IsTrue(node.Children[6].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[6].Token.Value(iterator) == "B");
+			Assert.IsTrue(node.Children[6].Token.ValueAsString(iterator) == "B");
 
 			// quoted variable
 			input = "'aA'*!'bB'+!'aA'*'bB'";
@@ -197,19 +197,19 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "BOOLEANEQUATION");
 			Assert.IsTrue(node.Children[0].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "aA");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "aA");
 			Assert.IsTrue(node.Children[1].Token.Name == "GATE");
-			Assert.IsTrue(node.Children[1].Token.Value(iterator) == "*");
+			Assert.IsTrue(node.Children[1].Token.ValueAsString(iterator) == "*");
 			Assert.IsTrue(node.Children[2].Token.Name == "INVERTOR");
 			Assert.IsTrue(node.Children[2].Children[0].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[2].Children[0].Token.Value(iterator) == "bB");
+			Assert.IsTrue(node.Children[2].Children[0].Token.ValueAsString(iterator) == "bB");
 			Assert.IsTrue(node.Children[3].Token.Name == "GATE");
 			Assert.IsTrue(node.Children[4].Token.Name == "INVERTOR");
 			Assert.IsTrue(node.Children[4].Children[0].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[4].Children[0].Token.Value(iterator) == "aA");
+			Assert.IsTrue(node.Children[4].Children[0].Token.ValueAsString(iterator) == "aA");
 			Assert.IsTrue(node.Children[5].Token.Name == "GATE");
 			Assert.IsTrue(node.Children[6].Token.Name == "VARIABLE");
-			Assert.IsTrue(node.Children[6].Token.Value(iterator) == "bB");
+			Assert.IsTrue(node.Children[6].Token.ValueAsString(iterator) == "bB");
 
 
 			// expression + gate + variable .star()
@@ -336,13 +336,13 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "PhoneNumber");
-			Assert.IsTrue(node.Token.Value(iterator) == "123-456-7890");
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == "123-456-7890");
 			Assert.IsTrue(node.Children[0].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "123");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "123");
 			Assert.IsTrue(node.Children[1].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[1].Token.Value(iterator) == "456");
+			Assert.IsTrue(node.Children[1].Token.ValueAsString(iterator) == "456");
 			Assert.IsTrue(node.Children[2].Token.Name == "FourDigitCode");
-			Assert.IsTrue(node.Children[2].Token.Value(iterator) == "7890");
+			Assert.IsTrue(node.Children[2].Token.ValueAsString(iterator) == "7890");
 		}
 	}
 }

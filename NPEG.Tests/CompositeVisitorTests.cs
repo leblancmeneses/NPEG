@@ -101,7 +101,7 @@ namespace NPEG.Tests
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 			Assert.IsTrue(node.Token.Name == "NESTEDRECURSIONTEST");
 			Assert.IsTrue(node.Children.Count == 1);
 			Assert.IsTrue(node.Children[0].Token.Name == "PENCLOSED");
@@ -206,7 +206,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Token.Name == "Test");
 			Assert.IsTrue(node.Children[0].Token.Name == "DynamicBackReferencing");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 		}
 
 
@@ -349,7 +349,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children.Count == 1);
 			Assert.IsTrue(node.Token.Name == "Expression");
-			Assert.IsTrue(node.Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Token.Name == "AnyCharacter");
 		}
 

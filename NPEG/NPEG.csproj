@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="AExpression.cs" />
     <Compile Include="ALeaf.cs" />
+    <Compile Include="Algorithms\AstWriter.cs" />
     <Compile Include="Algorithms\WriteRuleVisitor.cs" />
     <Compile Include="ApplicationExceptions\InfiniteLoopDetectedException.cs" />
     <Compile Include="ApplicationExceptions\InvalidInputException.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="ApplicationExceptions\ParsingFatalTerminalException.cs" />
     <Compile Include="AstNode.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TokenMatchExtensions.cs" />
     <Compile Include="GrammarInterpreter\AstNodes\InterpreterAstNode.cs" />
     <Compile Include="GrammarInterpreter\InterpreterParseException.cs" />

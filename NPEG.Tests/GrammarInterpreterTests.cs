@@ -33,7 +33,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Expression");
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 
 
 			// not sure if it would be better to use verbatim identifier @"" for escaping
@@ -45,7 +45,7 @@ namespace NPEG.Tests
 			visitor = new NpegParserVisitor(iterator);
 			escape.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
-			Assert.IsTrue(@"\" == visitor.AST.Token.Value(iterator));
+			Assert.IsTrue(@"\" == visitor.AST.Token.ValueAsString(iterator));
 
 			input = @"\";
 			escape = PEGrammar.Load(@"(?<Literal>): '\\';");
@@ -54,7 +54,7 @@ namespace NPEG.Tests
 			visitor = new NpegParserVisitor(iterator);
 			escape.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
-			Assert.IsTrue(@"\" == visitor.AST.Token.Value(iterator));
+			Assert.IsTrue(@"\" == visitor.AST.Token.ValueAsString(iterator));
 		}
 
 
@@ -134,13 +134,50 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 
 			Assert.IsTrue(node.Token.Name == "PhoneNumber");
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 			Assert.IsTrue(node.Children[0].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "123");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "123");
 			Assert.IsTrue(node.Children[1].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[1].Token.Value(iterator) == "456");
+			Assert.IsTrue(node.Children[1].Token.ValueAsString(iterator) == "456");
 			Assert.IsTrue(node.Children[2].Token.Name == "FourDigitCode");
-			Assert.IsTrue(node.Children[2].Token.Value(iterator) == "7890");
+			Assert.IsTrue(node.Children[2].Token.ValueAsString(iterator) == "7890");
+		}
+
+		[TestMethod]
+		public void PEGrammar_DynamicBackReference_Xml()
+		{
+			var grammar =
+			@"
+					(?<Tag>): [a-zA-Z0-9]+;
+					(?<StartTag>): '<' Tag '>';
+					(?<EndTag>): '</' \k<Tag> '>' ;
+					(?<Body>): (Xml / (!EndTag .))+;
+					(?<Xml>): (StartTag Body EndTag )+;
+			";
+
+			var input = @"
+					<test>
+						test data start
+						<test1>
+							test1 data start
+							<test2>
+								text2 data start
+								text2 data end
+							</test2>
+							test1 data end
+						</test1>
+						test data end
+					</test>
+			".Trim();
+
+			var ROOT = PEGrammar.Load(grammar);
+			var iterator = new ByteInputIterator(Encoding.UTF8.GetBytes(input));
+			var visitor = new NpegParserVisitor(iterator);
+			ROOT.Accept(visitor);
+			Assert.IsTrue(visitor.IsMatch);
+			AstNode node = visitor.AST;
+
+			throw new NotImplementedException("Refactoring - plan on changing backreferencing logic inside NPEGParser - just placeholder of failing test for now; conserve memory");
 		}
 
 		[TestMethod]
@@ -204,13 +241,13 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "PhoneNumber");
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 			Assert.IsTrue(node.Children[0].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "123");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "123");
 			Assert.IsTrue(node.Children[1].Token.Name == "ThreeDigitCode");
-			Assert.IsTrue(node.Children[1].Token.Value(iterator) == "456");
+			Assert.IsTrue(node.Children[1].Token.ValueAsString(iterator) == "456");
 			Assert.IsTrue(node.Children[2].Token.Name == "FourDigitCode");
-			Assert.IsTrue(node.Children[2].Token.Value(iterator) == "7890");
+			Assert.IsTrue(node.Children[2].Token.ValueAsString(iterator) == "7890");
 		}
 
 		[TestMethod]
@@ -233,7 +270,7 @@ namespace NPEG.Tests
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 		}
 
 		[TestMethod]
@@ -256,7 +293,7 @@ namespace NPEG.Tests
 			ROOT.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 #warning does not specify expected tree
 		}
 

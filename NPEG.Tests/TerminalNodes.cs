@@ -118,7 +118,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value(iterator) == "a");
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == "a");
 
 
 			// Byte boundary tests
@@ -133,7 +133,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch, "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be 0A = \n and letter a.");
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value(iterator) == "\na");
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == "\na");
 
 			input = "\0a";
 			bytes = Encoding.UTF8.GetBytes(input);
@@ -146,7 +146,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch, "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be 00 = \0 and letter a.");
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value(iterator) == "\0a");
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == "\0a");
 
 
 			// Don't care tests
@@ -160,7 +160,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Hexadecimal");
-			Assert.IsTrue(node.Token.Value(iterator) == Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71}));
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == Encoding.ASCII.GetString(new byte[] {0x11, 0x01, 0x71}));
 
 
 			iterator = new ByteInputIterator(new byte[] { 0x10 });
@@ -201,7 +201,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value(iterator) == "a");
+			Assert.IsTrue(ast.Token.ValueAsString(iterator) == "a");
 
 
 			input = "aa";
@@ -215,7 +215,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value(iterator) == "aa");
+			Assert.IsTrue(ast.Token.ValueAsString(iterator) == "aa");
 
 
 			// Byte boundary tests
@@ -230,7 +230,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch, "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be null and letter a.");
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value(iterator) == "\0a");
+			Assert.IsTrue(ast.Token.ValueAsString(iterator) == "\0a");
 
 
 			input = "\0a";
@@ -243,7 +243,7 @@ namespace NPEG.Tests
 			              "During incomplete byte boundaries 0 is expected to prefix input;  This would shift input to the right by 4 bits.  In this case it complete codepoint should be null and letter a.");
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value(iterator) == "\0a");
+			Assert.IsTrue(ast.Token.ValueAsString(iterator) == "\0a");
 
 
 			// Don't care tests
@@ -258,7 +258,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "Binary");
-			Assert.IsTrue(ast.Token.Value(iterator) == Encoding.ASCII.GetString(new byte[] { 0x11, 0x01, 0x71 }));
+			Assert.IsTrue(ast.Token.ValueAsString(iterator) == Encoding.ASCII.GetString(new byte[] { 0x11, 0x01, 0x71 }));
 
 
 			input = Encoding.ASCII.GetString(new byte[] { 0x10 });
@@ -295,7 +295,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode ast = visitor.AST;
 			Assert.IsTrue(ast.Token.Name == "CodePoint");
-			Assert.IsTrue(ast.Token.Value(iterator) == "&");
+			Assert.IsTrue(ast.Token.ValueAsString(iterator) == "&");
 		}
 
 
@@ -359,7 +359,7 @@ namespace NPEG.Tests
 			MinTrue5.Accept(visitor);
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
-			Assert.IsTrue(node.Token.Value(iterator) == input);
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 
 
 			iterator.Index = 0;

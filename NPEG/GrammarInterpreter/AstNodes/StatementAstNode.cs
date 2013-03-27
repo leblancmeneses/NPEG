@@ -18,10 +18,10 @@ namespace NPEG.GrammarInterpreter.AstNodes
 			{
 				if (IsCaptured)
 				{
-					return Children[0].Children[0].Children[0].Token.Value(_inputIterator);
+					return Children[0].Children[0].Children[0].Token.ValueAsString(_inputIterator);
 				}
 
-				return Children[0].Token.Value(_inputIterator);
+				return Children[0].Token.ValueAsString(_inputIterator);
 			}
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using NPEG.Algorithms;
@@ -53,9 +54,7 @@ namespace NPEG
 		// Therefore disableBackReferencePop helps identify when elements should be fetched with peek or with pop.
 
 		#endregion
-
-		private readonly Stack<Dictionary<String, byte[]>> _backReferenceLookup = new Stack<Dictionary<string, byte[]>>();
-
+		
 		private readonly Stack<Stack<AstNode>> _sandbox = new Stack<Stack<AstNode>>();
 		// Stack used to build AST.
 		// var s = new Stack<Stack<AstNode>>()
@@ -83,7 +82,6 @@ namespace NPEG
 			this.iterator = iterator;
 			Warnings = new List<Warn>();
 			_sandbox.Push(new Stack<AstNode>()); // initial base sandbox
-			_backReferenceLookup.Push(new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase));
 			IsOptimized = false;
 		}
 
@@ -92,7 +90,6 @@ namespace NPEG
 			this.iterator = iterator;
 			Warnings = new List<Warn>();
 			_sandbox.Push(new Stack<AstNode>()); // initial base sandbox
-			_backReferenceLookup.Push(new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase));
 			IsOptimized = false;
 
 			_astNodeFactory = astNodeFactory;
@@ -513,7 +510,7 @@ namespace NPEG
 					}
 					else
 					{
-						var variableValues = _backReferenceLookup.Peek();
+						var variableValues = _sandbox.Peek().ToArray().SelectMany(x=>x.Children).ToList();
 
 						var varLengthBytes = Encoding.UTF8.GetBytes(expression.VariableLengthExpression);
 						var varLengthIterator = new ByteInputIterator(varLengthBytes);
@@ -521,7 +518,7 @@ namespace NPEG
 						var varLengthParser = new LimitingRepetitionVariableLengthExpressionParser();
 						var varLengthParseTree = varLengthParser.Parse(varLengthIterator);
 
-						var varLengthSolver = new LimitingRepetitionVariableLengthExpressionSolver(varLengthIterator, variableValues);
+						var varLengthSolver = new LimitingRepetitionVariableLengthExpressionSolver(varLengthIterator, iterator, variableValues);
 						varLengthParseTree.Accept(varLengthSolver);
 
 
@@ -608,9 +605,6 @@ namespace NPEG
 
 
 						Int32 savePosition = iterator.Index;
-
-						var backReferenceLookup = _backReferenceLookup.Peek();
-						_backReferenceLookup.Push(new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase));
 						_sandbox.Peek().Push(new AstNode());
 
 						if (local(iterator))
@@ -634,17 +628,7 @@ namespace NPEG
 								_xmlBackReferenceLookup.Add(name, new Stack<Byte[]>());
 								_xmlBackReferenceLookup[name].Push(matchedBytes);
 							}
-
-							if (backReferenceLookup.ContainsKey(name))
-							{
-								backReferenceLookup[name] = matchedBytes;
-							}
-							else
-							{
-								backReferenceLookup.Add(name, matchedBytes);
-							}
-
-
+							
 
 							AstNode node = _sandbox.Peek().Pop();
 							node.Token = new TokenMatch(name, savePosition, iterator.Index - 1);
@@ -691,12 +675,7 @@ namespace NPEG
 								// each successful sandbox will have 1 item left in the stack
 							}
 
-							_backReferenceLookup.Pop();
 							return true;
-						}
-						else
-						{
-							_backReferenceLookup.Pop();
 						}
 						_sandbox.Peek().Pop();
 						iterator.Index = savePosition;

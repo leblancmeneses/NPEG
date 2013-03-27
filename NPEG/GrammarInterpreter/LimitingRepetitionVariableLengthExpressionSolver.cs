@@ -8,15 +8,17 @@ namespace NPEG.GrammarInterpreter
 {
 	public class LimitingRepetitionVariableLengthExpressionSolver : IAstNodeReplacement
 	{
+		private readonly IInputIterator _userExpressionIterator;
 		private readonly IInputIterator _inputIterator;
-		private readonly Dictionary<string, byte[]> _variableValues;
+		private readonly List<AstNode> _variableValues;
 
 		private readonly Stack<Stack<double>> _results = new Stack<Stack<double>>();
 		private readonly Stack<Stack<char>> _symbol = new Stack<Stack<char>>();
 
 
-		public LimitingRepetitionVariableLengthExpressionSolver(IInputIterator inputIterator, Dictionary<string, byte[]> variableValues)
+		public LimitingRepetitionVariableLengthExpressionSolver(IInputIterator userExpressionIterator, IInputIterator inputIterator, List<AstNode> variableValues)
 		{
+			_userExpressionIterator = userExpressionIterator;
 			_inputIterator = inputIterator;
 			_variableValues = variableValues;
 			_results.Push(new Stack<double>());
@@ -35,14 +37,15 @@ namespace NPEG.GrammarInterpreter
 			switch (node.Token.Name)
 			{
 				case "Variable":
-					var key = node.Children[0].Token.Value(_inputIterator);
-					if (!_variableValues.ContainsKey(key))
+					var key = node.Children[0].Token.ValueAsString(_userExpressionIterator);
+					if (!_variableValues.Any(x=>x.Token.Name.Equals(key, StringComparison.InvariantCultureIgnoreCase)))
 					{
 						throw new ArgumentOutOfRangeException(string.Format("backreference key {0} does not exist.", key));
 					}
 
 					uint value = 0;
-					foreach (var b in _variableValues[key].ToArray().Reverse())
+
+					foreach (var b in _variableValues.First(x=>x.Token.Name.Equals(key, StringComparison.InvariantCultureIgnoreCase)).Token.ValueAsBytes(_inputIterator).Reverse())
 					{
 						value <<= 8;
 						value |= (uint)b & 0xFF;
@@ -50,10 +53,10 @@ namespace NPEG.GrammarInterpreter
 					_results.Peek().Push(value);
 					break;
 				case "Symbol":
-					_symbol.Peek().Push(node.Token.Value(_inputIterator)[0]);
+					_symbol.Peek().Push(node.Token.ValueAsString(_userExpressionIterator)[0]);
 					break;
 				case "Digit":
-					_results.Peek().Push(double.Parse(node.Token.Value(_inputIterator)));
+					_results.Peek().Push(double.Parse(node.Token.ValueAsString(_userExpressionIterator)));
 					break;
 				case "Sum":
 					_symbol.Push(new Stack<char>());
@@ -73,11 +76,11 @@ namespace NPEG.GrammarInterpreter
 			switch (node.Token.Name)
 			{
 				case "Trig":
-					if (node.Token.Value(_inputIterator).StartsWith("cos", StringComparison.InvariantCultureIgnoreCase))
+					if (node.Token.ValueAsString(_userExpressionIterator).StartsWith("cos", StringComparison.InvariantCultureIgnoreCase))
 					{
 						_results.Peek().Push(Math.Cos(_results.Peek().Pop()));
 					}
-					else if (node.Token.Value(_inputIterator).StartsWith("sin", StringComparison.InvariantCultureIgnoreCase))
+					else if (node.Token.ValueAsString(_userExpressionIterator).StartsWith("sin", StringComparison.InvariantCultureIgnoreCase))
 					{
 						_results.Peek().Push(Math.Sin(_results.Peek().Pop()));
 					}

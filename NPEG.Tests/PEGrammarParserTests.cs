@@ -184,7 +184,7 @@ namespace NPEG.Tests
 
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == input);
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == input);
 
 
 			bytes = Encoding.UTF8.GetBytes("_variaBle023_name");
@@ -223,7 +223,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 
 			AstNode node = visitor.AST;
-			Assert.IsTrue(node.Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Token.ValueAsString(iterator) == ".");
 		}
 
 		[TestMethod]
@@ -264,7 +264,7 @@ namespace NPEG.Tests
 
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "CodePoint");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "#0b01010101");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "#0b01010101");
 
 			input = @"#2563";
 			bytes = Encoding.UTF8.GetBytes(input);
@@ -276,7 +276,7 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Test");
 			Assert.IsTrue(node.Children[0].Token.Name == "CodePoint");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "#2563");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "#2563");
 
 
 			input = @"#0xffff";
@@ -288,7 +288,7 @@ namespace NPEG.Tests
 
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "CodePoint");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "#0xffff");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "#0xffff");
 		}
 
 
@@ -306,7 +306,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 
 
 			input = (@"\k<CapturedLabelVariableName>");
@@ -317,7 +317,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 
 
 			input = (@"\k< CapturedLabelVariableName[\i] >");
@@ -328,9 +328,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "CaseSensitive");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == @"\i");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == @"\i");
 
 
 			input = (@"\k< CapturedLabelVariableName   [\i] >");
@@ -341,9 +341,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "CaseSensitive");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == @"\i");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == @"\i");
 		}
 
 
@@ -364,7 +364,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Fatal");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "fatal message without single or double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "fatal message without single or double quotes");
 
 
 			input = (@"FATAL< 'Fatal with single quotes' >");
@@ -375,7 +375,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with single quotes");
 
 
 			input = (@"FATAL<'Fatal with single quotes'>");
@@ -386,7 +386,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with single quotes");
 
 
 			input = (@"FATAL<'Fatal\'s escaped single quotes'>");
@@ -397,7 +397,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == @"Fatal\'s escaped single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"Fatal\'s escaped single quotes");
 
 
 			input = (@"FATAL< ""Fatal with double quotes"" >");
@@ -408,7 +408,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with double quotes");
 
 
 			input = (@"FATAL<""Fatal with double quotes"">");
@@ -419,7 +419,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with double quotes");
 
 
 			input = (@"FATAL<""Fatal message quoteing \""some other message\"" using escapes"">");
@@ -430,7 +430,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == @"Fatal message quoteing \""some other message\"" using escapes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"Fatal message quoteing \""some other message\"" using escapes");
 		}
 
 
@@ -451,7 +451,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Warn");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning message without single or double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning message without single or double quotes");
 
 
 			input = (@"WARN< 'warning with single quotes' >");
@@ -462,7 +462,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with single quotes");
 
 
 			input = (@"WARN<'warning with single quotes'>");
@@ -473,7 +473,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with single quotes");
 
 
 			input = (@"WARN<'warning\'s escaped single quotes'>");
@@ -484,7 +484,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == @"warning\'s escaped single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"warning\'s escaped single quotes");
 
 
 			input = (@"WARN< ""warning with double quotes"" >");
@@ -495,7 +495,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with double quotes");
 
 
 			input = (@"WARN<""warning with double quotes"">");
@@ -506,7 +506,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with double quotes");
 
 
 			input = (@"WARN<""warning message quoteing \""some other message\"" using escapes"">");
@@ -517,7 +517,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) ==
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) ==
 			              @"warning message quoteing \""some other message\"" using escapes");
 		}
 
@@ -537,7 +537,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Literal");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "MatchText");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "this is some captured text");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "this is some captured text");
 
 
 			input = (@"""this is double quoted captured text""");
@@ -549,7 +549,7 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Literal");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "MatchText");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "this is double quoted captured text");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "this is double quoted captured text");
 		}
 
 
@@ -569,7 +569,7 @@ namespace NPEG.Tests
 
 			Assert.IsTrue(node.Children[0].Token.Name == "CapturingGroup");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedItemName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedItemName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "AnyCharacter");
 		}
 
@@ -589,7 +589,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "TerminalReference");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedItemName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedItemName");
 
 
 			input = (@"(?< CapturedItemName >     )");
@@ -601,7 +601,7 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "TerminalReference");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedItemName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedItemName");
 
 
 			input = @"(?< CapturedItemName
@@ -616,12 +616,12 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "TerminalReference");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedItemName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedItemName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "OptionalFlags");
 			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.Name == "ReplaceBySingleChild");
-			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.Value(iterator) == @"\rsc");
+			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == @"\rsc");
 			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.Name == "ReplacementNode");
-			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.Value(iterator) == @"\rn");
+			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.ValueAsString(iterator) == @"\rn");
 
 
 			input =
@@ -638,12 +638,12 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "TerminalReference");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedItemName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedItemName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "OptionalFlags");
 			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.Name == "ReplacementNode");
-			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.Value(iterator) == @"\rn");
+			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == @"\rn");
 			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.Name == "ReplaceBySingleChild");
-			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.Value(iterator) == @"\rsc");
+			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.ValueAsString(iterator) == @"\rsc");
 
 
 			input = (@"(?<CapturedItemName\rsc\rn>)");
@@ -655,12 +655,12 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "TerminalReference");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedItemName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedItemName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "OptionalFlags");
 			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.Name == "ReplaceBySingleChild");
-			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.Value(iterator) == @"\rsc");
+			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == @"\rsc");
 			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.Name == "ReplacementNode");
-			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.Value(iterator) == @"\rn");
+			Assert.IsTrue(node.Children[0].Children[1].Children[1].Token.ValueAsString(iterator) == @"\rn");
 		}
 
 
@@ -680,11 +680,11 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Token.Name == "Sequence");
 			Assert.IsTrue(node.Children[0].Children.Count == 3);
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[2].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[2].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[2].Token.ValueAsString(iterator) == ".");
 
 
 			input = @". // capture first character
@@ -700,11 +700,11 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Token.Name == "Sequence");
 			Assert.IsTrue(node.Children[0].Children.Count == 3);
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[2].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[2].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[2].Token.ValueAsString(iterator) == ".");
 
 
 			input = (@"...");
@@ -717,11 +717,11 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Token.Name == "Sequence");
 			Assert.IsTrue(node.Children[0].Children.Count == 3);
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[2].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[2].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[2].Token.ValueAsString(iterator) == ".");
 		}
 
 
@@ -739,7 +739,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == ".");
 		}
 
 
@@ -760,9 +760,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Token.Name == "PrioritizedChoice");
 			Assert.IsTrue(node.Children[0].Children.Count == 2);
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == ".");
 
 			// whitespace
 			input = (@". / .");
@@ -775,9 +775,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Token.Name == "PrioritizedChoice");
 			Assert.IsTrue(node.Children[0].Children.Count == 2);
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == ".");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == ".");
 		}
 
 
@@ -859,9 +859,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Token.Name == "Sequence");
 			Assert.IsTrue(node.Children[0].Children.Count == 3);
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "AnyCharacter");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == ".");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == ".");
-			Assert.IsTrue(node.Children[0].Children[2].Token.Value(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == ".");
+			Assert.IsTrue(node.Children[0].Children[2].Token.ValueAsString(iterator) == ".");
 		}
 
 
@@ -902,7 +902,7 @@ namespace NPEG.Tests
 
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "CodePoint");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "#0b01010101");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "#0b01010101");
 
 			input = (@"#2563");
 			bytes = Encoding.UTF8.GetBytes(input);
@@ -914,7 +914,7 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Token.Name == "Test");
 			Assert.IsTrue(node.Children[0].Token.Name == "CodePoint");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "#2563");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "#2563");
 
 
 			input = (@"#0xffff");
@@ -926,7 +926,7 @@ namespace NPEG.Tests
 
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "CodePoint");
-			Assert.IsTrue(node.Children[0].Token.Value(iterator) == "#0xffff");
+			Assert.IsTrue(node.Children[0].Token.ValueAsString(iterator) == "#0xffff");
 		}
 
 
@@ -944,7 +944,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 
 
 			input = (@"\k<CapturedLabelVariableName>");
@@ -955,7 +955,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 
 
 			input = (@"\k< CapturedLabelVariableName[\i] >");
@@ -966,9 +966,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "CaseSensitive");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == @"\i");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == @"\i");
 
 
 			input = (@"\k< CapturedLabelVariableName   [\i] >");
@@ -979,9 +979,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "CapturedLabelVariableName");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "CapturedLabelVariableName");
 			Assert.IsTrue(node.Children[0].Children[1].Token.Name == "CaseSensitive");
-			Assert.IsTrue(node.Children[0].Children[1].Token.Value(iterator) == @"\i");
+			Assert.IsTrue(node.Children[0].Children[1].Token.ValueAsString(iterator) == @"\i");
 		}
 
 
@@ -1000,7 +1000,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Fatal");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "fatal message without single or double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "fatal message without single or double quotes");
 
 
 			input = (@"FATAL< 'Fatal with single quotes' >");
@@ -1011,7 +1011,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with single quotes");
 
 
 			input = (@"FATAL<'Fatal with single quotes'>");
@@ -1022,7 +1022,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with single quotes");
 
 
 			input = (@"FATAL<'Fatal\'s escaped single quotes'>");
@@ -1033,7 +1033,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == @"Fatal\'s escaped single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"Fatal\'s escaped single quotes");
 
 
 			input = (@"FATAL< ""Fatal with double quotes"" >");
@@ -1044,7 +1044,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with double quotes");
 
 
 			input = (@"FATAL<""Fatal with double quotes"">");
@@ -1055,7 +1055,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "Fatal with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "Fatal with double quotes");
 
 
 			input = (@"FATAL<""Fatal message quoteing \""some other message\"" using escapes"">");
@@ -1066,7 +1066,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == @"Fatal message quoteing \""some other message\"" using escapes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"Fatal message quoteing \""some other message\"" using escapes");
 		}
 
 		[TestMethod]
@@ -1084,7 +1084,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Literal");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "MatchText");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "this is some captured text");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "this is some captured text");
 
 
 			input = (@"""this is double quoted captured text""");
@@ -1096,7 +1096,7 @@ namespace NPEG.Tests
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Literal");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "MatchText");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "this is double quoted captured text");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "this is double quoted captured text");
 		}
 
 		[TestMethod]
@@ -1117,9 +1117,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children.Count == 3);
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "RecursionCall");
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Name == "Label");
-			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Value(iterator) == "variaBle023_name");
-			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.Value(iterator) == "_variaBle023_name");
-			Assert.IsTrue(node.Children[0].Children[2].Children[0].Token.Value(iterator) == "AAvariaBle023_name");
+			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.ValueAsString(iterator) == "variaBle023_name");
+			Assert.IsTrue(node.Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == "_variaBle023_name");
+			Assert.IsTrue(node.Children[0].Children[2].Children[0].Token.ValueAsString(iterator) == "AAvariaBle023_name");
 		}
 
 		[TestMethod]
@@ -1137,7 +1137,7 @@ namespace NPEG.Tests
 			AstNode node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Token.Name == "Warn");
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning message without single or double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning message without single or double quotes");
 
 
 			input = (@"WARN< 'warning with single quotes' >");
@@ -1148,7 +1148,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with single quotes");
 
 
 			input = (@"WARN<'warning with single quotes'>");
@@ -1159,7 +1159,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with single quotes");
 
 
 			input = (@"WARN<'warning\'s escaped single quotes'>");
@@ -1170,7 +1170,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == @"warning\'s escaped single quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"warning\'s escaped single quotes");
 
 
 			input = (@"WARN< ""warning with double quotes"" >");
@@ -1181,7 +1181,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with double quotes");
 
 
 			input = (@"WARN<""warning with double quotes"">");
@@ -1192,7 +1192,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == "warning with double quotes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "warning with double quotes");
 
 
 			input = (@"WARN<""warning message quoteing \""some other message\"" using escapes"">");
@@ -1203,7 +1203,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 			node = visitor.AST;
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "Message");
-			Assert.IsTrue(node.Children[0].Children[0].Token.Value(iterator) == @"warning message quoteing \""some other message\"" using escapes");
+			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"warning message quoteing \""some other message\"" using escapes");
 		}
 
 
@@ -1227,9 +1227,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Name == "AnyCharacter");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "BETWEEN");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Name == "Min");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Value(iterator) == "55");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == "55");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[1].Token.Name == "Max");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[1].Token.Value(iterator) == "77");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[1].Token.ValueAsString(iterator) == "77");
 
 
 			input = (@".{ 55 , 77 }");
@@ -1245,9 +1245,9 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Name == "AnyCharacter");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "BETWEEN");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Name == "Min");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Value(iterator) == "55");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == "55");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[1].Token.Name == "Max");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[1].Token.Value(iterator) == "77");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[1].Token.ValueAsString(iterator) == "77");
 
 
 			input = (@".{ , 77 }");
@@ -1264,7 +1264,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "ATMOST");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children.Count == 1);
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Name == "Max");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Value(iterator) == "77");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == "77");
 
 
 			input = (@".{,77}");
@@ -1281,7 +1281,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "ATMOST");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children.Count == 1);
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Name == "Max");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Value(iterator) == "77");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == "77");
 
 
 			input = (@".{ 55 ,   }");
@@ -1297,7 +1297,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Name == "AnyCharacter");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "ATLEAST");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Name == "Min");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Value(iterator) == "55");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == "55");
 
 
 			input = (@".{55,}");
@@ -1313,7 +1313,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Name == "AnyCharacter");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "ATLEAST");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Name == "Min");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.Value(iterator) == "55");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Children[0].Token.ValueAsString(iterator) == "55");
 
 
 			input = (@".{ 95687 }");
@@ -1328,7 +1328,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "LimitingRepetition");
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Name == "AnyCharacter");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "EXACT");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Value(iterator) == "95687");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.ValueAsString(iterator) == "95687");
 
 
 			input = (@".{95687}");
@@ -1343,7 +1343,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Token.Name == "LimitingRepetition");
 			Assert.IsTrue(node.Children[0].Children[0].Children[0].Token.Name == "AnyCharacter");
 			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Name == "EXACT");
-			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.Value(iterator) == "95687");
+			Assert.IsTrue(node.Children[0].Children[0].Children[1].Token.ValueAsString(iterator) == "95687");
 		}
 
 
