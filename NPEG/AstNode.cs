@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace NPEG
@@ -10,7 +11,7 @@ namespace NPEG
 	{
 		public AstNode()
 		{
-			Children = new List<AstNode>();
+			Children = new AstNodeCollection();
 		}
 
 		// removed datamember else wcf service recursively tries to serialize.
@@ -18,7 +19,7 @@ namespace NPEG
 		public AstNode Parent { get; set; }
 
 		[DataMember]
-		public List<AstNode> Children { get; set; }
+		public AstNodeCollection Children { get; set; }
 
 		[DataMember]
 		public TokenMatch Token { get; set; }
@@ -34,6 +35,23 @@ namespace NPEG
 			}
 
 			visitor.VisitLeave(this);
+		}
+	}
+
+	public class AstNodeCollection : List<AstNode>
+	{
+		public AstNode this[string key]
+		{
+			get
+			{
+				return this.First(x=>x.Token.Name.Equals(key));
+			}
+			set
+			{
+				var node = this.First(x => x.Token.Name.Equals(key));
+				node.Token = value.Token;
+				node.Children = value.Children;
+			}
 		}
 	}
 }
