@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/MsBuild/2003">
+
+    <UsingTask
+        TaskName="JavaScriptCompressorTask"
+        AssemblyFile="$(MSBuildProjectDirectory)\Yahoo.Yui.Compressor v2.0.0.0\Yahoo.Yui.Compressor.Build.MsBuild.dll" />
+   
+    <Target Name="MyTaskTarget">
+        <ItemGroup>
+		    <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\helper.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\ParsingExpressionGrammarException.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\ParsingFatalTerminalException.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\InfiniteLoopException.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\InputIterator.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\StringInputIterator.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\Expression.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\TokenMatch.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\AstNode.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\Warn.js"/>
+            <JavaScriptFiles Include="$(MSBuildProjectDirectory)\..\Npeg.js"/>		
+        </ItemGroup>
+        <JavaScriptCompressorTask
+            CompressionType="Standard"
+			EncodingType = "Default"
+			DeleteSourceFiles="false"
+            SourceFiles="@(JavaScriptFiles)"
+			DisableOptimizations="false"
+			IsEvalIgnored="true"
+			ObfuscateJavaScript="true"
+			PreserveAllSemicolons="true"
+			ThreadCulture="en-us"
+			OutputFile="$(MSBuildProjectDirectory)\..\build_output\npeg.all.min.js"
+        />
+    </Target>
+	
+</Project>
