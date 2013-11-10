@@ -60,7 +60,7 @@ namespace NPEG.Tests
 
 		[TestMethod]
 		[Timeout(2000)]
-		[ExpectedException(typeof (InfiniteLoopDetectedException))]
+		//[ExpectedException(typeof (InfiniteLoopDetectedException))]
 		public void PEGrammar_ZeroOrMore_InfiniteLoopTest()
 		{
 			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): (.*)*;");
@@ -74,7 +74,7 @@ namespace NPEG.Tests
 
 		[TestMethod]
 		[Timeout(2000)]
-		[ExpectedException(typeof (InfiniteLoopDetectedException))]
+		//[ExpectedException(typeof (InfiniteLoopDetectedException))]
 		public void PEGrammar_LimitingRepetition_InfiniteLoopTest()
 		{
 			string input = "";
@@ -88,7 +88,7 @@ namespace NPEG.Tests
 
 		[TestMethod]
 		[Timeout(2000)]
-		[ExpectedException(typeof (InfiniteLoopDetectedException))]
+		//[ExpectedException(typeof (InfiniteLoopDetectedException))]
 		public void PEGrammar_OneOrMore_InfiniteLoopTest()
 		{
 			string input = "";
@@ -100,17 +100,18 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 		}
 
-#warning commented out - do we want to throw an InfiniteLoopDetectedException or do we want to instead move forward with the bad grammar?
-		//[TestMethod]
-		//public void PEGrammar_OneOrMore_WithPredicate_DoesNotCauseInfiniteLoop()
-		//{
-		//    string input = "";
-		//    AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): (.*)+;");
+		[TestMethod]
+		[Timeout(2000)]
+		public void PEGrammar_OneOrMore_WithPredicate_DoesNotCauseInfiniteLoop()
+		{
+			string input = "";
+			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): (.*)+;");
 
-		//    var visitor = new NpegParserVisitor(new StringInputIterator(input));
-		//    caseSensitive.Accept(visitor);
-		//    Assert.IsTrue(visitor.IsMatch);
-		//}
+			var bytes = Encoding.UTF8.GetBytes(input);
+			var visitor = new NpegParserVisitor(new ByteInputIterator(bytes));
+			caseSensitive.Accept(visitor);
+			Assert.IsTrue(visitor.IsMatch);
+		}
 
 
 		// Root node must always be a capturing group.

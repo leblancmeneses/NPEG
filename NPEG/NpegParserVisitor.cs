@@ -326,12 +326,13 @@ namespace NPEG
 					{
 						if (savePosition == iterator.Index)
 						{
-							Exception ex = new InfiniteLoopDetectedException();
-							ex.Data.Add("Iterator.Index", iterator.Index);
-							var rulewriter = new WriteRuleVisitor();
-							expression.Accept(rulewriter);
-							ex.Data.Add("Expression", rulewriter.GrammarOutput);
-							throw ex;
+							//Exception ex = new InfiniteLoopDetectedException();
+							//ex.Data.Add("Iterator.Index", iterator.Index);
+							//var rulewriter = new WriteRuleVisitor();
+							//expression.Accept(rulewriter);
+							//ex.Data.Add("Expression", rulewriter.GrammarOutput);
+							//throw ex;
+							break;
 						}
 						savePosition = iterator.Index;
 					}
@@ -361,17 +362,13 @@ namespace NPEG
 					Int32 savePosition = iterator.Index;
 					while (local(iterator))
 					{
+						cnt++;
 						if (savePosition == iterator.Index)
 						{
-							Exception ex = new InfiniteLoopDetectedException();
-							ex.Data.Add("Iterator.Index", iterator.Index);
-							var rulewriter = new WriteRuleVisitor();
-							expression.Accept(rulewriter);
-							ex.Data.Add("Expression", rulewriter.GrammarOutput);
-							throw ex;
+							//InfiniteLoopDetectedException
+							break;
 						}
 						savePosition = iterator.Index;
-						cnt++;
 					}
 
 					iterator.Index = savePosition;
@@ -441,16 +438,12 @@ namespace NPEG
 								savePosition = iterator.Index;
 								while (local(iterator))
 								{
+									cnt++;
 									if (savePosition == iterator.Index)
 									{
-										Exception ex = new InfiniteLoopDetectedException();
-										ex.Data.Add("Iterator.Index", iterator.Index);
-										var rulewriter = new WriteRuleVisitor();
-										expression.Accept(rulewriter);
-										ex.Data.Add("Expression", rulewriter.GrammarOutput);
-										throw ex;
+										//InfiniteLoopDetectedException
+										break;
 									}
-									cnt++;
 									savePosition = iterator.Index;
 								}
 

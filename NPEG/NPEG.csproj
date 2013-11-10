@@ -85,7 +85,6 @@
     <Compile Include="ALeaf.cs" />
     <Compile Include="Algorithms\AstWriter.cs" />
     <Compile Include="Algorithms\WriteRuleVisitor.cs" />
-    <Compile Include="ApplicationExceptions\InfiniteLoopDetectedException.cs" />
     <Compile Include="ApplicationExceptions\InvalidInputException.cs" />
     <Compile Include="ApplicationExceptions\InvalidRuleException.cs" />
     <Compile Include="ApplicationExceptions\NpegException.cs" />
