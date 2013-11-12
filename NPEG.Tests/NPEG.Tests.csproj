@@ -75,6 +75,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CompositeVisitorTests.cs" />
+    <Compile Include="BugRegression.cs" />
     <Compile Include="StreamInputIteratorTests.cs" />
     <Compile Include="PEGrammarParserTests.cs" />
     <Compile Include="GrammarInterpreterTests.cs" />

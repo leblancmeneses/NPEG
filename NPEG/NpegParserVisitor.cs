@@ -146,7 +146,6 @@ namespace NPEG
 
 		public override void VisitEnter(AndPredicate expression)
 		{
-			_disableCapturingGroup.Push(true);
 		}
 
 		public override void VisitExecute(AndPredicate expression)
@@ -155,12 +154,12 @@ namespace NPEG
 
 		public override void VisitLeave(AndPredicate expression)
 		{
-			_disableCapturingGroup.Pop();
-
 			IsMatchPredicate exp = _matchStack.Pop();
 			_matchStack.Push(
 				delegate(IInputIterator iterator)
 				{
+					_disableCapturingGroup.Push(true);
+
 					_xmlDisableBackReferencePop.Push(true);
 					Boolean result = true;
 					Int32 savePosition = iterator.Index;
@@ -177,14 +176,15 @@ namespace NPEG
 
 					_xmlDisableBackReferencePop.Pop();
 
+					_disableCapturingGroup.Pop();
+
 					return result;
 				}
-				);
+			);
 		}
 
 		public override void VisitEnter(NotPredicate expression)
 		{
-			_disableCapturingGroup.Push(true);
 		}
 
 		public override void VisitExecute(NotPredicate expression)
@@ -193,12 +193,12 @@ namespace NPEG
 
 		public override void VisitLeave(NotPredicate expression)
 		{
-			_disableCapturingGroup.Pop();
-
 			IsMatchPredicate local = _matchStack.Pop();
 			_matchStack.Push(
 				delegate(IInputIterator iterator)
 				{
+					_disableCapturingGroup.Push(true);
+
 					_xmlDisableBackReferencePop.Push(true);
 
 					Boolean result = true;
@@ -216,9 +216,11 @@ namespace NPEG
 
 					_xmlDisableBackReferencePop.Pop();
 
+					_disableCapturingGroup.Pop();
+
 					return result;
 				}
-				);
+			);
 		}
 
 
@@ -581,101 +583,104 @@ namespace NPEG
 
 		public override void VisitLeave(CapturingGroup expression)
 		{
-			if (_disableCapturingGroup.Count == 0)
-			// no predicates being processed.
-			{
-				String name = expression.Name;
-				Boolean reduceBySingleChildNode = expression.DoReplaceBySingleChildNode;
-				IsMatchPredicate local = _matchStack.Pop();
+			String name = expression.Name;
+			Boolean reduceBySingleChildNode = expression.DoReplaceBySingleChildNode;
+			IsMatchPredicate local = _matchStack.Pop();
 
-				_matchStack.Push(
-					delegate(IInputIterator iterator)
+			_matchStack.Push(
+				delegate(IInputIterator iterator)
+				{
+					if (expression.DoCreateCustomAstNode && _astNodeFactory == null)
 					{
-						if (expression.DoCreateCustomAstNode && _astNodeFactory == null)
+						throw new ArgumentNullException("Second constructor overload is required during instantiation.  astNodeFactory requires to be set with this parser implementation.");
+					}
+
+
+					Int32 savePosition = iterator.Index;
+					_sandbox.Peek().Push(new AstNode());
+
+					if (local(iterator))
+					{
+						// predicates being processed should not append ast
+						if (_disableCapturingGroup.Count > 0)
 						{
-							throw new ArgumentNullException("Second constructor overload is required during instantiation.  astNodeFactory requires to be set with this parser implementation.");
-						}
-
-
-						Int32 savePosition = iterator.Index;
-						_sandbox.Peek().Push(new AstNode());
-
-						if (local(iterator))
-						{
-							if (savePosition >= iterator.Index)
-							{
-								// Warn terminal does not consume and ast should not be created for it, yet it should return that it was successful match.
-								_sandbox.Peek().Pop();
-								iterator.Index = savePosition;
-								return true;
-							}
-
-
-							Byte[] matchedBytes = iterator.Text(savePosition, iterator.Index - 1);
-							if (_xmlBackReferenceLookup.ContainsKey(name))
-							{
-								_xmlBackReferenceLookup[name].Push(matchedBytes);
-							}
-							else
-							{
-								_xmlBackReferenceLookup.Add(name, new Stack<Byte[]>());
-								_xmlBackReferenceLookup[name].Push(matchedBytes);
-							}
-							
-
-							AstNode node = _sandbox.Peek().Pop();
-							node.Token = new TokenMatch(name, savePosition, iterator.Index - 1);
-
-
-							if (expression.DoCreateCustomAstNode)
-							{
-								// create a custom astnode
-								IAstNodeReplacement nodevisitor = _astNodeFactory.Create(node);
-								nodevisitor.Token = node.Token;
-								nodevisitor.Parent = node.Parent;
-								nodevisitor.Children = node.Children;
-								foreach (AstNode updateparent in nodevisitor.Children)
-								{
-									updateparent.Parent = nodevisitor;
-								}
-
-								// since the whole tree has not finished completing this.Parent will be null on this run.
-								// logic inside astnodereplacement is to create properties, business names, that internally check Children collection to mine data.
-								// you still will need a top level visitor to process tree after it completely available.
-								node.Accept(nodevisitor);
-								node = nodevisitor;
-							}
-
-
-							if (reduceBySingleChildNode)
-							{
-								if (node.Children.Count == 1)
-								{
-									node = node.Children[0];
-								}
-							}
-
-
-							if (_sandbox.Peek().Count > 0)
-							{
-								node.Parent = _sandbox.Peek().Peek();
-								_sandbox.Peek().Peek().Children.Add(node);
-							}
-							else
-							{
-								_sandbox.Peek().Push(node);
-								// don't loose the root node
-								// each successful sandbox will have 1 item left in the stack
-							}
-
+							_sandbox.Peek().Pop();
+							iterator.Index = savePosition;
 							return true;
 						}
-						_sandbox.Peek().Pop();
-						iterator.Index = savePosition;
-						return false;
+
+						if (savePosition >= iterator.Index)
+						{
+							// Warn terminal does not consume and ast should not be created for it, yet it should return that it was successful match.
+							_sandbox.Peek().Pop();
+							iterator.Index = savePosition;
+							return true;
+						}
+
+
+						Byte[] matchedBytes = iterator.Text(savePosition, iterator.Index - 1);
+						if (_xmlBackReferenceLookup.ContainsKey(name))
+						{
+							_xmlBackReferenceLookup[name].Push(matchedBytes);
+						}
+						else
+						{
+							_xmlBackReferenceLookup.Add(name, new Stack<Byte[]>());
+							_xmlBackReferenceLookup[name].Push(matchedBytes);
+						}
+							
+
+						AstNode node = _sandbox.Peek().Pop();
+						node.Token = new TokenMatch(name, savePosition, iterator.Index - 1);
+
+
+						if (expression.DoCreateCustomAstNode)
+						{
+							// create a custom astnode
+							IAstNodeReplacement nodevisitor = _astNodeFactory.Create(node);
+							nodevisitor.Token = node.Token;
+							nodevisitor.Parent = node.Parent;
+							nodevisitor.Children = node.Children;
+							foreach (AstNode updateparent in nodevisitor.Children)
+							{
+								updateparent.Parent = nodevisitor;
+							}
+
+							// since the whole tree has not finished completing this.Parent will be null on this run.
+							// logic inside astnodereplacement is to create properties, business names, that internally check Children collection to mine data.
+							// you still will need a top level visitor to process tree after it completely available.
+							node.Accept(nodevisitor);
+							node = nodevisitor;
+						}
+
+
+						if (reduceBySingleChildNode)
+						{
+							if (node.Children.Count == 1)
+							{
+								node = node.Children[0];
+							}
+						}
+
+
+						if (_sandbox.Peek().Count > 0)
+						{
+							node.Parent = _sandbox.Peek().Peek();
+							_sandbox.Peek().Peek().Children.Add(node);
+						}
+						else
+						{
+							_sandbox.Peek().Push(node);
+							// don't loose the root node
+							// each successful sandbox will have 1 item left in the stack
+						}
+
+						return true;
 					}
-					);
-			}
+					_sandbox.Peek().Pop();
+					iterator.Index = savePosition;
+					return false;
+			});
 		}
 
 		public override void VisitEnter(RecursionCreate expression)
