@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.Extensions;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class PracticalExampleTests
 	{
 		public TestContext TestContext { get; set; }
 
 
-		[TestMethod]
+		[Test]
 		public void PracticalExample_MathematicalFormula()
 		{
 			#region Composite
@@ -74,7 +74,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PracticalExample_BooleanAlgebra()
 		{
 			#region Composite
@@ -297,7 +297,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PracticalExample_PhoneNumber()
 		{
 			#region terminals

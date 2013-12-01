@@ -1,32 +1,18 @@
-﻿#region License
-
-/* **********************************************************************************
- * Copyright (c) Leblanc Meneses
- * This source code is subject to terms and conditions of the MIT License
- * for NPEG. A copy of the license can be found in the License.txt file
- * at the root of this distribution. 
- * By using this source code in any fashion, you are agreeing to be bound by the terms of the 
- * MIT License.
- * You must not remove this notice from this software.
- * **********************************************************************************/
-
-#endregion
-
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.ApplicationExceptions;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class StreamInputIteratorTests
 	{
 		public TestContext TestContext { get; set; }
 
 
-		[TestMethod]
+		[Test]
 		public void Iterator_Initialization()
 		{
 			string value = "01234567890123456789";
@@ -45,7 +31,7 @@ namespace NPEG.Tests
 			              "Text unable to return complete input.");
 		}
 
-		[TestMethod]
+		[Test]
 		public void Iterator_GetText_Limit()
 		{
 			string value = "01234567890123456789";
@@ -68,7 +54,7 @@ namespace NPEG.Tests
 			}
 		}
 
-		[TestMethod]
+		[Test]
 		public void Iterator_OutofRange()
 		{
 			var memoryStream = new MemoryStream();
@@ -83,7 +69,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(input.Index == 0);
 		}
 
-		[TestMethod]
+		[Test]
 		public void Iterator_Index()
 		{
 			string value = "01234567890123456789";

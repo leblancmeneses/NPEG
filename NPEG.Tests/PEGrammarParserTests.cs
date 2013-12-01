@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Reflection;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.Extensions;
 using NPEG.GrammarInterpreter;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class PEGrammarParserTests
 	{
 		public TestContext TestContext { get; set; }
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_Space()
 		{
 			AExpression rule = OneOrMore(GetRule("mSpace"));
@@ -31,7 +31,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_NewLine()
 		{
 			AExpression rule = OneOrMore(GetRule("mNewLine"));
@@ -47,7 +47,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_Comment()
 		{
 			AExpression rule = OneOrMore(GetRule("mComment"));
@@ -80,7 +80,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_WhiteSpace()
 		{
 			AExpression rule = OneOrMore(GetRule("mWhiteSpace"));
@@ -114,7 +114,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_Hex()
 		{
 			AExpression rule = GetRule("mHex");
@@ -142,7 +142,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_Binary()
 		{
 			AExpression rule = GetRule("mBinary");
@@ -169,7 +169,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_Label()
 		{
 			AExpression rule = GetRule("mLabel");
@@ -208,7 +208,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_AnyCharacter()
 		{
 			AExpression rule = GetRule("mAnyCharacter");
@@ -226,7 +226,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Token.ValueAsString(iterator) == ".");
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_CharacterClass()
 		{
 			AExpression rule = GetRule("mCharacterClass");
@@ -248,7 +248,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_CodePoint()
 		{
 			AExpression rule = GetRule("mCodePoint");
@@ -292,7 +292,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_DynamicBackReference()
 		{
 			AExpression rule = GetRule("mDynamicBackReference");
@@ -347,7 +347,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_FATAL()
 		{
 			//It's up to the interpreter to expand: escaped \' and \" to the correct form ' and "
@@ -434,7 +434,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_WARN()
 		{
 			//It's up to the interpreter to expand: escaped \' and \" to the correct form ' and "
@@ -522,7 +522,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_Literal()
 		{
 			AExpression rule = GetRule("mLiteral");
@@ -553,7 +553,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_CapturingGroup()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -574,7 +574,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_TerminalReference()
 		{
 			AExpression rule = GetRule("mTerminalReference");
@@ -664,7 +664,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Sequence()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -725,7 +725,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Sequence_DoReplaceBySingleChildNode()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -743,7 +743,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_PriorityChoice()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -781,7 +781,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Multiple_PriorityChoiceAndSequence()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -842,7 +842,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Terminal_AnyCharacter()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -865,7 +865,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Terminal_CharacterClass()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -887,7 +887,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Terminal_CodePoint()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -930,7 +930,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Terminal_DynamicBackReference()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -985,7 +985,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_FATAL()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -1069,7 +1069,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == @"Fatal message quoteing \""some other message\"" using escapes");
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_Literal()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -1099,7 +1099,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[0].Token.ValueAsString(iterator) == "this is double quoted captured text");
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_RecursionCall()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -1122,7 +1122,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[0].Children[2].Children[0].Token.ValueAsString(iterator) == "AAvariaBle023_name");
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_WARN()
 		{
 			AExpression rule = GetRule("mExpressionRoot");
@@ -1207,7 +1207,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammarParser_ExpressionRoot_LimitingRepetition()
 		{
 			AExpression rule = GetRule("mExpressionRoot");

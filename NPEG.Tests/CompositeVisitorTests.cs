@@ -1,19 +1,18 @@
-﻿using System;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
 using NPEG.Extensions;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class CompositeVisitorTests
 	{
 		public TestContext TestContext { get; set; }
 
 
-		[TestMethod]
+		[Test]
 		public void CompositeVisitor_RecursiveParentheses()
 		{
 			#region Composite
@@ -60,7 +59,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void CompositeVisitor_NestedRecursive()
 		{
 			#region Composite
@@ -119,7 +118,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void CompositeVisitor_CapturingGroup_SandBoxTest_PriorityChoice1()
 		{
 			PrioritizedChoice newline = new PrioritizedChoice(
@@ -210,7 +209,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void CompositeVisitor_CapturingGroup_SandBoxTest_PriorityChoice2()
 		{
 			var mSpace = new CharacterClass {ClassExpression = "[ \t]"};
@@ -308,7 +307,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void CompositeVisitor_CapturingGroup_SandBoxTest_PriorityChoice3()
 		{
 			var prefix = new PrioritizedChoice(
@@ -354,7 +353,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void CompositeVisitor_Recursiveness()
 		{
 			var whitespace = new CharacterClass {ClassExpression = "[ \t\r\n\v]"};

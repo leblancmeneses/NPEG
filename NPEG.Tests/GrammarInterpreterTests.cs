@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.ApplicationExceptions;
 using NPEG.Extensions;
 using NPEG.GrammarInterpreter;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class GrammarInterpreterTests
 	{
 		public TestContext TestContext { get; set; }
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_Literal()
 		{
 			AExpression caseSensitive = PEGrammar.Load(@"(?<Expression>): 'Hello World';");
@@ -58,7 +58,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		[Timeout(2000)]
 		//[ExpectedException(typeof (InfiniteLoopDetectedException))]
 		public void PEGrammar_ZeroOrMore_InfiniteLoopTest()
@@ -72,7 +72,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 		}
 
-		[TestMethod]
+		[Test]
 		[Timeout(2000)]
 		//[ExpectedException(typeof (InfiniteLoopDetectedException))]
 		public void PEGrammar_LimitingRepetition_InfiniteLoopTest()
@@ -86,7 +86,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 		}
 
-		[TestMethod]
+		[Test]
 		[Timeout(2000)]
 		//[ExpectedException(typeof (InfiniteLoopDetectedException))]
 		public void PEGrammar_OneOrMore_InfiniteLoopTest()
@@ -100,7 +100,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 		}
 
-		[TestMethod]
+		[Test]
 		[Timeout(2000)]
 		public void PEGrammar_OneOrMore_WithPredicate_DoesNotCauseInfiniteLoop()
 		{
@@ -115,7 +115,7 @@ namespace NPEG.Tests
 
 
 		// Root node must always be a capturing group.
-		[TestMethod]
+		[Test]
 		public void PEGrammar_LimitingRepetition()
 		{
 			var grammar =
@@ -144,7 +144,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[2].Token.ValueAsString(iterator) == "7890");
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_DynamicBackReference_Xml()
 		{
 			var grammar =
@@ -181,7 +181,7 @@ namespace NPEG.Tests
 			throw new NotImplementedException("Refactoring - plan on changing backreferencing logic inside NPEGParser - just placeholder of failing test for now; conserve memory");
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_LimitingRepetition_VariableExpression()
 		{
 			var grammar =
@@ -221,7 +221,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Token.End == bytes.Length - 2); // zero index - expect additional character to not be consumed
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_PhoneNumber()
 		{
 			var input = "123-456-7890";
@@ -251,7 +251,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Children[2].Token.ValueAsString(iterator) == "7890");
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_RecursiveParentheses()
 		{
 			var input = "((((((123))))))";
@@ -274,7 +274,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(node.Token.ValueAsString(iterator) == input);
 		}
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_MathematicalFormula_Recursion()
 		{
 			AExpression ROOT = PEGrammar.Load(
@@ -299,7 +299,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof (ParsingFatalTerminalException))]
 		public void PEGrammar_Interpreter_Fatal()
 		{
@@ -319,7 +319,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_Interpreter_Warn()
 		{
 			AExpression ROOT = PEGrammar.Load(
@@ -339,7 +339,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_Interpreter_CodePoint()
 		{
 			AExpression ROOT = PEGrammar.Load(
@@ -358,7 +358,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void PEGrammar_BooleanAlgebra()
 		{
 			String grammar =

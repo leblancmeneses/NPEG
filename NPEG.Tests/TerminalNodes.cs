@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.Extensions;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class TerminalNodes
 	{
 		public TestContext TestContext { get; set; }
 
-		[TestMethod]
+		[Test]
 		public void Terminal_Any()
 		{
 			var input = "ijk";
@@ -58,7 +58,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void Terminal_CharacterClass()
 		{
 			AExpression Digit = new CharacterClass {ClassExpression = "[0-9]"};
@@ -78,7 +78,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(visitor.IsMatch);
 		}
 
-		[TestMethod]
+		[Test]
 		public void Terminal_Literal()
 		{
 			var Mixed = new Literal {MatchText = "Hello World"};
@@ -102,7 +102,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void Terminal_CodePoint_Hexadecimal()
 		{
 			Assert.IsTrue((Byte) 'a' == 97);
@@ -184,7 +184,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void Terminal_CodePoint_Binary()
 		{
 			Assert.IsTrue((Byte) 'a' == 97);
@@ -281,7 +281,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void Terminal_CodePoint_Decimal()
 		{
 			var input = "&";
@@ -299,7 +299,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void Terminal_LimitingRepetition()
 		{
 			// min
@@ -408,7 +408,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void Terminal_DynamicBackReference()
 		{
 			#region Composite
@@ -460,7 +460,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void Terminal_DynamicBackReference_Recursive()
 		{
 			String input =

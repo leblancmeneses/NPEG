@@ -1,32 +1,17 @@
-﻿#region License
-
-/* **********************************************************************************
- * Copyright (c) Leblanc Meneses
- * This source code is subject to terms and conditions of the MIT License
- * for NPEG. A copy of the license can be found in the License.txt file
- * at the root of this distribution. 
- * By using this source code in any fashion, you are agreeing to be bound by the terms of the 
- * MIT License.
- * You must not remove this notice from this software.
- * **********************************************************************************/
-
-#endregion
-
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPEG.ApplicationExceptions;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class ByteInputIteratorTests
 	{
 		public TestContext TestContext { get; set; }
 
 
-		[TestMethod]
+		[Test]
 		public void Iterator_Initialization()
 		{
 			var input = "01234567890123456789";
@@ -42,7 +27,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(bytes.SequenceEqual(iterator.Text(0, 19)), "Text unable to return complete input.");
 		}
 
-		[TestMethod]
+		[Test]
 		public void Iterator_GetText_Limit()
 		{
 			var bytes = Encoding.UTF8.GetBytes("01234567890123456789");
@@ -62,7 +47,7 @@ namespace NPEG.Tests
 			}
 		}
 
-		[TestMethod]
+		[Test]
 		public void Iterator_OutofRange()
 		{
 			var bytes = Encoding.UTF8.GetBytes("");
@@ -77,7 +62,7 @@ namespace NPEG.Tests
 			Assert.IsTrue(iterator.Index == 0);
 		}
 
-		[TestMethod]
+		[Test]
 		public void Iterator_Index()
 		{
 			var bytes = Encoding.UTF8.GetBytes("01234567890123456789");

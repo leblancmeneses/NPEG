@@ -1,30 +1,16 @@
-﻿#region License
-
-/* **********************************************************************************
- * Copyright (c) Leblanc Meneses
- * This source code is subject to terms and conditions of the MIT License
- * for NPEG. A copy of the license can be found in the License.txt file
- * at the root of this distribution. 
- * By using this source code in any fashion, you are agreeing to be bound by the terms of the 
- * MIT License.
- * You must not remove this notice from this software.
- * **********************************************************************************/
-
-#endregion
-
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
 using NPEG.NonTerminals;
 using NPEG.Terminals;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class PredicateTests
 	{
 		public TestContext TestContext { get; set; }
 
-		[TestMethod]
+		[Test]
 		public void NonTerminal_Predicate_And()
 		{
 			// predicates should not adjust the 
@@ -42,7 +28,7 @@ namespace NPEG.Tests
 		}
 
 
-		[TestMethod]
+		[Test]
 		public void NonTerminal_Predicate_Or()
 		{
 			// predicates should not adjust the 

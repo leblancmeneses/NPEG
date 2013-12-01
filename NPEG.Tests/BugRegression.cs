@@ -1,15 +1,16 @@
 ﻿using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using NPEG.GrammarInterpreter;
+using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestClass]
+	[TestFixture]
 	public class BugRegression
 	{
 
-		[TestMethod]
+		[Test]
 		public void Recursive_Grammar_Used_In_Predicate_Should_Not_Append_To_Ast()
 		{
 			var rules = PEGrammar.Load(@"
