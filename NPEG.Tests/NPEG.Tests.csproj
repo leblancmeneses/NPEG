@@ -46,7 +46,9 @@
     <Compile Include="BugRegression.cs" />
     <Compile Include="ByteInputIteratorTests.cs" />
     <Compile Include="CompositeVisitorTests.cs" />
+    <Compile Include="Extensions\Timing.cs" />
     <Compile Include="GrammarInterpreterTests.cs" />
+    <Compile Include="NpegOptionTests.cs" />
     <Compile Include="PEGrammarParserTests.cs" />
     <Compile Include="PracticalExampleTests.cs" />
     <Compile Include="PredicateTests.cs" />

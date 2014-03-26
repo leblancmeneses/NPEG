@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using NPEG.ApplicationExceptions;
 using NPEG.GrammarInterpreter.AstNodes;
@@ -827,9 +828,22 @@ namespace NPEG.GrammarInterpreter
 				) { DoCreateCustomAstNode = true };
 		}
 
-
-		public static AExpression Load(String rules)
+		public static Dictionary<string, AExpression> CompiledInstance = new Dictionary<string, AExpression>();
+		public static object CompiledInstanceLock = new object();
+		public static AExpression Load(String rules, NpegOptions options = NpegOptions.None)
 		{
+			if ((options & NpegOptions.Cached) == NpegOptions.Cached)
+			{
+				lock (CompiledInstanceLock)
+				{
+					if (CompiledInstance.ContainsKey(rules))
+					{
+						return CompiledInstance[rules];
+					}
+				}
+			}
+
+
 			var rootExpression = RootPegExpression();
 			var iterator = new ByteInputIterator(Encoding.UTF8.GetBytes(rules));
 			var visitor = new NpegParserVisitor(iterator, new PeGrammarAstNodeFactory(iterator));
@@ -838,6 +852,19 @@ namespace NPEG.GrammarInterpreter
 			if (visitor.IsMatch)
 			{
 				var interpret = (InterpreterAstNode)visitor.AST;
+				if ((options & NpegOptions.Cached) == NpegOptions.Cached)
+				{
+					lock (CompiledInstanceLock)
+					{
+						if (!CompiledInstance.ContainsKey(rules))
+						{
+							CompiledInstance.Add(rules, interpret.Expression);
+						}
+
+						return CompiledInstance[rules];
+					}
+				}
+
 				return interpret.Expression;
 			}
 
