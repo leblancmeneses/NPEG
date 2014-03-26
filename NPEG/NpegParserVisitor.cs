@@ -711,11 +711,11 @@ namespace NPEG
 		public override void Visit(Literal expression)
 		{
 			Boolean iscasesensitive = expression.IsCaseSensitive;
-			String data = expression.MatchText;
+			var bytes = Encoding.UTF8.GetBytes(expression.MatchText);
 			_matchStack.Push(
 				delegate(IInputIterator iterator)
 				{
-					foreach (Char c in data)
+					foreach (var c in bytes)
 					{
 						if (iscasesensitive)
 						{
@@ -733,7 +733,7 @@ namespace NPEG
 							if (iterator.Current() == -1)
 								return false;
 
-							if (Encoding.UTF8.GetString(new[] { (Byte)iterator.Current() }, 0, 1).ToUpper() != c.ToString().ToUpper())
+							if (!String.Equals(Encoding.UTF8.GetString(new[] { (Byte)iterator.Current() }, 0, 1), Encoding.UTF8.GetString(new[] { c }, 0, 1), StringComparison.CurrentCultureIgnoreCase))
 							{
 								iterator.Next();
 								return false;
@@ -744,8 +744,7 @@ namespace NPEG
 					}
 
 					return true;
-				}
-				);
+				});
 		}
 
 		public override void Visit(CodePoint expression)
