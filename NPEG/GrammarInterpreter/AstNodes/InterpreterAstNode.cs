@@ -114,7 +114,7 @@ namespace NPEG.GrammarInterpreter.AstNodes
 
 						if (statement.IsCaptured)
 						{
-							var captureStatement = new CapturingGroup(statement.Name, expressionStack.Pop());
+							var captureStatement = new CapturingGroup(statement.Name, expressionStack.Pop()){RuleStart = node.Token.Start, RuleEnd = node.Token.End};
 							if (
 								statement.Children[0].Children[0].Children.Any(child => child.Token.Name == "OptionalFlags")
 								&&
@@ -135,7 +135,7 @@ namespace NPEG.GrammarInterpreter.AstNodes
 						// final root non terminal expression is at the bottom.
 						if (wrapWithRecursionRule.Contains(statement.Name))
 						{
-							expression = new RecursionCreate(statement.Name, expression);
+							expression = new RecursionCreate(statement.Name, expression){RuleStart = node.Token.Start, RuleEnd = node.Token.End};
 						}
 
 						completedStatements.Add(statement.Name, expression);
@@ -154,7 +154,7 @@ namespace NPEG.GrammarInterpreter.AstNodes
 							left = reverse.Pop();
 							right = reverse.Pop();
 							reverse.Push(
-								new Sequence(left, right)
+								new Sequence(left, right) { RuleStart = node.Token.Start, RuleEnd = node.Token.End }
 								);
 						}
 
@@ -169,7 +169,7 @@ namespace NPEG.GrammarInterpreter.AstNodes
 							left = expressionStack.Pop();
 
 							expressionStack.Push(
-								new PrioritizedChoice(left, right)
+								new PrioritizedChoice(left, right) { RuleStart = node.Token.Start, RuleEnd = node.Token.End }
 								);
 						}
 						break;
@@ -179,10 +179,10 @@ namespace NPEG.GrammarInterpreter.AstNodes
 						switch (node.Token.ValueAsString(_inputIterator)[0].ToString())
 						{
 							case "!":
-								expressionStack.Push(new NotPredicate(expressionStack.Pop()));
+								expressionStack.Push(new NotPredicate(expressionStack.Pop()) { RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 								break;
 							case "&":
-								expressionStack.Push(new AndPredicate(expressionStack.Pop()));
+								expressionStack.Push(new AndPredicate(expressionStack.Pop()) { RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 								break;
 							default:
 								throw new Exception("Unsupported PEG Prefix.");
@@ -193,13 +193,13 @@ namespace NPEG.GrammarInterpreter.AstNodes
 						switch (node.Children[0].Token.Name)
 						{
 							case "ZeroOrMore":
-								expressionStack.Push(new ZeroOrMore(expressionStack.Pop()));
+								expressionStack.Push(new ZeroOrMore(expressionStack.Pop()) { RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 								break;
 							case "OneOrMore":
-								expressionStack.Push(new OneOrMore(expressionStack.Pop()));
+								expressionStack.Push(new OneOrMore(expressionStack.Pop()) { RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 								break;
 							case "Optional":
-								expressionStack.Push(new Optional(expressionStack.Pop()));
+								expressionStack.Push(new Optional(expressionStack.Pop()) { RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 								break;
 							case "LimitingRepetition":
 								switch (node.Children[0].Children[1].Token.Name)
@@ -214,7 +214,9 @@ namespace NPEG.GrammarInterpreter.AstNodes
 										                     		Max =
 										                     			Int32.Parse(
 										                     				node.Children[0].Children[1].Children[1].
-																				Token.ValueAsString(_inputIterator))
+																				Token.ValueAsString(_inputIterator)),
+																	RuleStart = node.Token.Start,
+																	RuleEnd = node.Token.End
 										                     	});
 										break;
 									case "ATMOST":
@@ -222,7 +224,9 @@ namespace NPEG.GrammarInterpreter.AstNodes
 										                     	{
 										                     		Min = null,
 										                     		Max = Int32.Parse(node.Children[0].Children[1].Children[0].Token
-																				.ValueAsString(_inputIterator))
+																				.ValueAsString(_inputIterator)),
+																	RuleStart = node.Token.Start,
+																	RuleEnd = node.Token.End
 										                     	});
 										break;
 									case "ATLEAST":
@@ -231,17 +235,18 @@ namespace NPEG.GrammarInterpreter.AstNodes
 										                     		Min =
 										                     			Int32.Parse(node.Children[0].Children[1].Children[0].
 																				Token.ValueAsString(_inputIterator)),
-										                     		Max = null
+																	Max = null,
+																	RuleStart = node.Token.Start,
+																	RuleEnd = node.Token.End
 										                     	});
 										break;
 									case "EXACT":
 										Int32 exactcount = Int32.Parse(node.Children[0].Children[1].Token.ValueAsString(_inputIterator));
-										expressionStack.Push(new LimitingRepetition(expressionStack.Pop())
-										                     	{Min = exactcount, Max = exactcount});
+										expressionStack.Push(new LimitingRepetition(expressionStack.Pop()) { Min = exactcount, Max = exactcount, RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 										break;
 									case "VariableLength":
 										var variableLengthExpression = node.Children[0].Children[1].Token.ValueAsString(_inputIterator);
-										expressionStack.Push(new LimitingRepetition(expressionStack.Pop()) { VariableLengthExpression = variableLengthExpression });
+										expressionStack.Push(new LimitingRepetition(expressionStack.Pop()) { VariableLengthExpression = variableLengthExpression, RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 										break;
 								}
 								break;
@@ -252,7 +257,7 @@ namespace NPEG.GrammarInterpreter.AstNodes
 
 
 					case "CapturingGroup":
-						var capture = new CapturingGroup(node.Children[0].Token.ValueAsString(_inputIterator), expressionStack.Pop());
+						var capture = new CapturingGroup(node.Children[0].Token.ValueAsString(_inputIterator), expressionStack.Pop()) { RuleStart = node.Token.Start, RuleEnd = node.Token.End };
 
 						if (node.Children.Any(child => child.Token.Name == "OptionalFlags"))
 						{
@@ -270,7 +275,7 @@ namespace NPEG.GrammarInterpreter.AstNodes
 					case "Group":
 						break;
 					case "AnyCharacter":
-						expressionStack.Push(new AnyCharacter());
+						expressionStack.Push(new AnyCharacter() { RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 						break;
 					case "Literal":
 						Boolean isCaseSensitive = true;
@@ -282,29 +287,31 @@ namespace NPEG.GrammarInterpreter.AstNodes
 						                     		IsCaseSensitive = isCaseSensitive,
 						                     		MatchText = Regex.Replace(
 														Regex.Replace(node.Children[0].Token.ValueAsString(_inputIterator), @"\\(?<quote>""|')", @"${quote}")
-						                     			, @"\\\\", @"\")
+						                     			, @"\\\\", @"\"),
+													RuleStart = node.Token.Start,
+													RuleEnd = node.Token.End
 						                     	});
 						break;
 					case "CharacterClass":
-						expressionStack.Push(new CharacterClass { ClassExpression = node.Token.ValueAsString(_inputIterator) });
+						expressionStack.Push(new CharacterClass { ClassExpression = node.Token.ValueAsString(_inputIterator), RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 						break;
 					case "RecursionCall":
 						expressionStack.Push((this)[node.Children[0].Token.ValueAsString(_inputIterator)]);
 						break;
 					case "CodePoint":
-						expressionStack.Push(new CodePoint { Match = "#" + node.Children[0].Token.ValueAsString(_inputIterator) });
+						expressionStack.Push(new CodePoint { Match = "#" + node.Children[0].Token.ValueAsString(_inputIterator), RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 						break;
 					case "Fatal":
-						expressionStack.Push(new Fatal { Message = node.Children[0].Token.ValueAsString(_inputIterator) });
+						expressionStack.Push(new Fatal { Message = node.Children[0].Token.ValueAsString(_inputIterator), RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 						break;
 					case "Warn":
-						expressionStack.Push(new Warn { Message = node.Children[0].Token.ValueAsString(_inputIterator) });
+						expressionStack.Push(new Warn { Message = node.Children[0].Token.ValueAsString(_inputIterator), RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 						break;
 					case "DynamicBackReferencing":
 						if (node.Children.Count == 1)
 						{
 							// no options specified only tag name.
-							expressionStack.Push(new DynamicBackReference { BackReferenceName = node.Children[0].Token.ValueAsString(_inputIterator) });
+							expressionStack.Push(new DynamicBackReference { BackReferenceName = node.Children[0].Token.ValueAsString(_inputIterator), RuleStart = node.Token.Start, RuleEnd = node.Token.End });
 						}
 						else
 						{

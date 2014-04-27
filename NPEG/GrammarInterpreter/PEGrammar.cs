@@ -846,7 +846,7 @@ namespace NPEG.GrammarInterpreter
 
 			var rootExpression = RootPegExpression();
 			var iterator = new ByteInputIterator(Encoding.UTF8.GetBytes(rules));
-			var visitor = new NpegParserVisitor(iterator, new PeGrammarAstNodeFactory(iterator));
+			var visitor = new NpegParserVisitor(iterator, new PeGrammarAstNodeFactory(iterator)) { IsOptimized = (options & NpegOptions.Optimize) == NpegOptions.Optimize };
 
 			rootExpression.Accept(visitor);
 			if (visitor.IsMatch)

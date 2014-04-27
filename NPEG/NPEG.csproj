@@ -95,6 +95,7 @@
     <Compile Include="Extensions\TokenMatchExtensions.cs" />
     <Compile Include="GrammarInterpreter\AstNodes\InterpreterAstNode.cs" />
     <Compile Include="GrammarInterpreter\InterpreterParseException.cs" />
+    <Compile Include="GrammarInterpreter\NpegLog.cs" />
     <Compile Include="GrammarInterpreter\NpegOptions.cs" />
     <Compile Include="GrammarInterpreter\PEGrammar.cs" />
     <Compile Include="GrammarInterpreter\AstNodes\PeGrammarAstNodeFactory.cs" />

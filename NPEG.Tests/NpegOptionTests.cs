@@ -43,22 +43,23 @@ s* ('|' (?<DataColumn> (! ('|' / S) .)+ ))+ '|' S1
 
 			var withNone = Timing.TimedFor(() =>
 			{
-				PEGrammar.Load(grammar);
+				PEGrammar.Load(grammar, NpegOptions.Optimize);
 			}, 10);
 
 			var withCompiled = Timing.TimedFor(() =>
 			{
-				PEGrammar.Load(grammar, NpegOptions.Cached);
+				PEGrammar.Load(grammar, NpegOptions.Cached | NpegOptions.Optimize);
 			}, 10);
 
 			var withNoneAfter = Timing.TimedFor(() =>
 			{
-				PEGrammar.Load(grammar);
+				PEGrammar.Load(grammar, NpegOptions.Optimize);
 			}, 10);
 
 			Console.WriteLine("withNone: {0}", withNone.ElapsedMilliseconds);
 			Console.WriteLine("withCompiled: {0}", withCompiled.ElapsedMilliseconds);
 			Console.WriteLine("withNoneAfter: {0}", withNoneAfter.ElapsedMilliseconds);
+			Console.WriteLine("total time: {0}",  withNone.ElapsedMilliseconds + withCompiled.ElapsedMilliseconds + withNoneAfter.ElapsedMilliseconds);
 
 			Assert.Greater(withNone.Elapsed, withCompiled.Elapsed);
 			Assert.Greater(withNoneAfter.Elapsed, withCompiled.Elapsed);
