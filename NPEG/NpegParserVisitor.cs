@@ -27,12 +27,6 @@ namespace NPEG
     // Expr: Value;
 
 
-    private readonly Stack<Boolean> _disableCapturingGroup = new Stack<bool>();
-    // This stack helps manage when CapturingGroup is added to the parse tree.
-    // All capturinggroups are ignored when located inside AndPredicate and NotPredicate as predicates do not consume characters.
-    // When not in an AndPredicate or NotPredicate capturing groups are added to the parse tree.
-
-
     protected IInputIterator Iterator;
 
     #region Xml Parsing
@@ -215,8 +209,6 @@ namespace NPEG
           {
             return LogNonTerminal(expression, iterator, () =>
                   {
-                _disableCapturingGroup.Push(true);
-
                 _xmlDisableBackReferencePop.Push(true);
                 Boolean result = true;
                 Int32 savePosition = iterator.Index;
@@ -232,8 +224,6 @@ namespace NPEG
                 }
 
                 _xmlDisableBackReferencePop.Pop();
-
-                _disableCapturingGroup.Pop();
 
                 return result;
               });
@@ -257,8 +247,6 @@ namespace NPEG
           {
             return LogNonTerminal(expression, iterator, () =>
                   {
-                _disableCapturingGroup.Push(true);
-
                 _xmlDisableBackReferencePop.Push(true);
 
                 Boolean result = true;
@@ -275,8 +263,6 @@ namespace NPEG
                 }
 
                 _xmlDisableBackReferencePop.Pop();
-
-                _disableCapturingGroup.Pop();
 
                 return result;
               });
@@ -629,20 +615,42 @@ namespace NPEG
           {
             return LogNonTerminal(expression, iterator, () =>
                   {
-                Boolean result = true;
-                Int32 savePosition = iterator.Index;
-                if (localLeft(iterator) && localRight(iterator))
-                {
-                  result &= true;
-                }
-                else
-                {
-                  iterator.Index = savePosition;
-                  result &= false;
-                }
+                    Boolean result = true;
+                    Int32 savePosition = iterator.Index;
 
-                return result;
-              });
+                    _sandbox.Push(new Stack<AstNode>());
+                    _sandbox.Peek().Push(new AstNode());
+
+                    if (!localLeft(iterator))
+                    {
+                      _sandbox.Pop();
+                      iterator.Index = savePosition;
+                      return false;
+                    }
+
+                    if (!localRight(iterator))
+                    {
+                      _sandbox.Pop();
+                      iterator.Index = savePosition;
+                      return false;
+                    }
+
+                    Stack<AstNode> s = _sandbox.Pop();
+                    if (s.Count >= 1)
+                    {
+                      AstNode child = s.Pop();
+                      if (_sandbox.Peek().Count == 0)
+                      {
+                        _sandbox.Peek().Push(child);
+                      }
+                      else
+                      {
+                        _sandbox.Peek().Peek().Children.AddRange(child.Children);
+                      }
+                    }
+
+                    return result;
+                  });
           });
     }
 
@@ -678,14 +686,6 @@ namespace NPEG
 
                 if (local(iterator))
                 {
-                        // predicates being processed should not append ast
-                        if (_disableCapturingGroup.Count > 0)
-                  {
-                    _sandbox.Peek().Pop();
-                          // predicates are responsible for resetting: iterator.Index
-                          return true;
-                  }
-
                   if (savePosition >= iterator.Index)
                   {
                           // Warn terminal does not consume and ast should not be created for it, yet it should return that it was successful match.
