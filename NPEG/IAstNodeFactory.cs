@@ -1,7 +1,7 @@
-﻿namespace NPEG
+namespace NPEG
 {
-	public interface IAstNodeFactory
-	{
-		IAstNodeReplacement Create(AstNode original);
-	}
+  public interface IAstNodeFactory
+  {
+    IAstNodeReplacement Create(AstNode original);
+  }
 }
