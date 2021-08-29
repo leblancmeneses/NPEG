@@ -57,3 +57,4 @@ packages/
 #ncrunch
 *ncrunch*
 *crunch*.local.xml
+.vs/NPEG/v15/sqlite3/storage.ide

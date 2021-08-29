@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,13 +10,13 @@ using NUnit.Framework;
 
 namespace NPEG.Tests
 {
-	[TestFixture]
-	public class NpegOptionTests
-	{
-		[Test]
-		public void Compiled_Parse_Tree_Is_Faster()
-		{
-			string grammar = @"
+  [TestFixture]
+  public class NpegOptionTests
+  {
+    [Test]
+    public void Compiled_Parse_Tree_Is_Faster()
+    {
+      string grammar = @"
 NewLine: [\r][\n] / [\n][\r] / [\n] / [\r];
 Space: ' ';
 Tab: [\t];
@@ -41,28 +41,28 @@ s* ('|' (?<DataColumn> (! ('|' / S) .)+ ))+ '|' S1
 (?<Document>): W* TagLine* FeatureLine Background? W* ((Scenario/ScenarioOutline) W*)+ ;
 ".Trim();
 
-			var withNone = Timing.TimedFor(() =>
-			{
-				PEGrammar.Load(grammar, NpegOptions.Optimize);
-			}, 10);
+      var withNone = Timing.TimedFor(() =>
+      {
+        PEGrammar.Load(grammar, NpegOptions.Optimize);
+      }, 10);
 
-			var withCompiled = Timing.TimedFor(() =>
-			{
-				PEGrammar.Load(grammar, NpegOptions.Cached | NpegOptions.Optimize);
-			}, 10);
+      var withCompiled = Timing.TimedFor(() =>
+      {
+        PEGrammar.Load(grammar, NpegOptions.Cached | NpegOptions.Optimize);
+      }, 10);
 
-			var withNoneAfter = Timing.TimedFor(() =>
-			{
-				PEGrammar.Load(grammar, NpegOptions.Optimize);
-			}, 10);
+      var withNoneAfter = Timing.TimedFor(() =>
+      {
+        PEGrammar.Load(grammar, NpegOptions.Optimize);
+      }, 10);
 
-			Console.WriteLine("withNone: {0}", withNone.ElapsedMilliseconds);
-			Console.WriteLine("withCompiled: {0}", withCompiled.ElapsedMilliseconds);
-			Console.WriteLine("withNoneAfter: {0}", withNoneAfter.ElapsedMilliseconds);
-			Console.WriteLine("total time: {0}",  withNone.ElapsedMilliseconds + withCompiled.ElapsedMilliseconds + withNoneAfter.ElapsedMilliseconds);
+      Console.WriteLine("withNone: {0}", withNone.ElapsedMilliseconds);
+      Console.WriteLine("withCompiled: {0}", withCompiled.ElapsedMilliseconds);
+      Console.WriteLine("withNoneAfter: {0}", withNoneAfter.ElapsedMilliseconds);
+      Console.WriteLine("total time: {0}", withNone.ElapsedMilliseconds + withCompiled.ElapsedMilliseconds + withNoneAfter.ElapsedMilliseconds);
 
-			Assert.Greater(withNone.Elapsed, withCompiled.Elapsed);
-			Assert.Greater(withNoneAfter.Elapsed, withCompiled.Elapsed);
-		}
-	}
+      Assert.Greater(withNone.Elapsed, withCompiled.Elapsed);
+      Assert.Greater(withNoneAfter.Elapsed, withCompiled.Elapsed);
+    }
+  }
 }

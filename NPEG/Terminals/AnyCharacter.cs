@@ -1,9 +1,9 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 namespace NPEG.Terminals
 {
-	[DataContract]
-	public class AnyCharacter : ALeaf
-	{
-	}
+  [DataContract]
+  public class AnyCharacter : ALeaf
+  {
+  }
 }

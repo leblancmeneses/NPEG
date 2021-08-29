@@ -1,12 +1,12 @@
-﻿using NPEG.ApplicationExceptions;
+using NPEG.ApplicationExceptions;
 
 namespace NPEG.GrammarInterpreter
 {
-	public class LimitingRepetitionVariableLengthExpressionParser
-	{
-		public AstNode Parse(IInputIterator inputIterator)
-		{
-			string grammar = @"
+  public class LimitingRepetitionVariableLengthExpressionParser
+  {
+    public AstNode Parse(IInputIterator inputIterator)
+    {
+      string grammar = @"
 				WhiteSpace: [\s\n\t ]+;
 				Comment: '/*' (!'*/' .)* '*/';
 				(?<S>): (WhiteSpace / Comment)*;
@@ -18,17 +18,17 @@ namespace NPEG.GrammarInterpreter
 				(?<Expr \rsc>): S Sum S;
             ".Trim();
 
-			AExpression rules = PEGrammar.Load(grammar);
+      AExpression rules = PEGrammar.Load(grammar);
 
-			var visitor = new NpegParserVisitor(inputIterator);
-			rules.Accept(visitor);
+      var visitor = new NpegParserVisitor(inputIterator);
+      rules.Accept(visitor);
 
-			if (visitor.IsMatch)
-			{
-				return visitor.AST;
-			}
+      if (visitor.IsMatch)
+      {
+        return visitor.AST;
+      }
 
-			throw new InvalidInputException();
-		}
-	}
+      throw new InvalidInputException();
+    }
+  }
 }
