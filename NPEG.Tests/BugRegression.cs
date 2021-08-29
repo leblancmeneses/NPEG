@@ -9,6 +9,27 @@ namespace NPEG.Tests
   [TestFixture]
   public class BugRegression
   {
+    [Test]
+    public void Bug_Issue_6_CapturingGroup()
+    {
+      var grammar =
+      @"
+        (?<PropertyName>): ('_' / [a-zA-Z]) [a-zA-Z0-9]*;
+        (?<PropertyArray>): PropertyName '[' (?<ArrayIndex> [0-9]+ ) ']';
+        (?<Segment>): (PropertyArray / PropertyName) ;
+        (?<Expr>): (Segment '.')* Segment;
+      ";
+
+      var input = @"Data[0]".Trim();
+
+      var ROOT = PEGrammar.Load(grammar);
+      var iterator = new ByteInputIterator(Encoding.UTF8.GetBytes(input));
+      var visitor = new NpegParserVisitor(iterator);
+      ROOT.Accept(visitor);
+      Assert.IsTrue(visitor.IsMatch);
+      AstNode node = visitor.AST;
+      Assert.AreEqual(1, node.Children.Count);
+    }
 
     [Test]
     public void Recursive_Grammar_Used_In_Predicate_Should_Not_Append_To_Ast()
