@@ -1,0 +1,81 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:notification="clr-namespace:RobustHaven.Windows.Controls;assembly=RobustHaven.Windows.Controls">
+
+	<Style TargetType="notification:Notification">
+		<Setter Property="ItemTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<Border BorderThickness="10" Background="Azure">
+						<notification:DataTemplateSelector Content="{Binding}"
+									HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+									VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+							<notification:DataTemplateSelector.Resources>
+								<DataTemplate x:Key="InformationMessage">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+
+										<TextBlock Grid.Row="0" Text="{Binding Header}" />
+										<TextBlock Grid.Row="1" Text="{Binding Description}" />
+									</Grid>
+								</DataTemplate>
+								<DataTemplate x:Key="SuccessMessage">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+
+										<TextBlock Grid.Row="0" Text="{Binding Header}" />
+										<TextBlock Grid.Row="1" Text="{Binding Description}" />
+									</Grid>
+								</DataTemplate>
+								<DataTemplate x:Key="WarningMessage">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+
+										<TextBlock Grid.Row="0" Text="{Binding Header}" />
+										<TextBlock Grid.Row="1" Text="{Binding Description}" />
+									</Grid>
+								</DataTemplate>
+								<DataTemplate x:Key="ErrorMessage">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+
+										<TextBlock Grid.Row="0" Text="{Binding Header}" />
+										<TextBlock Grid.Row="1" Text="{Binding Description}" />
+									</Grid>
+								</DataTemplate>
+							</notification:DataTemplateSelector.Resources>
+						</notification:DataTemplateSelector>
+					</Border>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="notification:NotificationItem">
+		<Style.Setters>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="notification:NotificationItem">
+						<Border BorderThickness="5" Background="BlanchedAlmond">
+							<Grid>
+								<ContentPresenter />
+							</Grid>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style.Setters>
+	</Style>
+</ResourceDictionary>

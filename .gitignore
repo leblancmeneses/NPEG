@@ -1,5 +1,7 @@
 #http://stackoverflow.com/questions/2143956/gitignore-for-visual-studio-projects-and-solutions
 
+Externs/silverlight/telerik
+
 #OS junk files
 [Tt]humbs.db
 *.DS_Store
@@ -58,3 +60,4 @@ packages/
 *ncrunch*
 *crunch*.local.xml
 .vs/NPEG/v15/sqlite3/storage.ide
+.vs/config/applicationhost.config

@@ -1,0 +1,15 @@
+<OutOfBrowserSettings ShortName="Language Workbench" EnableGPUAcceleration="True" ShowInstallMenuItem="True">
+  <OutOfBrowserSettings.Blurb>Language Workbench Application on your desktop; at home, at work or on the go.</OutOfBrowserSettings.Blurb>
+  <OutOfBrowserSettings.WindowSettings>
+    <WindowSettings Title="Language Workbench" Height="540" Width="846" />
+  </OutOfBrowserSettings.WindowSettings>
+  <OutOfBrowserSettings.SecuritySettings>
+    <SecuritySettings ElevatedPermissions="Required" />
+  </OutOfBrowserSettings.SecuritySettings>
+  <OutOfBrowserSettings.Icons>
+    <Icon Size="16,16">Icons/npeg_16x16.png</Icon>
+    <Icon Size="32,32">Icons/npeg_32x32.png</Icon>
+    <Icon Size="48,48">Icons/npeg_48x48.png</Icon>
+    <Icon Size="128,128">Icons/npeg_128x128.png</Icon>
+  </OutOfBrowserSettings.Icons>
+</OutOfBrowserSettings>

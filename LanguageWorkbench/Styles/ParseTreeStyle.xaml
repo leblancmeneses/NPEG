@@ -1,0 +1,139 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Terminals="clr-namespace:NPEG.Terminals;assembly=NPEG"
+    xmlns:NonTerminals="clr-namespace:NPEG.NonTerminals;assembly=NPEG"
+    xmlns:localConverters="clr-namespace:LanguageWorkbench.Converters" xmlns:NPEG="clr-namespace:NPEG;assembly=NPEG">
+	<localConverters:RemoveNameSpaceConverter x:Key="removeNameSpaceConverter" />
+
+	<!-- polymorphism in datatemplates -->
+	<DataTemplate DataType="NPEG:AComposite">
+		<TextBlock Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}"  />
+	</DataTemplate>
+
+	<DataTemplate DataType="NonTerminals:CapturingGroup">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="Name" StringFormat="{}Name: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="DoReplaceBySingleChildNode" StringFormat="{}DoReplaceBySingleChildNode: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+	<DataTemplate DataType="NonTerminals:LimitingRepetition">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="Min" StringFormat="{}Min: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="Max" StringFormat="{}Min: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+	<DataTemplate DataType="NonTerminals:RecursionCreate">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="FunctionName" StringFormat="{}FunctionName: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+			<!-- I no longer remember what TypeContains was for??? -->
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="TypeContains" StringFormat="{}TypeContains: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+
+	<DataTemplate DataType="Terminals:CharacterClass">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="ClassExpression" StringFormat="{}ClassExpression: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+	<DataTemplate DataType="Terminals:DynamicBackReference">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="BackReferenceName" StringFormat="{}BackReferenceName: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="IsCaseSensitive" StringFormat="{}IsCaseSensitive: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+
+	<DataTemplate DataType="Terminals:Fatal">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="Message" StringFormat="{}Message: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+	<DataTemplate DataType="Terminals:Warn">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="Message" StringFormat="{}Message: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+	<DataTemplate DataType="Terminals:Literal">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="MatchText" StringFormat="{}MatchText: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="IsCaseSensitive" StringFormat="{}IsCaseSensitive: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+
+	<DataTemplate DataType="Terminals:RecursionCall">
+		<StackPanel Orientation="Vertical" Margin="0,5,0,5">
+			<TextBlock Grid.Row="0" Text="{Binding Path=., Converter={StaticResource removeNameSpaceConverter}, ConverterParameter=''}" FontSize="14" FontWeight="Bold" />
+			<TextBlock>
+                    <TextBlock.Text>
+                        <Binding Path="FunctionName" StringFormat="{}FunctionName: {0}"/>
+                    </TextBlock.Text>
+			</TextBlock>
+		</StackPanel>
+	</DataTemplate>
+</ResourceDictionary>

@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{02E44D18-E094-42CA-9BF1-A9C35945C6AF}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NPEG</RootNamespace>
+    <AssemblyName>NPEG</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AComposite.cs" />
+    <Compile Include="AExpression.cs" />
+    <Compile Include="ALeaf.cs" />
+    <Compile Include="Algorithms\AstWriter.cs" />
+    <Compile Include="Algorithms\WriteRuleVisitor.cs" />
+    <Compile Include="ApplicationExceptions\InvalidInputException.cs" />
+    <Compile Include="ApplicationExceptions\InvalidRuleException.cs" />
+    <Compile Include="ApplicationExceptions\IteratorUsageException.cs" />
+    <Compile Include="ApplicationExceptions\NpegException.cs" />
+    <Compile Include="ApplicationExceptions\ParsingFatalTerminalException.cs" />
+    <Compile Include="AstNode.cs" />
+    <Compile Include="ByteInputIterator.cs" />
+    <Compile Include="Extensions\StackExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TokenMatchExtensions.cs" />
+    <Compile Include="GrammarInterpreter\AstNodes\InterpreterAstNode.cs" />
+    <Compile Include="GrammarInterpreter\AstNodes\PeGrammarAstNodeFactory.cs" />
+    <Compile Include="GrammarInterpreter\AstNodes\StatementAstNode.cs" />
+    <Compile Include="GrammarInterpreter\InterpreterParseException.cs" />
+    <Compile Include="GrammarInterpreter\LimitingRepetitionVariableLengthExpressionParser.cs" />
+    <Compile Include="GrammarInterpreter\LimitingRepetitionVariableLengthExpressionSolver.cs" />
+    <Compile Include="GrammarInterpreter\NpegLog.cs" />
+    <Compile Include="GrammarInterpreter\NpegOptions.cs" />
+    <Compile Include="GrammarInterpreter\PEGrammar.cs" />
+    <Compile Include="IAstNodeFactory.cs" />
+    <Compile Include="IAstNodeReplacement.cs" />
+    <Compile Include="IInputIterator.cs" />
+    <Compile Include="IParseTreeVisitor.cs" />
+    <Compile Include="NonTerminals\AndPredicate.cs" />
+    <Compile Include="NonTerminals\CapturingGroup.cs" />
+    <Compile Include="NonTerminals\LimitingRepetition.cs" />
+    <Compile Include="NonTerminals\NotPredicate.cs" />
+    <Compile Include="NonTerminals\OneOrMore.cs" />
+    <Compile Include="NonTerminals\Optional.cs" />
+    <Compile Include="NonTerminals\PrioritizedChoice.cs" />
+    <Compile Include="NonTerminals\RecursionCreate.cs" />
+    <Compile Include="NonTerminals\Sequence.cs" />
+    <Compile Include="NonTerminals\ZeroOrMore.cs" />
+    <Compile Include="NpegParserVisitor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StreamInputIterator.cs" />
+    <Compile Include="Terminals\AnyCharacter.cs" />
+    <Compile Include="Terminals\CharacterClass.cs" />
+    <Compile Include="Terminals\CodePoint.cs" />
+    <Compile Include="Terminals\DynamicBackReference.cs" />
+    <Compile Include="Terminals\Fatal.cs" />
+    <Compile Include="Terminals\Literal.cs" />
+    <Compile Include="Terminals\RecursionCall.cs" />
+    <Compile Include="Terminals\Warn.cs" />
+    <Compile Include="TokenMatch.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
