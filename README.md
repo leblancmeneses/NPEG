@@ -1,24 +1,24 @@
-#NPEG - .NET Parsing Expression Grammar.  
+# NPEG - .NET Parsing Expression Grammar.  
 
-*	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/JavaScript. [Tool Here](http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-language-workbench)
-*	The framework can read and write it's own DSL. [DSL Documentation](http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-dsl-documentation). 
+*	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/JavaScript. [Tool Here](https://www.robusthaven.com/blog/2012/10/npeg-language-workbench)
+*	The framework can read and write it's own DSL. [DSL Documentation](https://www.robusthaven.com/blog/2012/10/npeg-language-workbench). 
 
-The inline DSL is only supported in C#.  All other languages must use the DSL inside the language workbench to export the parse tree in your target language. 
+The inline DSL is only supported in C#.  All other languages must use the DSL inside the [language workbench](https://www.robusthaven.com/blog/2012/10/npeg-language-workbenchc) to export the parse tree in your target language. 
 All offline versions will be faster so we provide an offline C# version also.  You can grab dependencies for your target language here: https://github.com/leblancmeneses/NPEG/tree/master/Languages
 
-##How to get started
-Watch this [pair programming session as Leblanc](http://www.robusthaven.com/blog/parsing-expression-grammar/dsl-pair-programming-with-leblanc) writes a math expression solver.
+## How to get started
+Watch this [pair programming session as Leblanc](https://www.robusthaven.com/blog/2012/12/dsl-pair-programming-with-leblanc) writes a math expression solver.
 
 
 
-##Nuget Packages
+## Nuget Packages
 [Offline version](http://nuget.org/packages/RobustHaven.Text.Npeg) which requires exporting the parse tree using the language workbench.
 
 <code>
 Install-Package RobustHaven.Text.Npeg
 </code>
 
-[Online version](https://github.com/leblancmeneses/NPEG) that allows building the parse tree from a string using the [NPEG DSL](http://www.robusthaven.com/blog/parsing-expression-grammar/npeg-dsl-documentation).
+[Online version](https://github.com/leblancmeneses/NPEG) that allows building the parse tree from a string using the [NPEG DSL](https://www.robusthaven.com/blog/2012/10/npeg-language-workbench).
 
 <code>
 Install-Package NPEG 
