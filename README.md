@@ -3,7 +3,7 @@
 *	The framework can output equivalent parsers natively in C/C++/C#/Java/PHP/JavaScript. [Tool Here](https://www.robusthaven.com/blog/2012/10/npeg-language-workbench)
 *	The framework can read and write it's own DSL. [DSL Documentation](https://www.robusthaven.com/blog/2012/10/npeg-language-workbench). 
 
-The inline DSL is only supported in C#.  All other languages must use the DSL inside the [language workbench](https://www.robusthaven.com/blog/2012/10/npeg-language-workbenchc) to export the parse tree in your target language. 
+The inline DSL is only supported in C#.  All other languages must use the DSL inside the [language workbench](https://www.robusthaven.com/blog/2012/10/npeg-language-workbench) to export the parse tree in your target language. 
 All offline versions will be faster so we provide an offline C# version also.  You can grab dependencies for your target language here: https://github.com/leblancmeneses/NPEG/tree/master/Languages
 
 ## How to get started
