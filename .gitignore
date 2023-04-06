@@ -7,6 +7,7 @@ Externs/silverlight/telerik
 *.DS_Store
 
 #Visual Studio files
+.vs
 *.[Oo]bj
 *.user
 *.aps
